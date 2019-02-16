@@ -2,10 +2,10 @@
   <div>
     <Navbar/>
     <div class="row mr-0">
-      <div class="col-2" >
+      <div class="col-2">
         <img src="../../../img/chern.jpg" class="avatar">
       </div>
-      <div class="col-10" >
+      <div class="col-10">
         <div class="d-flex flex-column">
           <div class="userName">Чернышев Всеволод Леонидович</div>
           <div class="line"></div>
@@ -56,32 +56,43 @@
               </div>
               <div class="content">
                 <section>
-                  <h2>Features</h2>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ea dolorem sequi, quo tempore in eum
-                  obcaecati atque quibusdam officiis est dolorum minima deleniti ratione molestias numquam. Voluptas voluptates
-                  quibusdam cum?
+                  <div class="row">
+                    <div class="col-3 categoriesAbout">Факультет:</div>
+                    <div class="col-7 textAbout">Факультет компьютерных наук</div>
+                  </div>
+                  <div class="row">
+                    <div class="col-3 categoriesAbout">Город:</div>
+                    <div class="col-7 textAbout">Москва</div>
+                  </div>
+                  <div class="row text">
+                    <div class="col-3 categoriesAbout">Должность:</div>
+                    <div class="col-7 textAbout">Доцент</div>
+                  </div>
+                  <div class="row text">
+                    <div class="col-3 categoriesAbout">Город:</div>
+                    <div class="col-7 textAbout">Москва</div>
+                  </div>
+                  <div class="row text">
+                    <div class="col-3 categoriesAbout">Researcher ID:</div>
+                    <div class="col-7 textAbout">K-5545-2015</div>
+                  </div>
+                  <div class="row text">
+                    <div class="col-3 categoriesAbout">Телефон:</div>
+                    <div class="col-7 textAbout">8-912-345-67-89</div>
+                  </div>
+                  <div class="row text">
+                    <div class="col-3 categoriesAbout">Почта:</div>
+                    <div class="col-7 textAbout">vchernyshov@hse.ru</div>
+                  </div>
                 </section>
-                <section>
-                  <h2>Delivery Contents</h2>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Autem quas adipisci a accusantium eius ut voluptatibus
-                  ad impedit nulla, ipsa qui. Quasi temporibus eos commodi aliquid impedit amet, similique nulla.
-                </section>
-                <section>
-                  <h2>Shipping</h2>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quam nemo ducimus eius, magnam error quisquam sunt
-                  voluptate labore, excepturi numquam! Alias libero optio sed harum debitis! Veniam, quia in eum.
-                </section>
-                <section>
-                  <h2>Returns</h2>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsa dicta vero rerum? Eaque repudiandae architecto
-                  libero reprehenderit aliquam magnam ratione quidem? Nobis doloribus molestiae enim deserunt necessitatibus eaque
-                  quidem incidunt.
-                </section>
+                <section>Тут что нибудь появится</section>
+                <section>Тут что нибудь появится</section>
               </div>
             </div>
           </div>
-           <news v-bind:posts="arr"/>
+          <news id="myNews" v-bind:posts="arr"/>
         </div>
       </div>
-    </div>
-    <div class="row mr-0 ml-5">
-     
     </div>
   </div>
 </template>
@@ -131,6 +142,9 @@ export default {
 </script>
 
 <style>
+#myNews {
+  margin-top: 5%;
+}
 * {
   font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
 }
@@ -152,6 +166,7 @@ export default {
   padding: 10%;
   width: 100%;
   max-width: 270px;
+  min-width: 70px;
 }
 
 .side {
@@ -344,6 +359,7 @@ export default {
   -webkit-transition: all 0.33s cubic-bezier(0.38, 0.8, 0.32, 1.07);
   transition: all 0.33s cubic-bezier(0.38, 0.8, 0.32, 1.07);
 }
+
 .tabs .slider .indicator {
   position: relative;
   width: 90px;
@@ -559,10 +575,35 @@ export default {
     height: 1.5em;
   }
 }
+
+@media (max-width: 750px) {
+  .tabs {
+    margin-bottom: 50px;
+  }
+  .categoriesAbout {
+    margin-right: 10%;
+  }
+}
+
+@media (max-width: 830px) {
+  #myNews {
+    margin-top: 10%;
+  }
+}
+
 @media (max-width: 600px) {
+  .userName {
+    font-size: 20px;
+    margin-left: 4%;
+  }
+
+  #myNews {
+    margin-top: 0;
+  }
   .tabs ul li label {
     padding: 5px;
     border-radius: 5px;
+    margin-bottom: 0;
   }
   .tabs ul li label span {
     display: none;

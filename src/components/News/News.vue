@@ -5,7 +5,7 @@
       <news-column  v-bind:posts= "posts"/>
     </div>
     <div class="col-md-4 col-sm-12 text mt-4">
-      <news-column  v-bind:posts= "posts"/>
+      <news-column class = "ml-md-5 ml-0"  v-bind:posts= "posts"/>
     </div>
   </div>
 </template>

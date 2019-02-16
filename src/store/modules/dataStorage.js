@@ -40,16 +40,12 @@ const actions = {
             .get("http://websuck1t.herokuapp.com/posts/all")
             .then(response => {
                 let answer = response.data.response;
-                // console.log(response.data)
-
                 for (var item of response.data.response.added) {
-                    // console.log(item)
-
                     makeRequest(item, context);
 
                 }
                 context.commit('SET_TOKEN', response.data.token)
-
+                // TODO: change request here
                 // for (var i in answer) {
 
                 //     context.commit('PUSH_POST', {
@@ -155,7 +151,7 @@ function makeRequest(item, context) {
         Axios.get("http://websuck1t.herokuapp.com/posts/" + item).then(response => {
             //  console.log(response.data)
             context.commit('PUSH_POST', {
-                name: '',
+                name: 'Всеволод Чернышев',
                 postId: response.data.postId,
                 postBody: response.data.postBody,
                 num: context.state.columnToAdd

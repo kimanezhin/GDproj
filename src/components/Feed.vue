@@ -8,58 +8,6 @@
         <feedMenu></feedMenu>
       </div>
       <news v-bind:posts="arr"/>
-      <!-- <div class="col-md-4 col-sm-12 ml-md-5 mt-4">
-        <div class="d-flex flex-row mb-5">
-          <img src="../../img/chern.jpg" alt>
-          <div class="toOverlay" id="ovr">
-            <textarea
-              id="myText"
-              @click="setCurrentSize"
-              class="ml-3"
-              placeholder="Кокошко для поста"
-              ref="container"
-              v-model="inputText"
-            ></textarea>
-
-            <div class="attachments mr-auto" v-if="isEditorShown">
-              <div class="addSmth">
-                <div><font-awesome-icon icon="user"/></div>
-               <div>  <font-awesome-icon icon="user"/></div>
-               <div>  <font-awesome-icon icon="user"/></div>
-              </div>
-              <input type="submit" @click="sendPost" id = "submitButton" class="btn btn-secondary">
-            </div>
-          </div>
-        </div>
-
-        <transition-group name="list" tag="p">
-          <div class="mb-3 post" v-for="post in getPosts(0)" :key="post.postId">
-            <div class="postHeader">
-              <img src="../../img/chern.jpg" alt>
-              <div class="align-self-end ml-3 font-weight-bold">{{post.name}}</div>
-              <div class="align-self-end mr-3 ml-auto font-weight-bold">01.01.2019</div>
-            </div>
-            <div class="text">
-              <div class = "transit" v-readMore:300="post.postBody"></div>
-            </div>
-          </div>
-        </transition-group>
-      </div>
-     
-      <div class="col-md-4 col-sm-12 ml-md-5 text mt-4">
-        <transition-group name="listP" tag="p">
-          <div class="mb-3 post" v-for="post in getPosts(1)" :key="post.postId">
-            <div class="postHeader">
-              <img src="../../img/chern.jpg" alt>
-              <div class="align-self-end ml-3 font-weight-bold">{{post.name}}</div>
-              <div class="align-self-end mr-3 ml-auto font-weight-bold">01.01.2019</div>
-            </div>
-            <div class="text">
-              <div v-readMore:300="post.postBody"></div>
-            </div>
-          </div>
-        </transition-group>
-      </div>-->
     </div>
   </div>
 </template>
