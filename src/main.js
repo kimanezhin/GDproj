@@ -14,10 +14,10 @@ import VModal from 'vue-js-modal'
 Vue.use(VModal, { dynamic: true, injectModalsContainer: true })
 
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faUserSecret, faEnvelope, faUser, faNewspaper, faProjectDiagram, faTasks, faCog, faPaperPlane, faImage } from '@fortawesome/free-solid-svg-icons'
+import { faPlus, faUserSecret, faEnvelope, faUser, faNewspaper, faProjectDiagram, faTasks, faCog, faPaperPlane, faImage } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
  
-library.add(faUserSecret, faEnvelope, faUser,faNewspaper,faProjectDiagram,faTasks,faCog,faPaperPlane, faImage )
+library.add(faPlus, faUserSecret, faEnvelope, faUser,faNewspaper,faProjectDiagram,faTasks,faCog,faPaperPlane, faImage )
  
 Vue.component('font-awesome-icon', FontAwesomeIcon)
  

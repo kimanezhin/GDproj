@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="ml-4 title">channels</div>
+    <div class="ml-4 title">channels </div>
     <div class="ml-2 smth">
       <a
         href="#"
@@ -11,6 +11,7 @@
         :key="channel.num"
       >{{channel}}</a>
     </div>
+
   </div>
 </template>
 <script>
@@ -48,7 +49,8 @@ export default {
   font-size: 19px;
 }
 .title {
-  color: #a2a2a2;
+  /* color: #a2a2a2; */
+  opacity: 0.8;
 }
 
 .smth > a {

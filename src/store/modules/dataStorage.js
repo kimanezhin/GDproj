@@ -16,6 +16,38 @@ const state = {
     messages: ['s'],
     posts: [
     ],
+    channels: [
+        {
+            id: 1,
+            name: "Homer Simpson",
+            thumbnail: "http://lorempixel.com/40/40/people/1"
+        },
+        {
+            id: 2,
+            name: "Amancio Ortega",
+            thumbnail: "http://lorempixel.com/40/40/people/2"
+        },
+        {
+            id: 3,
+            name: "Peter Parker",
+            thumbnail: "http://lorempixel.com/40/40/people/3"
+        },
+        {
+            id: 4,
+            name: "John Cena",
+            thumbnail: "http://lorempixel.com/40/40/4"
+        },
+        {
+            id: 5,
+            name: "John Cena",
+            thumbnail: "http://lorempixel.com/40/40/4"
+        },
+        {
+            id: 6,
+            name: "John Cena",
+            thumbnail: "http://lorempixel.com/40/40/4"
+        }
+    ],
     token: '',
     socket: {
         isConnected: false,
