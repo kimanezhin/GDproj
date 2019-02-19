@@ -19,34 +19,25 @@ const state = {
     channels: [
         {
             id: 1,
-            name: "Homer Simpson",
+            name: "#general",
             thumbnail: "http://lorempixel.com/40/40/people/1"
         },
         {
             id: 2,
-            name: "Amancio Ortega",
+            name: "#grudina",
             thumbnail: "http://lorempixel.com/40/40/people/2"
         },
         {
             id: 3,
-            name: "Peter Parker",
+            name: "#javaHW",
             thumbnail: "http://lorempixel.com/40/40/people/3"
         },
         {
             id: 4,
-            name: "John Cena",
-            thumbnail: "http://lorempixel.com/40/40/4"
-        },
-        {
-            id: 5,
-            name: "John Cena",
-            thumbnail: "http://lorempixel.com/40/40/4"
-        },
-        {
-            id: 6,
-            name: "John Cena",
+            name: "#osi",
             thumbnail: "http://lorempixel.com/40/40/4"
         }
+       
     ],
     token: '',
     socket: {

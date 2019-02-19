@@ -14,11 +14,18 @@ import projectsComponent from './projectsComponent'
 export default {
     data(){
         return{
-            channels:['#general', '#notGeneral','#soci','#cs'],
+           // channels:['#general', '#notGeneral','#soci','#cs'],
             projects:['#grudina','#minorProject','#soci','#algosi'],
             messages:['Anna Androidovna','Darya Aiphonovna', 'Maria Konstantinovna'],
         }
     },
+
+     computed: {
+    channels() {
+    //   const condition = new RegExp("", "i");
+      return this.$store.state.dataStorage.channels.map(item => item.name);
+    }
+  },
     //Uncommit later
 
     // props:{
