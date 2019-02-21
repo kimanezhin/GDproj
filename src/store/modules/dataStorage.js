@@ -13,6 +13,7 @@ Vue.use(Vuex)
 
 
 const state = {
+    isDataFetched: false,
     messages: ['s'],
     posts: [
     ],
@@ -81,7 +82,7 @@ const actions = {
                 //     context.state.columnToAdd = context.state.columnToAdd == 0 ? 1 : 0;
 
                 // }
-            });
+            }).then(() => {context.state.isDataFetched = true;});
     },
 
 

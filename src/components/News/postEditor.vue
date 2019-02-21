@@ -299,7 +299,7 @@ textarea {
 .toOverlay {
   /* display: inline-block; */
   background-color: white;
-  width: 15vw;
+  width: 75%;
   position: absolute;
   z-index: 30;
   left: 70px;
@@ -358,7 +358,7 @@ img {
     /* width: 27vw !important; */
   }
   .toOverlay {
-    width: 20vw;
+    width: 75%;
   }
 }
 
@@ -367,7 +367,7 @@ img {
     width: 55vw !important;
   }
   .toOverlay {
-    width: 60vw;
+    width: 65vw;
   }
 }
 </style>
