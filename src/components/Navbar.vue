@@ -60,7 +60,7 @@ export default {
 
 .line-style {
   position: absolute;
-  height: 15%;
+  height: 19%;
   left: 0;
   right: 0;
 }

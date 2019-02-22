@@ -1,15 +1,17 @@
 <template >
-  <div class="row">
+  <div class="row d-flex justify-content-around">
     <div id = "imgCol" class="col-md-4 col-sm-12 mt-4">
       <post-editor v-if="isDataFetched"/>
       <news-column v-if="isDataFetched" v-bind:posts="posts"/>
     </div>
-    <div class="col-md-4 col-sm-12 text mt-4">
+    <div class="col-md-4 ml-5 col-sm-12 text mt-4">
       <div v-if="!isDataFetched" id="ld" class="loading">
         <div class="loadText">{{ Loading}}</div>
         <!-- <img src="https://loading.io/spinners/coolors/lg.palette-rotating-ring-loader.gif" alt=""> -->
       </div>
-      <news-column v-if="isDataFetched" class="ml-md-5 ml-0" v-bind:posts="posts"/>
+     
+      <news-column v-if="isDataFetched" class=" ml-0" v-bind:posts="posts"/>
+     
     </div>
   </div>
 </template>

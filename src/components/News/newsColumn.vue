@@ -1,8 +1,8 @@
 <template>
   <div>
     <transition-group name="list" tag="p">
-      <div class="mb-3 post" v-for="post in posts" :key="post.postId">
-        <div class="postHeader">
+      <div class="mb-4 post" v-for="post in posts" :key="post.postId">
+        <div class="postHeader mb-1">
           <img src="../../../img/chern.jpg" alt>
           <div class="align-self-end ml-3 font-weight-bold">{{post.name}}</div>
           <div class="align-self-end mr-3 ml-auto font-weight-bold">01.01.2019</div>

@@ -90,7 +90,7 @@
               </div>
             </div>
           </div>
-          <news id="myNews" v-bind:posts="arr"/>
+          <news class = "mr-auto" id="myNews" v-bind:posts="arr"/>
         </div>
       </div>
     </div>
@@ -144,6 +144,8 @@ export default {
 <style>
 #myNews {
   margin-top: 5%;
+  border: 1px solid black;
+
 }
 * {
   font-family: Helvetica Neue, Helvetica, Arial, sans-serif;

@@ -42,7 +42,7 @@ export default {
       return index == this.currentChannel;
     },
     showModal(id) {
-      this.$modal.show(modalMenu,{hashId:id})
+      this.$modal.show(modalMenu,{hashId:id},{height:'480px'})
     },
     makeVisible(index) {
       // document.getElementsByClassName('channelOption')[0].classList.add('middleOpacity');

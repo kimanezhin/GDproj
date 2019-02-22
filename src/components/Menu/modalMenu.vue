@@ -4,37 +4,97 @@
       <h1>{{myName}}</h1>
     </div>
     <div class="container">
-      <input type="text" class="form-control p-3 mb-2 mt-2" v-model="myName" v-on:keyup="changeName($event)">
+      <input
+        type="text"
+        class="form-control p-3 mb-2 mt-2"
+        v-model="myName"
+        v-on:keyup="changeName($event)"
+      >
     </div>
-    <div class="container">
-      <ul class="nav nav-pills nav-fill">
-        <li class="nav-item">
-          <div class="nav-link active" v-on:click="setActive" id="tags">Tags</div>
-        </li>
-        <li class="nav-item">
-          <div class="nav-link" v-on:click="setActive" id="people">People</div>
-        </li>
-      </ul>
+    <div class="container d-flex justify-content-center">
+      <div class="mt-1">
+        <v-selectmenu
+          :data="menu"
+         
+          title="Helo"
+          :multiple="true"
+          key-field="id"
+          show-field="name"
+          v-model="value"
+        ></v-selectmenu>
+      </div>
     </div>
-    <div class="container myList">
-      <ul class = "list-group">
-        <li class = "list-group-item">1</li>
-        <li class = "list-group-item">2</li>
-        <li class = "list-group-item">3</li>
-
-      </ul>
-    </div>
-    <div  class="container d-flex align-items-end ">
-        <button class = "btn btn-primary ml-auto">Сохранить</button>
+    <!-- <div class="container d-flex align-items-end" style="margin-top:210px;">
+      <button class="btn btn-outline-secondary" id="save">Сохранить</button>
+      <button class="btn btn-outline-danger ml-5" id="delete">Удалить</button>
+    </div> -->
+    <div class = "container-fluid d-flex mt-5 mr-5 justify-content-end">
+      <button class = "btn btn-outline-primary">Сохранить</button>
+      <button class = "btn btn-outline-danger ml-2">Удалить канал</button>
     </div>
   </div>
 </template>
 
 <script>
 export default {
+  components: {},
   data() {
     return {
-      myName: "Hello"
+      myName: "Hello",
+      value: "Choose tags",
+
+      menu: [
+        {
+          title: "Tags",
+          list: [
+            {
+              id: 1,
+              name: "#someHash"
+            },
+            {
+              id: 2,
+              name: "#someHash"
+            },
+            {
+              id: 3,
+              name: "#someHash"
+            },
+            {
+              id: 4,
+              name: "#someHash"
+            },
+            {
+              id: 5,
+              name: "#someHash"
+            }
+          ]
+        },
+        {
+          title: "People",
+          list: [
+            {
+              id: 6,
+              name: "#someHash"
+            },
+            {
+              id: 7,
+              name: "#someHash"
+            },
+            {
+              id: 8,
+              name: "#someHash"
+            },
+            {
+              id: 9,
+              name: "#someHash"
+            },
+            {
+              id: 10,
+              name: "#someHash"
+            }
+          ]
+        }
+      ]
     };
   },
   methods: {
@@ -43,10 +103,9 @@ export default {
       var first = document.getElementById("tags");
       var second = document.getElementById("people");
       if (first.classList.contains("active")) {
-          this.setClasses(first,second);
-      }
-      else{
-          this.setClasses(second,first);
+        this.setClasses(first, second);
+      } else {
+        this.setClasses(second, first);
       }
     },
     setClasses(first, second) {
@@ -64,16 +123,15 @@ export default {
 </script>
 
 <style scoped>
-#tags:hover,#people:hover{
-    cursor: pointer;
+#tags:hover,
+#people:hover {
+  cursor: pointer;
 }
-.myList{
-    height: 120px;
-    overflow-y: scroll;
+.myList {
+  height: 200px;
+  overflow-y: scroll;
 }
 .nameContainer {
   height: 40px;
-}
-input {
 }
 </style>
