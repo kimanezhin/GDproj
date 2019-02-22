@@ -7,6 +7,14 @@
           <div class="align-self-end ml-3 font-weight-bold">{{post.name}}</div>
           <div class="align-self-end mr-3 ml-auto font-weight-bold">01.01.2019</div>
         </div>
+        <div class="hashtags">
+          <div class="hash">#smth</div>
+          <div class="hash">#smth</div>
+          <div class="hash">#smth</div>
+          <div class="hash">#smth</div>
+          <div class="hash">#smth</div>
+          <div class="hash">#smth</div>
+        </div>
         <div class="text">
           <div class="transit" v-readMore:300="post.postBody"></div>
         </div>
@@ -27,16 +35,63 @@ export default {
   },
   methods: {
     checkPosts() {
+      console.log('Hello')
+    },
+    checkHashtagCount() {
       
+      
+      console.log(document.getElementsByClassName('hash').length)
+        console.log("smth");
+
+      $(".hashTags .myHashTag").each(function(index, item) {
+        if (parseInt($(item).data("index")) > 4) {
+          $(item).css({
+            display: "none"
+          });
+        }
+
+        if (parseInt($(item).data("index")) == 4) {
+          $(item).html(
+            '<a href="#" data-index = "-1" onclick="showAllHashtags();">. . .</a>'
+          );
+        }
+      });
+    },
+    showAllHashtags() {
+      $(".hashTags .myHashTag").each(function(index, item) {
+        if (parseInt($(item).data("index")) >= 4) {
+          $(item).css({
+            display: "initial"
+          });
+        }
+        if (parseInt($(item).data("index")) == -1) {
+          console.log($(item));
+          $(item).html("");
+        }
+      });
     }
   },
   mounted() {
-   
+    this.checkHashtagCount()
   }
 };
 </script>
 
 <style scoped>
+.hashtags {
+  display: flex;
+  flex-direction: row;
+}
+.hash {
+  font-weight: 500;
+  color: rgb(88, 137, 192);
+  margin-left: 5px;
+}
+.hash:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 .list-enter-active,
 .list-leave-active {
   transition: all 1s;
@@ -63,8 +118,6 @@ img {
   height: 51px;
 }
 
-
-
 @media screen and (max-width: 1200px) {
   #menu {
     display: none;
@@ -75,16 +128,13 @@ img {
 
   .text {
     width: 100vw;
-   
   }
 
   .post {
     width: 85vw;
-   
   }
-  .transit{
-       width: 85vw;
-   
+  .transit {
+    width: 85vw;
   }
 }
 </style>

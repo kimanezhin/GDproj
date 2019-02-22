@@ -1,5 +1,5 @@
 <template >
-  <div class="row d-flex justify-content-around">
+  <div class="row d-flex" :class="flexBehaviour">
     <div id = "imgCol" class="col-md-4 col-sm-12 mt-4">
       <post-editor v-if="isDataFetched"/>
       <news-column v-if="isDataFetched" v-bind:posts="posts"/>
@@ -32,6 +32,10 @@ export default {
       default: function() {
         return [];
       }
+    },
+    flexBehaviour:{
+      type: String,
+      default : "justify-content-around"
     }
   },
   computed: {

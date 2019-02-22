@@ -15,7 +15,6 @@
       <div class="mt-1">
         <v-selectmenu
           :data="menu"
-         
           title="Helo"
           :multiple="true"
           key-field="id"
@@ -27,20 +26,19 @@
     <!-- <div class="container d-flex align-items-end" style="margin-top:210px;">
       <button class="btn btn-outline-secondary" id="save">Сохранить</button>
       <button class="btn btn-outline-danger ml-5" id="delete">Удалить</button>
-    </div> -->
-    <div class = "container-fluid d-flex mt-5 mr-5 justify-content-end">
-      <button class = "btn btn-outline-primary">Сохранить</button>
-      <button class = "btn btn-outline-danger ml-2">Удалить канал</button>
+    </div>-->
+    <div class="container-fluid d-flex mt-5 mr-5 justify-content-end">
+      <button class="btn btn-outline-primary">Сохранить</button>
+      <button class="btn btn-outline-danger ml-2">Удалить канал</button>
     </div>
   </div>
-</template>
+</template>>
 
 <script>
 export default {
-  components: {},
   data() {
     return {
-      myName: "Hello",
+      myName: "#NewChannelTitle",
       value: "Choose tags",
 
       menu: [
@@ -96,38 +94,9 @@ export default {
         }
       ]
     };
-  },
-  methods: {
-    changeName(event) {},
-    setActive() {
-      var first = document.getElementById("tags");
-      var second = document.getElementById("people");
-      if (first.classList.contains("active")) {
-        this.setClasses(first, second);
-      } else {
-        this.setClasses(second, first);
-      }
-    },
-    setClasses(first, second) {
-      first.classList.remove("active");
-      second.classList.add("active");
-    }
-  },
-  mounted() {
-    this.myName = this.$store.state.dataStorage.channels[
-      parseInt(this.hashId)
-    ].name;
-  },
-  props: ["hashId"]
+  }
 };
 </script>
+<style>
 
-<style scoped>
-#tags:hover,
-#people:hover {
-  cursor: pointer;
-}
-.nameContainer {
-  height: 40px;
-}
 </style>

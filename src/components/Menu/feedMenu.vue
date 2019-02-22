@@ -1,8 +1,8 @@
 <template>
   <div>
-    <channels-component :channels="channels"></channels-component>
-    <projects-component :projects="projects"></projects-component>
-    <messages-component :messages="messages"></messages-component>
+    <channels-component class = "mt-2" :channels="channels"></channels-component>
+    <projects-component class = "mt-2" :projects="projects"></projects-component>
+    <messages-component class = "mt-2" :messages="messages"></messages-component>
   </div>
 </template>
 <script>

@@ -2,6 +2,7 @@
   <div id="autocomplete-tpl" type="template/x-template">
     <div class="autocomplete">
       <p class="control icon-right">
+        <font-awesome-icon id = "add" icon = "plus"  v-on:click = "createNewChannel"/>
         <input
           type="text"
           class="input-dropdown"
@@ -16,6 +17,7 @@
           ref="dropdown"
           v-model="search"
         >
+        
         <i
           class="chevron bottom"
           @click="toggle"
@@ -42,7 +44,11 @@
 
 <script>
 import store from "../store/store.js";
+import newChannelModal from './Menu/newChannelModal'
 export default {
+  components:{
+    newChannelModal
+  },
   data() {
     return {
       isOpened: false,
@@ -60,6 +66,9 @@ export default {
       //TODO: this channel was chosen this.$emit("select-item", selectedOption);
       this.search = selectedOption.name;
       this.isOpened = false;
+    },
+    createNewChannel(){
+       this.$modal.show(newChannelModal,{adaptive:true})
     },
     onDown() {
       if (!this.isOpened) {
@@ -96,7 +105,14 @@ export default {
 </script>
 
 <style scoped>
+#add{
+  margin-top: 3%;
+  font-size: 20px;
+}
 
+#add:hover{
+  cursor: pointer;
+}
 
 body {
   background: #1d1f20;
@@ -134,8 +150,12 @@ input.input-dropdown {
   font-family: "Nunito", Helvetica, Arial, sans-serif;
   height: 40px;
   width: 100%;
-  border: 1px solid #3f3f41;
-  border-radius: 2px 0 0 2px;
+  /* border: 1px solid #3f3f41; */
+  /* border-left: none; */
+  border: none;
+  /* border-radius: 2px 0 0 2px; */
+  /* border-top-left-radius: 0; */
+  /* border-bottom-left-radius: 0; */
   /* background-color: #3f3f41; */
   color: #000000;
   font-size: 16px;
@@ -147,6 +167,9 @@ input.input-dropdown::-webkit-input-placeholder {
   color: #fff;
 }
 p.control {
+  /* border: 2px solid #3f3f41; */
+  /* border-left: none; */
+  border-radius: 2px 0 0 2px;
   position: relative;
   display: flex;
   margin-bottom: 0.1rem;
