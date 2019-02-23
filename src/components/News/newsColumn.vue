@@ -8,7 +8,7 @@
           <div class="align-self-end mr-3 ml-auto font-weight-bold">01.01.2019</div>
         </div>
         <div class="hashtags">
-          <div class="hash">#smth</div>
+          <div v-on:mouseover="checkHashtagCount" class="hash">#smth</div>
           <div class="hash">#smth</div>
           <div class="hash">#smth</div>
           <div class="hash">#smth</div>
@@ -35,44 +35,76 @@ export default {
   },
   methods: {
     checkPosts() {
-      console.log('Hello')
+      console.log("Hello");
     },
     checkHashtagCount() {
-      
-      
-      console.log(document.getElementsByClassName('hash').length)
-        console.log("smth");
+      // console.log(document
+      //   .getElementsByClassName("hashtags"))
+      let parent = document.getElementsByClassName("hashtags");
+      var that = this;
+      var arr = Array.from(parent);
+      var myNode = "";
+      arr.forEach(function(parentItem, index, arr) {
+        var innerArray = Array.from(parentItem.getElementsByClassName("hash"));
+        innerArray.forEach((item, i, arr) => {
+          if (i > 4) item.style.display = "none";
+          if (i == 4) {
+            var points = document.createElement("div");
+            points.classList.add("pt");
+            points.innerHTML = ". . .";
+            parent[index].insertBefore(points, item);
+            item.style.display = "none";
+            //  item.innerHTML = ". . ."
+            points.addEventListener("click", () => {
+              // arr.forEach((item, i) => {
+              that.showAllHashtags(parent, index, points, innerArray);
+              // });
+            });
 
-      $(".hashTags .myHashTag").each(function(index, item) {
-        if (parseInt($(item).data("index")) > 4) {
-          $(item).css({
-            display: "none"
-          });
-        }
+            points.addEventListener("mouseover", () => {
+              points.style.textDecoration = "underline";
+              points.style.cursor = "pointer";
+            });
 
-        if (parseInt($(item).data("index")) == 4) {
-          $(item).html(
-            '<a href="#" data-index = "-1" onclick="showAllHashtags();">. . .</a>'
-          );
-        }
+            points.addEventListener("mouseout", () => {
+              points.style.textDecoration = "none";
+              points.style.cursor = "initial";
+            });
+          }
+        });
       });
     },
-    showAllHashtags() {
-      $(".hashTags .myHashTag").each(function(index, item) {
-        if (parseInt($(item).data("index")) >= 4) {
-          $(item).css({
-            display: "initial"
-          });
-        }
-        if (parseInt($(item).data("index")) == -1) {
-          console.log($(item));
-          $(item).html("");
+    showAllHashtags(parent, index, points, innerArray) {
+      parent[index].removeChild(points);
+      innerArray.forEach((item, i) => {
+        if (i > 4) {
+          item.style.display = "initial";
         }
       });
+      // var elem = parentItem.getElementsByClassName("pt")[0];
+      // elem.style.display = "none";
+
+      // var innerArray = Array.from(parentItem.getElementsByClassName("hash"));
+      // innerArray.forEach((item, i) => {
+      //   if (i > 4) {
+      //     item.style.display = "initial";
+      //   }
+      // });
+      // $(".hashTags .myHashTag").each(function(index, item) {
+      //   if (parseInt($(item).data("index")) >= 4) {
+      //     $(item).css({
+      //       display: "initial"
+      //     });
+      //   }
+      //   if (parseInt($(item).data("index")) == -1) {
+      //     console.log($(item));
+      //     $(item).html("");
+      //   }
+      // });
     }
   },
   mounted() {
-    this.checkHashtagCount()
+    this.checkHashtagCount();
   }
 };
 </script>
