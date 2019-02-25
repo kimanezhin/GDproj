@@ -5,17 +5,17 @@
         <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
         <label for="inputEmail" class="sr-only">Email address</label>
         <input
-          type="email"
           id="inputEmail"
           class="form-control mb-3"
           placeholder="Email address"
           required
           autofocus
+          v-model="id"
         >
         
         <input
           class="button btn btn-lg btn-primary btn-block"
-          v-on:click="showNotification"
+          v-on:click="signIn"
           type="submit"
           data-type="top-left"
           data-status="success"
@@ -34,21 +34,26 @@
 </template>
 
 <script>
+import Axios from "axios";
 export default {
   name: "Login",
   data() {
-    return {};
+    return {
+      id: "",
+      reg: false
+    };
   },
   methods: {
     signIn() {
-      showNotification();
+      this.$store.dispatch("SET_ID", this.id);
+      this.showNotification();
     },
     showNotification() {
       var pattern = /^\w+@{1}(edu.)?(hse.ru){1}$/;
       var email = $(document.getElementById("inputEmail")).val();
-     
-      if (pattern.test(email)) {
-     
+
+      // if (pattern.test(email))
+      {
         event.preventDefault();
 
         //   $('.button').removeClass('is-active');
@@ -68,6 +73,15 @@ export default {
             .addClass("bar-top");
         }, 5900);
       }
+
+      //TODO: Here should be /authenticate
+      console.log(this.$store.getters.GET_ID);
+     
+
+      this.$store.dispatch("AUTH_REQUEST",this.$store.getters.GET_ID).then(()=>{
+         this.$router.push('/feed')
+      })
+
     }
   }
 };

@@ -82,7 +82,9 @@ export default {
     },
     sendPost() {},
 
-    test() {},
+    test() {
+      
+    },
     onOptionSelect(selected){
       console.log(selected)
     },

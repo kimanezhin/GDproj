@@ -15,8 +15,17 @@
           <div class="hash">#smth</div>
           <div class="hash">#smth</div>
         </div>
-        <div class="text">
-          <div class="transit" v-readMore:300="post.postBody"></div>
+        <div class="text specialClass">
+          <!-- <vue-markdown> -->
+          <!-- {{post.postBody}} -->
+          <div
+            class="transit"
+            :name="post.postId"
+            v-html="makeMarkDown(post.postBody, post.postId)"
+          >
+            <!-- {{makeMarkDown(post.postBody, post.postId)}} -->
+          </div>
+          <!-- </vue-markdown> -->
         </div>
       </div>
     </transition-group>
@@ -24,7 +33,13 @@
 </template>
 
 <script>
+import vueMarkdown from "vue-markdown";
+import marked from "marked";
 export default {
+  components: {
+    vueMarkdown,
+    marked
+  },
   props: {
     posts: {
       type: Array,
@@ -37,18 +52,25 @@ export default {
     checkPosts() {
       console.log("Hello");
     },
+    makeMarkDown(preText, name) {
+      //document.getElementsByName(name).innerHTML =
+      return marked(preText);
+    },
     checkHashtagCount() {
-      // console.log(document
-      //   .getElementsByClassName("hashtags"))
       let parent = document.getElementsByClassName("hashtags");
+
       var that = this;
       var arr = Array.from(parent);
       var myNode = "";
+
       arr.forEach(function(parentItem, index, arr) {
         var innerArray = Array.from(parentItem.getElementsByClassName("hash"));
         innerArray.forEach((item, i, arr) => {
-          if (i > 4) item.style.display = "none";
-          if (i == 4) {
+          // item.classList.add('used')
+          if (i > 4 && !item.classList.contains("used"))
+            item.style.display = "none";
+          if (i == 4 && !item.classList.contains("used")) {
+            item.classList.add("used");
             var points = document.createElement("div");
             points.classList.add("pt");
             points.innerHTML = ". . .";
@@ -77,34 +99,67 @@ export default {
     showAllHashtags(parent, index, points, innerArray) {
       parent[index].removeChild(points);
       innerArray.forEach((item, i) => {
+        item.classList.remove("used");
         if (i > 4) {
           item.style.display = "initial";
         }
       });
-      // var elem = parentItem.getElementsByClassName("pt")[0];
-      // elem.style.display = "none";
+    },
+    readMore() {
 
-      // var innerArray = Array.from(parentItem.getElementsByClassName("hash"));
-      // innerArray.forEach((item, i) => {
-      //   if (i > 4) {
-      //     item.style.display = "initial";
+      var t = Array.from(document.getElementsByClassName("transit"));
+      var texts = Array.from(document.getElementsByClassName("specialClass"));
+      t.forEach((item, i) => {
+        if (item.clientHeight >= 100) {
+          texts[i].classList.add("constantSize");
+
+          if (!texts[i].classList.contains("eventReady")) {
+            texts[i].addEventListener("click", element => {
+              item.classList.remove("toCrop");
+              event.target.classList.remove("constantSize");
+            });
+            texts[i].classList.add("eventReady");
+          }
+          item.classList.add("toCrop");
+        }
+      });
+
+      // var sm = document.getElementsByClassName("toCrop");
+      // Array.from(sm).forEach(item => {
+      //   if (item.clientHeight >= 100) {
+      //     item.classList.add('constantSize')
       //   }
       // });
-      // $(".hashTags .myHashTag").each(function(index, item) {
-      //   if (parseInt($(item).data("index")) >= 4) {
-      //     $(item).css({
-      //       display: "initial"
-      //     });
-      //   }
-      //   if (parseInt($(item).data("index")) == -1) {
-      //     console.log($(item));
-      //     $(item).html("");
-      //   }
-      // });
+      // console.log(sm)
+
+      //  console.log(t)
+    }
+  },
+  computed: {
+    isFetched() {
+      return this.$store.state.dataStorage.isDataFetched;
+    },
+    size() {
+      return this.$store.state.dataStorage.posts.length;
     }
   },
   mounted() {
-    this.checkHashtagCount();
+    if (this.isFetched) {
+      var that = this;
+      that.$nextTick(() => {
+        this.checkHashtagCount();
+      });
+    } else console.log("(((");
+  },
+  watch: {
+    isFetched: function(params) {
+      console.log(params + "Hellllll");
+      // this.checkHashtagCount();
+    },
+    size: function(params) {
+      this.checkHashtagCount();
+      this.readMore();
+    }
   }
 };
 </script>
@@ -114,6 +169,39 @@ export default {
   display: flex;
   flex-direction: row;
 }
+.constantSize {
+  height: 100px;
+  display: inline-block;
+  border: 0px solid #aaa;
+  position: relative;
+  padding: 0px;
+}
+
+.constantSize::after {
+  content: "Read more..";
+  font-size: 20px !important;
+  font-weight: 600;
+  height: 70%;
+  position: absolute;
+  z-index: 100;
+  bottom: 0px;
+  width: 100%;
+  background: transparent linear-gradient(rgba(255, 255, 255, 0), #f1f1f1)
+    repeat scroll 0% 0%;
+  line-height: 5;
+  text-align: center;
+  font-size: 12px;
+  font-family: monospace;
+}
+.constantSize:hover::after {
+  text-decoration: underline;
+}
+
+.toCrop {
+  clip: rect(0px, auto, 100px, 0px);
+  position: absolute;
+}
+
 .hash {
   font-weight: 500;
   color: rgb(88, 137, 192);

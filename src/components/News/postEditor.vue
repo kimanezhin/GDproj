@@ -56,6 +56,7 @@
 <script>
 import smoothReflow from "vue-smooth-reflow";
 import vueMarkdown from "vue-markdown";
+import Axios from 'axios'
 export default {
   mixins: [smoothReflow],
   components: {
@@ -139,12 +140,22 @@ export default {
         this.$store.getters.GET_WIDTH + "px";
       document.getElementById("fantomPage").style.height =
         this.$store.getters.GET_HEIGHT + "px";
-      console.log(this.$store.getters.GET_WIDTH);
+      
       document
         .getElementsByClassName("toOverlay")[0]
         .classList.add("extendedOverlay");
-    },
 
+
+
+
+
+    },
+    sendToServer(data){
+        //TODO: here should be adress to drafts
+        Axios.post('',{
+          
+        })
+    },
     resize() {
       var text = document.getElementById("myText");
       this.isPreviewReady = text.value !== "";

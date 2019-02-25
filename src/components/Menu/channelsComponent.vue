@@ -11,7 +11,6 @@
         xmlns:xlink="http://www.w3.org/1999/xlink"
         enable-background="new 0 0 24 24"
         width="17"
-        
         v-on:click = "createNewChannel"
         class = "mb-2"
       >
@@ -57,6 +56,7 @@ export default {
       currentChannel: 0
     };
   },
+
   methods: {
     boldText(index) {
       return index == this.currentChannel;

@@ -1,17 +1,16 @@
 <template >
   <div class="row d-flex" :class="flexBehaviour">
-    <div id = "imgCol" class="col-md-4 col-sm-12 mt-4">
+    <div id="imgCol" class="col-md-4 col-sm-12 mt-4">
       <post-editor v-if="isDataFetched"/>
-      <news-column v-if="isDataFetched" v-bind:posts="posts"/>
+      <news-column v-if="isDataFetched" v-bind:posts="getPosts(0)"/>
     </div>
     <div class="col-md-4 ml-5 col-sm-12 text mt-4">
       <div v-if="!isDataFetched" id="ld" class="loading">
         <div class="loadText">{{ Loading}}</div>
         <!-- <img src="https://loading.io/spinners/coolors/lg.palette-rotating-ring-loader.gif" alt=""> -->
       </div>
-     
-      <news-column v-if="isDataFetched" class=" ml-0" v-bind:posts="posts"/>
-     
+
+      <news-column v-if="isDataFetched" class="ml-0" v-bind:posts="getPosts(1)"/>
     </div>
   </div>
 </template>
@@ -33,14 +32,17 @@ export default {
         return [];
       }
     },
-    flexBehaviour:{
+    flexBehaviour: {
       type: String,
-      default : "justify-content-around"
+      default: "justify-content-around"
     }
   },
   computed: {
     isDataFetched() {
       return this.$store.state.dataStorage.isDataFetched;
+    },
+    postColumn(index){
+      return this.posts.filter(post => post.num == index)
     }
   },
   components: {
@@ -52,7 +54,7 @@ export default {
   },
   methods: {
     getPosts(i) {
-      return this.arr.filter(post => parseInt(post.num) == i);
+      return this.posts.filter(post => parseInt(post.num) == i);
     },
     enableLoading() {
       var count = 1;
@@ -61,7 +63,7 @@ export default {
           this.Loading += ".";
         } else {
           this.Loading = this.Loading.split("")
-            .slice(0,this.Loading.length - 3)
+            .slice(0, this.Loading.length - 3)
             .join("");
         }
         count++;
@@ -71,7 +73,7 @@ export default {
 };
 </script>
 <style scoped>
-#imgCol{
+#imgCol {
   min-width: 51px;
 }
 .loadText {

@@ -4,6 +4,7 @@ import Axios from 'axios'
 import VueNativeSock from "vue-native-websocket";
 import _ from "lodash";
 import currentUsers from './currentUsers'
+import { rejects } from 'assert';
 const vm = new Vue();
 Vue.use(Vuex)
 
@@ -13,8 +14,11 @@ Vue.use(Vuex)
 
 
 const state = {
+    id: '',
+
     isDataFetched: false,
     messages: ['s'],
+    URL: "https://valera-denis.herokuapp.com",
     posts: [
     ],
     channels: [
@@ -38,7 +42,7 @@ const state = {
             name: "#osi",
             thumbnail: "http://lorempixel.com/40/40/4"
         }
-       
+
     ],
     token: '',
     socket: {
@@ -53,7 +57,8 @@ const getters = {
     GET_POSTS(state) { return state.posts; },
     GET_TOKEN(state) { return state.token; },
     GET_USER(state, getters, rootstate, rootgetters) { return rootstate.users },
-    GET_FULL_NAME: (state) => (id) => { }
+    GET_FULL_NAME: (state) => (id) => { },
+    GET_ID(state) { return parseInt(state.id) }
 
 }
 
@@ -61,12 +66,19 @@ const actions = {
 
     async FETCH_DATA(context) {
         await Axios
-            .get("http://websuck1t.herokuapp.com/posts/all")
+            .post(context.state.URL + "/posts/last",
+                20
+                , {
+                    withCredentials: true
+                }
+            )
             .then(response => {
-                let answer = response.data.response;
-                for (var item of response.data.response.added) {
-                    makeRequest(item, context);
 
+                let answer = response.data.response;
+                
+                for (var item of response.data) {
+                    
+                    makeRequest(item, context);
                 }
                 context.commit('SET_TOKEN', response.data.token)
                 // TODO: change request here
@@ -82,8 +94,14 @@ const actions = {
                 //     context.state.columnToAdd = context.state.columnToAdd == 0 ? 1 : 0;
 
                 // }
-            }).then(() => {context.state.isDataFetched = true;});
+            }).then(() => { context.state.isDataFetched = true; });
     },
+
+
+    SET_ID(context, payload) {
+
+        context.state.id = payload;
+    }
 
 
 }
@@ -170,34 +188,26 @@ const mutations = {
         state.socket.reconnectError = true
     }
 }
-function makeRequest(item, context) {
+async function makeRequest(item, context) {
     try {
-        Axios.get("http://websuck1t.herokuapp.com/posts/" + item).then(response => {
-            //  console.log(response.data)
+        // Axios.get("http://websuck1t.herokuapp.com/posts/" + item).then(response => {
+        //  console.log(response.data)
+        SET_NAME(context.state, item.authorId).then((name) => {
+            context.state.columnToAdd = context.state.columnToAdd == 0 ? 1 : 0;
             context.commit('PUSH_POST', {
-                name: 'Всеволод Чернышев',
-                postId: response.data.postId,
-                postBody: response.data.postBody,
+                name: name.data[0].firstName + " " + name.data[0].secondName,
+                postId: item.id,
+                postBody: item.body[0].markdown,
                 num: context.state.columnToAdd
             });
-            try {
-                SET_NAME(context.state, [item, response.data.postAuthor]);
-                context.state.columnToAdd = context.state.columnToAdd == 0 ? 1 : 0;
-            }
-            catch (Exc) {
-                console.log("EXCEPTION");
-            }
-        });
+        })
     } catch (Exc) { console.log('aaaa') }
 }
 
 function SET_NAME(state, payload) {
-    const prom = currentUsers.getters.GET_BY_ID.call('s', currentUsers.state).call('s', payload[1])
-    prom.then(data => {
-
-        //  state.posts[parseInt(payload[0])].name = data.data.firstName + ' ' + data.data.secondName
-
-    })
+    var t = currentUsers.getters.GET_BY_ID.call('s', currentUsers.state).call('s', payload)
+   
+    return t;
 }
 export default {
     state,
