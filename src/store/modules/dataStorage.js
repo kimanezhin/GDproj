@@ -64,7 +64,8 @@ const getters = {
 
 const actions = {
 
-    async FETCH_DATA(context) {
+    async FETCH_DATA(context, payload) {
+        let uri = payload ? context.state.URL + "/posts/forUser":context.state.URL + "/posts/last";
         await Axios
             .post(context.state.URL + "/posts/last",
                 20
@@ -205,6 +206,7 @@ async function makeRequest(item, context) {
 }
 
 function SET_NAME(state, payload) {
+
     var t = currentUsers.getters.GET_BY_ID.call('s', currentUsers.state).call('s', payload)
    
     return t;

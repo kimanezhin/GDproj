@@ -5,6 +5,7 @@ import App from './App'
 import router from './router'
 import BootstrapVue from 'bootstrap-vue'
 import store from './store/store'
+import Axios from 'axios'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import VueNativeSock from 'vue-native-websocket'
@@ -16,7 +17,7 @@ Vue.use(vSelectMenu,{language:'en'});
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faPlus, faUserSecret, faEnvelope, faUser, faNewspaper, faProjectDiagram, faTasks, faCog, faPaperPlane, faImage } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
- 
+
 library.add(faPlus, faUserSecret, faEnvelope, faUser,faNewspaper,faProjectDiagram,faTasks,faCog,faPaperPlane, faImage )
  
 Vue.component('font-awesome-icon', FontAwesomeIcon)

@@ -12,37 +12,63 @@ const state = {
 
 const getters = {
     GET_BY_ID(state) {
-        return async (id) => {
+        return (id) => {
 
             return new Promise((resolve, reject) => {
-                 
-                const req = getUser(id, state)
 
-                if (typeof req != "undefined") {
+                // let req = getUser(id, state)
+                getUser(id, state).then((response) => {
+                  
                     var d = {
-                         data:[{
-                           req
+                        data: [{
+                            response
                         }]
                     }
 
                     //  console.log(d)
                     resolve(d)
-                }
+                }).catch(() => {
+                    
+                    let response = makeResponse(id)
+                    response.then(answ => {
+                        //  console.log(answ)
+                        state.m._c.set(id, {
+                            firstName: answ.data[0].firstName, //response.data.userName.firstName,
+                            secondName: answ.data[0].secondName, //response.data.userName.secondName
+                            id: answ.data[0].id
+                        })
 
-                const response = makeResponse(id)
-                response.then(answ => {
-                    //  console.log(answ)
-                    state.m.set(id, {
-                        firstName: answ.data[0].firstName, //response.data.userName.firstName,
-                        secondName: answ.data[0].secondName, //response.data.userName.secondName
-                        id: answ.data[0].id
+                    }).catch((error) => {
+                        // console.log(id)
                     })
-
-                }).catch((error) => {
-                    // console.log(id)
+                    // console.log(response)
+                    resolve(response)
                 })
-                // console.log(response)
-                resolve(response)
+             //   if (typeof req !== "undefined") {
+                    // var d = {
+                    //     data: [{
+                    //         req
+                    //     }]
+                    // }
+
+                    // //  console.log(d)
+                    // resolve(d)
+               // }
+
+                // const response = makeResponse(id)
+                // response.then(answ => {
+                //     //  console.log(answ)
+                //     state.m.set(id, {
+                //         firstName: answ.data[0].firstName, //response.data.userName.firstName,
+                //         secondName: answ.data[0].secondName, //response.data.userName.secondName
+                //         id: answ.data[0].id
+                //     })
+
+                // }).catch((error) => {
+                //     // console.log(id)
+                // })
+                // // console.log(response)
+                // resolve(response)
             })
 
         }
@@ -69,7 +95,14 @@ export default {
 async function makeResponse(id) {
     return await Axios.post('https://valera-denis.herokuapp.com/users/', [id], { withCredentials: true })
 }
- function getUser(id, state) {
-    return state.m.get(id);
+function getUser(id, state) {
+    return new Promise((resolve, reject) => {
+        let t = state.m.get(id);
+        
+        if (typeof t !== "undefined") {
+            resolve(t)
+        }
+        reject()
+    })
 
 }
