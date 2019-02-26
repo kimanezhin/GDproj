@@ -33,7 +33,7 @@ const actions = {
 const mutations = {
     CREATE_POST(context, payload) {
         Axios.defaults.headers.post["Content-Type"] = "application/json";
-        Axios.post(payload + "/drafts/create",
+        Axios.post(payload + "/drafts/createAndPublish",
             [
                 {
                     "markdown": context.currentDraft
@@ -42,9 +42,9 @@ const mutations = {
             , {
                 withCredentials: true
             }
-        ).then((response) => {
-            context.currentId = response.data
-            Axios.post(payload + "/drafts/publish",context.currentId,{withCredentials:true})
+        ).then(() => {
+            // context.currentId = response.data
+            // Axios.post(payload + "/drafts/publish",context.currentId,{withCredentials:true})
             console.log(response.data)
         })
     },
