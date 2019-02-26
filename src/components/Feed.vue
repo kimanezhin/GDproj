@@ -1,10 +1,16 @@
 <template>
   <div id="main">
-    <!-- <div v-show="isEditorShown" @loadstart="test" @click="closeEditor" id="fantomPage"></div> -->
     <Navbar id="nv"></Navbar>
-     <div class="d-flex exit">Exit</div>
+    <channel-drop-down id = "drop" @select-item="onOptionSelect">
+      <!-- <template slot="item" slot-scope="option">
+        <span>
+          <img :src="option.thumbnail">
+        </span>
+      </template> -->
+    </channel-drop-down>
+    <div class="d-flex exit">Exit</div>
     <div class="row">
-      <div class="col-md-2 mt-5" id="menu" style>
+      <div class="col-md-2 mt-5" id="menu">
         <feedMenu></feedMenu>
       </div>
       <news v-bind:posts="arr"/>
@@ -25,12 +31,14 @@ const vm = new Vue();
 import { mapState, mapGetters } from "vuex";
 import smoothReflow from "vue-smooth-reflow";
 import News from "./News/News";
+import ChannelDropDown from "./ChannelDropDown";
 export default {
   mixins: [smoothReflow],
   components: {
     feedMenu,
     Navbar,
-    News
+    News,
+    ChannelDropDown
   },
   data() {
     return {
@@ -38,7 +46,7 @@ export default {
       isEditorShown: false,
       currentSize: "51px",
       inputText: "",
-      readyToClose: false,
+      readyToClose: false
     };
   },
   computed: {
@@ -74,7 +82,12 @@ export default {
     },
     sendPost() {},
 
-    test() {},
+    test() {
+      
+    },
+    onOptionSelect(selected){
+      console.log(selected)
+    },
     setInitialSize() {
       {
         document.getElementById("myText").style.height = "51px";
@@ -113,7 +126,6 @@ export default {
       text.style.height = "auto";
       text.style.height = text.scrollHeight + 1 + "px";
       this.currentSize = text.scrollHeight + 1 + "px";
- 
 
       var flag = true;
     },
@@ -122,13 +134,14 @@ export default {
     }
   },
   mounted() {
+    
     this.$smoothReflow({
       property: ["height", "width"],
       transition: "height .25s ease-in-out, width 5.75s ease-in-out",
       el: ".toOverlay"
     });
     let realWidth = document.getElementById("main").scrollWidth;
-    let readlHeight = document.getElementById("main").scrollHeight;
+    let realHeight = document.getElementById("main").scrollHeight;
     this.$store.dispatch("SET_SCREEN_WIDTH", { width: realWidth });
     this.$store.dispatch("SET_SCREEN_HEIGHT", { height: realHeight });
 
@@ -173,23 +186,24 @@ export default {
 
 <style scoped>
 
+#drop{
+  display: none;
+}
 
-
-.exit{
+.exit {
   position: sticky;
   font-weight: 600;
   margin-left: 98%;
   font-size: 30px;
-  margin-top: 15px;
+  margin-top: 45px;
   position: absolute;
- -webkit-transform: rotate(-90deg); /* разворот текста для разных браузеров */
-     -moz-transform: rotate(-90deg);
-     -ms-transform: rotate(-90deg);
-     -o-transform: rotate(-90deg);
-     transform: rotate(-90deg);
-     width: 1px;
-     /* height: 50px; */
-   
+  -webkit-transform: rotate(-90deg); /* разворот текста для разных браузеров */
+  -moz-transform: rotate(-90deg);
+  -ms-transform: rotate(-90deg);
+  -o-transform: rotate(-90deg);
+  transform: rotate(-90deg);
+  width: 1px;
+  /* height: 50px; */
 }
 
 #submitButton {
@@ -286,6 +300,9 @@ img {
 @media screen and (max-width: 1200px) {
   #menu {
     display: none;
+  }
+  #drop{
+    display: initial;
   }
   div {
     margin: 0;

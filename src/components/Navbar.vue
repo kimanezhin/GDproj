@@ -2,7 +2,7 @@
   <div class = "d-flex flex-row">
     <slide>
         
-      <router-link to = "/me"> 
+      <router-link to = "/user/5051"> 
         <font-awesome-icon icon="user" class="mt-1 mr-2"/>
         <span>Моя страница</span>
       </router-link>
@@ -60,7 +60,7 @@ export default {
 
 .line-style {
   position: absolute;
-  height: 15%;
+  height: 19%;
   left: 0;
   right: 0;
 }

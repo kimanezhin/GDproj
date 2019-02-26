@@ -56,6 +56,7 @@
 <script>
 import smoothReflow from "vue-smooth-reflow";
 import vueMarkdown from "vue-markdown";
+import Axios from "axios";
 export default {
   mixins: [smoothReflow],
   components: {
@@ -91,7 +92,11 @@ export default {
     },
     sendPost() {
       this.closeEditor();
-
+      this.$store.dispatch("SET_DRAFT", this.inputText).then(() => {
+        this.$store.dispatch("SEND_POST", this.inputText).then(() => {
+          this.inputText = "";
+        });
+      });
       setTimeout(function() {
         document
           .getElementsByClassName("toOverlay")[0]
@@ -139,12 +144,15 @@ export default {
         this.$store.getters.GET_WIDTH + "px";
       document.getElementById("fantomPage").style.height =
         this.$store.getters.GET_HEIGHT + "px";
-      console.log(this.$store.getters.GET_WIDTH);
+
       document
         .getElementsByClassName("toOverlay")[0]
         .classList.add("extendedOverlay");
     },
-
+    sendToServer(data) {
+      //TODO: here should be adress to drafts
+      Axios.post("", {});
+    },
     resize() {
       var text = document.getElementById("myText");
       this.isPreviewReady = text.value !== "";
@@ -157,6 +165,7 @@ export default {
     }
   },
   mounted() {
+    if (localStorage.inputText) this.inputText = localStorage.inputText;
     this.$smoothReflow({
       property: ["height", "width"],
       transition: "height .25s ease-in-out, width 5.75s ease-in-out",
@@ -192,6 +201,11 @@ export default {
     text.select();
     this.resize();
     document.activeElement.blur();
+  },
+  watch:{
+    inputText(newText){
+      localStorage.inputText = newText
+    }
   }
 };
 </script>
@@ -299,7 +313,7 @@ textarea {
 .toOverlay {
   /* display: inline-block; */
   background-color: white;
-  width: 15vw;
+  width: 75%;
   position: absolute;
   z-index: 30;
   left: 70px;
@@ -358,7 +372,7 @@ img {
     /* width: 27vw !important; */
   }
   .toOverlay {
-    width: 20vw;
+    width: 75%;
   }
 }
 
@@ -367,7 +381,7 @@ img {
     width: 55vw !important;
   }
   .toOverlay {
-    width: 60vw;
+    width: 65vw;
   }
 }
 </style>
