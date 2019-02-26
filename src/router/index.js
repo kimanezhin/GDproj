@@ -44,9 +44,10 @@ export default new Router({
       beforeEnter: ifNotAuthenticated
     },
     {
-      path: '/me',
+      path: '/user/:id',
       name: 'acc',
       component: Acc,
+      props:true,
       beforeEnter: ifNotAuthenticated
     }
   ]

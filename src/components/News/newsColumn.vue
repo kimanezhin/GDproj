@@ -1,9 +1,9 @@
 <template>
   <div>
-    <transition-group name="list" tag="p">
+    <div name="list" tag="p">
       <div class="mb-4 post" v-for="post in posts" :key="post.postId">
         <div class="postHeader mb-1">
-          <img src="../../../img/chern.jpg" alt>
+          <img src="../../../img/chern.jpg" :name="post.authorId" v-on:click = "openUser($event)">
           <div class="align-self-end ml-3 font-weight-bold">{{post.name}}</div>
           <div class="align-self-end mr-3 ml-auto font-weight-bold">01.01.2019</div>
         </div>
@@ -28,7 +28,7 @@
           <!-- </vue-markdown> -->
         </div>
       </div>
-    </transition-group>
+    </div>
   </div>
 </template>
 
@@ -55,6 +55,9 @@ export default {
     makeMarkDown(preText, name) {
       //document.getElementsByName(name).innerHTML =
       return marked(preText);
+    },
+    openUser(event){
+      this.$router.push('/user/'+parseInt(event.target.name))
     },
     checkHashtagCount() {
       let parent = document.getElementsByClassName("hashtags");
@@ -141,6 +144,9 @@ export default {
     },
     size() {
       return this.$store.state.dataStorage.posts.length;
+    },
+    userSize(){
+      return this.$store.state.dataStorage.userPosts.length;
     }
   },
   mounted() {
@@ -159,12 +165,19 @@ export default {
     size: function(params) {
       this.checkHashtagCount();
       this.readMore();
+    },
+    userSize: function (params) {
+       this.checkHashtagCount();
+      this.readMore();
     }
   }
 };
 </script>
 
 <style scoped>
+img:hover{
+  cursor: pointer;
+}
 .hashtags {
   display: flex;
   flex-direction: row;
@@ -179,17 +192,18 @@ export default {
 
 .constantSize::after {
   content: "Read more..";
-  font-size: 20px !important;
+  font-size: 16px !important;
   font-weight: 600;
   height: 70%;
   position: absolute;
   z-index: 100;
   bottom: 0px;
   width: 100%;
-  background: transparent linear-gradient(rgba(255, 255, 255, 0), #f1f1f1)
+  background: transparent linear-gradient(rgba(255, 255, 255, 0), #fcfcfce0)
     repeat scroll 0% 0%;
-  line-height: 5;
-  text-align: center;
+  line-height: 10;
+  text-align: right;
+  /* text-align: center; */
   font-size: 12px;
   font-family: monospace;
 }

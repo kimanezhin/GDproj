@@ -3,14 +3,16 @@
     <div id="imgCol" class="col-md-4 col-sm-12 mt-4">
       <post-editor v-if="isDataFetched"/>
       <news-column v-if="isDataFetched" v-bind:posts="getPosts(0)"/>
+      <news-column v-else-if="isUserDataFetched " class="ml-0" v-bind:posts="getPosts(0)"/>
     </div>
     <div class="col-md-4 ml-5 col-sm-12 text mt-4">
-      <div v-if="!isDataFetched" id="ld" class="loading">
+      <div v-if="!isDataFetched && !isUserDataFetched" id="ld" class="loading">
         <div class="loadText">{{ Loading}}</div>
         <!-- <img src="https://loading.io/spinners/coolors/lg.palette-rotating-ring-loader.gif" alt=""> -->
       </div>
 
-      <news-column v-if="isDataFetched" class="ml-0" v-bind:posts="getPosts(1)"/>
+      <news-column v-if="isDataFetched " class="ml-0" v-bind:posts="getPosts(1)"/>
+      <news-column v-else-if="isUserDataFetched " class="ml-0" v-bind:posts="getPosts(1)"/>
     </div>
   </div>
 </template>
@@ -43,6 +45,9 @@ export default {
     },
     postColumn(index){
       return this.posts.filter(post => post.num == index)
+    },
+    isUserDataFetched(){
+      return this.$store.state.dataStorage.isUserDataFetched;
     }
   },
   components: {

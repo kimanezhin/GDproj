@@ -78,7 +78,8 @@ export default {
       console.log(this.$store.getters.GET_ID);
      
 
-      this.$store.dispatch("AUTH_REQUEST",this.$store.getters.GET_ID).then(()=>{
+      this.$store.dispatch("AUTH_REQUEST",this.$store.getters.GET_ID).then((response)=>{
+          
          this.$router.push('/feed')
       })
 

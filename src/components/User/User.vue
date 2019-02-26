@@ -7,7 +7,7 @@
       </div>
       <div class="col-10">
         <div class="d-flex flex-column">
-          <div class="userName">Чернышев Всеволод Леонидович</div>
+          <div class="userName">{{firstName}} {{secondName}}</div>
           <div class="line"></div>
           <div class>
             <div class="tabs mt-3">
@@ -90,7 +90,7 @@
               </div>
             </div>
           </div>
-          <news flexBehaviour = "" class = "mr-auto" id="myNews" v-bind:posts="arr"/>
+          <news flexBehaviour class="mr-auto" id="myNews" v-bind:posts="arr"/>
         </div>
       </div>
     </div>
@@ -102,15 +102,19 @@ import Navbar from "./../Navbar";
 import News from "./../News/News";
 import { mapState, mapGetters } from "vuex";
 import store from "../../store/store.js";
+import Axios from "axios";
 export default {
   data() {
     return {
-      currentBlock: 1
+      currentBlock: 1,
+      firstName: "",
+      secondName: ""
     };
   },
+  props: ["id"],
   computed: {
     ...mapGetters({
-      arr: "GET_POSTS",
+      arr: "GET_USER_POSTS",
       token: "GET_TOKEN"
     })
   },
@@ -132,7 +136,22 @@ export default {
     }
   },
   created() {
-    this.$store.dispatch("FETCH_DATA");
+    
+    Axios.post(this.$store.getters.GET_URL + "/users", [parseInt(this.id)], {
+      withCredentials: true
+    }).then((response) =>{
+      console.log(response.data)
+      this.firstName = response.data[0].firstName;
+      this.secondName = response.data[0].secondName
+    });
+    this.$store.dispatch("FETCH_USER_DATA", parseInt(this.id));
+  },
+
+  watch: {
+    id: function(newId) {
+      console.log(newId);
+      location.reload();
+    }
   },
   components: {
     Navbar,
@@ -268,9 +287,9 @@ export default {
   /* padding-bottom: 80px; */
   width: 70%;
   height: 250px;
-  /* box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22); */
-
-  border-radius: 5px;
+  /* box-shadow: 0 1px 20px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22); */
+  /* border: 3px solid rgb(110, 207, 236); */
+  border-radius: 50px;
   min-width: 240px;
   box-sizing: border-box;
 }
@@ -371,6 +390,9 @@ export default {
 }
 .tabs .content {
   margin-top: 30px;
+}
+.content{
+  margin-left: 30px;
 }
 .tabs .content section {
   display: none;

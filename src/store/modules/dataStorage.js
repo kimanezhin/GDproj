@@ -17,10 +17,12 @@ const state = {
     id: '',
 
     isDataFetched: false,
+    isUserDataFetched: false,
     messages: ['s'],
     URL: "https://valera-denis.herokuapp.com",
     posts: [
     ],
+    userPosts: [],
     channels: [
         {
             id: 1,
@@ -55,17 +57,19 @@ const state = {
 
 const getters = {
     GET_POSTS(state) { return state.posts; },
+    GET_USER_POSTS(state) { return state.userPosts },
     GET_TOKEN(state) { return state.token; },
     GET_USER(state, getters, rootstate, rootgetters) { return rootstate.users },
     GET_FULL_NAME: (state) => (id) => { },
-    GET_ID(state) { return parseInt(state.id) }
+    GET_ID(state) { return parseInt(state.id) },
+    GET_URL(state){return state.URL}
 
 }
 
 const actions = {
 
     async FETCH_DATA(context, payload) {
-        let uri = payload ? context.state.URL + "/posts/forUser":context.state.URL + "/posts/last";
+        // let uri = payload ? context.state.URL + "/posts/forUser" : context.state.URL + "/posts/last";
         await Axios
             .post(context.state.URL + "/posts/last",
                 20
@@ -76,9 +80,9 @@ const actions = {
             .then(response => {
 
                 let answer = response.data.response;
-                
+
                 for (var item of response.data) {
-                    
+
                     makeRequest(item, context);
                 }
                 context.commit('SET_TOKEN', response.data.token)
@@ -98,6 +102,18 @@ const actions = {
             }).then(() => { context.state.isDataFetched = true; });
     },
 
+    async FETCH_USER_DATA(context, payload) {
+        let uri = context.state.URL + '/posts/forUser'
+        await Axios.post(uri, {
+            userId: payload,
+            limit: 20
+        }, { withCredentials: true }).then((response) => {
+            for (var item of response.data) {
+                makeUserRequest(item, context)
+            }
+        }).then(() => { context.state.isUserDataFetched = true; })
+    },
+
 
     SET_ID(context, payload) {
 
@@ -113,6 +129,7 @@ const mutations = {
             name: payload.name,
             postId: payload.postId,
             postBody: payload.postBody,
+            authorId:payload.authorId,
             num: payload.num
         })
     },
@@ -195,20 +212,37 @@ async function makeRequest(item, context) {
         //  console.log(response.data)
         SET_NAME(context.state, item.authorId).then((name) => {
             context.state.columnToAdd = context.state.columnToAdd == 0 ? 1 : 0;
-            context.commit('PUSH_POST', {
+            context.commit("PUSH_POST",{
                 name: name.data[0].firstName + " " + name.data[0].secondName,
                 postId: item.id,
                 postBody: item.body[0].markdown,
+                authorId: item.authorId,
                 num: context.state.columnToAdd
             });
         })
     } catch (Exc) { console.log('aaaa') }
 }
 
+
+async function makeUserRequest(item, context) {
+    SET_NAME(context.state, item.authorId).then((name) => {
+        
+        context.state.columnToAdd = context.state.columnToAdd == 0 ? 1 : 0;
+        context.state.userPosts.push({ 
+            name: name.data[0].firstName + " " + name.data[0].secondName,
+            postId: item.id,
+            postBody: item.body[0].markdown,
+            authorId: item.authorId,
+            num: context.state.columnToAdd
+        });
+    })
+
+}
+
 function SET_NAME(state, payload) {
 
     var t = currentUsers.getters.GET_BY_ID.call('s', currentUsers.state).call('s', payload)
-   
+
     return t;
 }
 export default {
