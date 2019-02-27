@@ -80,10 +80,14 @@ export default {
     },
     closeEditor() {
       // this.readyToClose = false;
+      let myText = document.getElementById("myText");
+      // myText.setAttribute('readonly')
+      myText.readOnly = !myText.readOnly;
+    
       this.readyToClose = true;
-
-      document.getElementById("myText").style.height = "51px";
-      document.getElementById("myText").style.width = "65%";
+    
+      myText.style.height = "51px";
+      myText.style.width = "65%";
       this.isEditorShown = false;
 
       document
@@ -123,8 +127,8 @@ export default {
 
     setInitialSize() {
       {
-        document.getElementById("myText").style.height = "21px";
-        document.getElementById("myText").style.width = "65%";
+        myText.style.height = "21px";
+        myText.style.width = "65%";
 
         document
           .getElementsByClassName("toOverlay")[0]
@@ -134,11 +138,12 @@ export default {
       }
     },
     setCurrentSize() {
-      this.isEditorShown = true;
+      let myText = document.getElementById("myText");
 
-      document.getElementById("myText").style.height = "auto";
-      document.getElementById("myText").style.width = "55vw";
-      document.getElementById("myText").style.height = this.currentSize;
+      this.isEditorShown = true;
+      myText.style.height = "auto";
+      myText.style.width = "55vw";
+      myText.style.height = this.currentSize;
 
       document.getElementById("fantomPage").style.width =
         this.$store.getters.GET_WIDTH + "px";
@@ -148,6 +153,9 @@ export default {
       document
         .getElementsByClassName("toOverlay")[0]
         .classList.add("extendedOverlay");
+      setTimeout(() => {
+        myText.readOnly = !myText.readOnly;
+      }, 300);
     },
     sendToServer(data) {
       //TODO: here should be adress to drafts
@@ -162,10 +170,9 @@ export default {
     },
     delayedResize() {
       window.setTimeout(this.resize, 0);
-    }
-  },
-  mounted() {
-    if (localStorage.inputText) this.inputText = localStorage.inputText;
+    },
+    initialSettings(){
+       if (localStorage.inputText) this.inputText = localStorage.inputText;
     this.$smoothReflow({
       property: ["height", "width"],
       transition: "height .25s ease-in-out, width 5.75s ease-in-out",
@@ -201,10 +208,14 @@ export default {
     text.select();
     this.resize();
     document.activeElement.blur();
+    }
   },
-  watch:{
-    inputText(newText){
-      localStorage.inputText = newText
+  mounted() {
+   
+  },
+  watch: {
+    inputText(newText) {
+      localStorage.inputText = newText;
     }
   }
 };
@@ -372,7 +383,7 @@ img {
     /* width: 27vw !important; */
   }
   .toOverlay {
-    width: 75%;
+    /* width: 75%; */
   }
 }
 
