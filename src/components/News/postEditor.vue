@@ -83,9 +83,9 @@ export default {
       let myText = document.getElementById("myText");
       // myText.setAttribute('readonly')
       myText.readOnly = !myText.readOnly;
-    
+
       this.readyToClose = true;
-    
+
       myText.style.height = "51px";
       myText.style.width = "65%";
       this.isEditorShown = false;
@@ -171,51 +171,62 @@ export default {
     delayedResize() {
       window.setTimeout(this.resize, 0);
     },
-    initialSettings(){
-       if (localStorage.inputText) this.inputText = localStorage.inputText;
-    this.$smoothReflow({
-      property: ["height", "width"],
-      transition: "height .25s ease-in-out, width 5.75s ease-in-out",
-      el: ".toOverlay"
-    });
-    console.log(this.$store.getters.GET_WIDTH);
-    document.getElementById("fantomPage").style.width =
-      this.$store.getters.GET_WIDTH + "px";
+    initialSettings() {
+      if (localStorage.inputText) this.inputText = localStorage.inputText;
+      this.$smoothReflow({
+        property: ["height", "width"],
+        transition: "height .25s ease-in-out, width 5.75s ease-in-out",
+        el: ".toOverlay"
+      });
+      document.getElementById("fantomPage").style.width =
+        this.$store.getters.GET_WIDTH + "px";
 
-    //fixed textarea
-    var observe;
-    if (window.attachEvent) {
-      observe = function(element, event, handler) {
-        element.attachEvent("on" + event, handler);
-      };
-    } else {
-      observe = function(element, event, handler) {
-        element.addEventListener(event, handler, false);
-      };
-    }
+      //fixed textarea
+      var observe;
+      if (window.attachEvent) {
+        observe = function(element, event, handler) {
+          element.attachEvent("on" + event, handler);
+        };
+      } else {
+        observe = function(element, event, handler) {
+          element.addEventListener(event, handler, false);
+        };
+      }
 
-    var text = document.getElementById("myText");
+      var text = document.getElementById("myText");
 
-    /* 0-timeout to get the already changed text */
+      /* 0-timeout to get the already changed text */
 
-    observe(text, "change", this.resize);
-    observe(text, "cut", this.delayedResize);
-    observe(text, "paste", this.delayedResize);
-    observe(text, "drop", this.delayedResize);
-    observe(text, "keydown", this.delayedResize);
+      observe(text, "change", this.resize);
+      observe(text, "cut", this.delayedResize);
+      observe(text, "paste", this.delayedResize);
+      observe(text, "drop", this.delayedResize);
+      observe(text, "keydown", this.delayedResize);
 
-    text.focus();
-    text.select();
-    this.resize();
-    document.activeElement.blur();
+      text.focus();
+      text.select();
+      this.resize();
+      document.activeElement.blur();
     }
   },
-  mounted() {
-   
+  mounted() {},
+  computed: {
+    size() {
+      return this.$store.state.dataStorage.posts.length;
+    },
+    userSize() {
+      return this.$store.state.dataStorage.userPosts.length;
+    }
   },
   watch: {
     inputText(newText) {
       localStorage.inputText = newText;
+    },
+    size(newText) {
+      this.initialSettings();
+    },
+    userSize(newText) {
+      this.initialSettings();
     }
   }
 };

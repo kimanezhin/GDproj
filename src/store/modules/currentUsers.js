@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import Axios from 'axios'
+import dataStorage from './dataStorage'
 Vue.use(Vuex)
 
 //const m = new Map()
@@ -59,7 +60,7 @@ export default {
     mutations
 }
 async function makeResponse(id) {
-    return await Axios.post('https://valera-denis.herokuapp.com/users/', [id], { withCredentials: true })
+    return await Axios.post(dataStorage.state.URL +'/users/', [id], { withCredentials: true })
 }
 function getUser(id, state) {
     return new Promise((resolve, reject) => {

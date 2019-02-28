@@ -7,12 +7,6 @@ import currentUsers from './currentUsers'
 import { rejects } from 'assert';
 const vm = new Vue();
 Vue.use(Vuex)
-
-
-
-
-
-
 const state = {
     id: '',
 

@@ -45,7 +45,7 @@ const mutations = {
         ).then(() => {
             // context.currentId = response.data
             // Axios.post(payload + "/drafts/publish",context.currentId,{withCredentials:true})
-            console.log(response.data)
+            // console.log(response.data)
         })
     },
     PUBLISH(context, payload){

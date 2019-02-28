@@ -5,7 +5,6 @@ Vue.use(Vuex)
 Axios.defaults.headers.post["Content-Type"] = "application/json";
 const state = {
     status: ''
-    
 }
 
 const getters = {
