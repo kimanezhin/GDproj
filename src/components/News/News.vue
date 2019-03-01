@@ -1,7 +1,7 @@
 <template >
-  <div class="row d-flex" :class="flexBehaviour">
+  <div class="row d-flex" v-if = "isDataFetched || isUserDataFetched" :class="flexBehaviour">
     <div id="imgCol" class="col-md-4 col-sm-12 mt-4">
-      <post-editor v-if="isDataFetched"/>
+      <post-editor/>
       <news-column v-if="isDataFetched" v-bind:posts="getPosts(0)"/>
       <news-column v-else-if="isUserDataFetched " class="ml-0" v-bind:posts="getPosts(0)"/>
     </div>

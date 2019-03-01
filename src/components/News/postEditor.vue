@@ -35,7 +35,7 @@
 		c33.4-2.1,61,25.4,58.8,58.8C297.925,275.625,275.525,297.925,248.025,299.625z"
             ></path>
           </svg>
-          <div class="addSmth">
+          <!-- <div class="addSmth">
             <div>
               <font-awesome-icon icon="user"/>
             </div>
@@ -45,7 +45,7 @@
             <div>
               <font-awesome-icon icon="user"/>
             </div>
-          </div>
+          </div> -->
           <input type="submit" @click="sendPost" id="submitButton" class="btn btn-secondary">
         </div>
       </div>
@@ -82,8 +82,10 @@ export default {
       // this.readyToClose = false;
       let myText = document.getElementById("myText");
       // myText.setAttribute('readonly')
-      myText.readOnly = !myText.readOnly;
-
+      if (this.isEditorShown) {
+        myText.readOnly = !myText.readOnly;
+      }
+      console.log("1");
       this.readyToClose = true;
 
       myText.style.height = "51px";
@@ -138,6 +140,7 @@ export default {
       }
     },
     setCurrentSize() {
+      console.trace();
       let myText = document.getElementById("myText");
 
       this.isEditorShown = true;
@@ -153,9 +156,11 @@ export default {
       document
         .getElementsByClassName("toOverlay")[0]
         .classList.add("extendedOverlay");
-      setTimeout(() => {
-        myText.readOnly = !myText.readOnly;
-      }, 300);
+      console.log("1");
+      if (!this.isEditorShown)
+        setTimeout(() => {
+          myText.readOnly = !myText.readOnly;
+        }, 300);
     },
     sendToServer(data) {
       //TODO: here should be adress to drafts
@@ -172,6 +177,11 @@ export default {
       window.setTimeout(this.resize, 0);
     },
     initialSettings() {
+      let realWidth = document.getElementById("main").scrollWidth;
+      let realHeight = document.getElementById("main").scrollHeight;
+      this.$store.dispatch("SET_SCREEN_WIDTH", { width: realWidth });
+      this.$store.dispatch("SET_SCREEN_HEIGHT", { height: realHeight });
+
       if (localStorage.inputText) this.inputText = localStorage.inputText;
       this.$smoothReflow({
         property: ["height", "width"],
@@ -314,7 +324,7 @@ textarea {
   resize: none;
 
   /* width: 65%; */
-
+  z-index: 502;
   left: 60px;
   overflow-y: hidden;
 }
@@ -323,8 +333,8 @@ textarea {
   /* position: absolute; */
   position: fixed;
   height: 100vh;
-  background-color: transparent;
-  z-index: 9;
+  background-color: red;
+  z-index: 400;
   top: 0;
   left: 0;
 }
@@ -337,7 +347,7 @@ textarea {
   background-color: white;
   width: 75%;
   position: absolute;
-  z-index: 30;
+  z-index: 502;
   left: 70px;
   border: 2px solid black;
   transition-property: width height;
@@ -345,7 +355,7 @@ textarea {
   transition-duration: 0.75s;
 }
 .extendedOverlay {
-  z-index: 20;
+  z-index: 500;
   outline: none !important;
   box-shadow: 0px 1px 8px 0px black;
   width: 60vw;

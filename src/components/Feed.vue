@@ -140,10 +140,6 @@ export default {
       transition: "height .25s ease-in-out, width 5.75s ease-in-out",
       el: ".toOverlay"
     });
-    let realWidth = document.getElementById("main").scrollWidth;
-    let realHeight = document.getElementById("main").scrollHeight;
-    this.$store.dispatch("SET_SCREEN_WIDTH", { width: realWidth });
-    this.$store.dispatch("SET_SCREEN_HEIGHT", { height: realHeight });
 
     let socketURL =
       "ws://websuck1t.herokuapp.com/posts/subscribe/" + this.token;

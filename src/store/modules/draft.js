@@ -1,10 +1,5 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-// import Axios from 'axios'
-// import VueNativeSock from "vue-native-websocket";
-// import _ from "lodash";
-// import currentUsers from './currentUsers'
-import { rejects } from 'assert';
 import Axios from 'axios';
 Vue.use(Vuex)
 
