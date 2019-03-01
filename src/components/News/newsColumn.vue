@@ -1,9 +1,9 @@
 <template>
   <div>
-    <div name="list" tag="p">
-      <div class="mb-4 post" v-for="post in posts" :key="post.postId">
+    <div name="list" tag="p" v-if="this.index != -3">
+      <div class="mb-4 post" v-for="post in myPosts" :key="post.postId">
         <div class="postHeader mb-1">
-          <img src="../../../img/chern.jpg" :name="post.authorId" v-on:click = "openUser($event)">
+          <img src="../../../img/chern.jpg" :name="post.authorId" v-on:click="openUser($event)">
           <div class="align-self-end ml-3 font-weight-bold">{{post.name}}</div>
           <div class="align-self-end mr-3 ml-auto font-weight-bold">01.01.2019</div>
         </div>
@@ -36,6 +36,11 @@
 import vueMarkdown from "vue-markdown";
 import marked from "marked";
 export default {
+  data() {
+    return {
+      index: -2
+    };
+  },
   components: {
     vueMarkdown,
     marked
@@ -46,6 +51,12 @@ export default {
       default: function() {
         return [];
       }
+    },
+    columnNum: {
+      type: Number
+    },
+    forUser: {
+      type: Number
     }
   },
   methods: {
@@ -56,8 +67,8 @@ export default {
       //document.getElementsByName(name).innerHTML =
       return marked(preText);
     },
-    openUser(event){
-      this.$router.push('/user/'+parseInt(event.target.name))
+    openUser(event) {
+      this.$router.push("/user/" + parseInt(event.target.name));
     },
     checkHashtagCount() {
       let parent = document.getElementsByClassName("hashtags");
@@ -109,7 +120,6 @@ export default {
       });
     },
     readMore() {
-
       var t = Array.from(document.getElementsByClassName("transit"));
       var texts = Array.from(document.getElementsByClassName("specialClass"));
       t.forEach((item, i) => {
@@ -139,23 +149,65 @@ export default {
     }
   },
   computed: {
+    myPosts() {
+       let arr = this.forUser ? this.$store.getters.GET_USER_POSTS: this.$store.getters.GET_POSTS;
+      if (this.index == -1) {
+       
+        return arr.sort((first, second) => {
+          return second.postId - first.postId;
+        });
+      }
+
+      return arr.filter(
+        p => p.num == this.index
+      ).sort((first, second) => {
+        return second.postId - first.postId;
+      });
+    },
+    getIndex: {
+      get: function() {
+        return this.index;
+      },
+      set: function(param) {
+        this.index = param;
+      }
+    },
     isFetched() {
-      return this.$store.state.dataStorage.isDataFetched;
+      return this.$store.state.dataStorage.isDataFetched || this.$store.state.dataStorage.isUserDataFetched;
     },
     size() {
       return this.$store.state.dataStorage.posts.length;
     },
-    userSize(){
+    userSize() {
       return this.$store.state.dataStorage.userPosts.length;
     }
   },
   mounted() {
-    if (this.isFetched) {
-      var that = this;
+    this.index = this.columnNum;
+    let that = this;
+    if (this.isFetched || that.forUser) {
       that.$nextTick(() => {
         this.checkHashtagCount();
+        if (window.outerWidth < 768 || window.innerWidth < 768) {
+          if (that.index == 1) that.index = -3;
+          if (that.index == 0) that.index = -1;
+          that.readMore();
+        }
       });
     } else console.log("(((");
+
+    window.addEventListener("resize", function() {
+      if (window.outerWidth < 768 || window.innerWidth < 768) {
+        // that.firstArray = that.$options.propsData.posts;
+        // console.log(that.getPosts(-1)
+        if (that.index == 1) that.index = -3;
+        if (that.index == 0) that.index = -1;
+      } else {
+        if (that.index == -3) that.index = 1;
+        if (that.index == -1) that.index = 0;
+      }
+      that.readMore();
+    });
   },
   watch: {
     isFetched: function(params) {
@@ -166,8 +218,8 @@ export default {
       this.checkHashtagCount();
       this.readMore();
     },
-    userSize: function (params) {
-       this.checkHashtagCount();
+    userSize: function(params) {
+      this.checkHashtagCount();
       this.readMore();
     }
   }
@@ -175,7 +227,7 @@ export default {
 </script>
 
 <style scoped>
-img:hover{
+img:hover {
   cursor: pointer;
 }
 .hashtags {
@@ -240,6 +292,8 @@ img:hover{
 }
 .text {
   width: 35vw;
+
+  border-top: none;
 }
 div {
   max-width: 100%;

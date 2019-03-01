@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id = "main">
     <Navbar/>
     <div class="row mr-0">
       <div class="col-2">
@@ -90,7 +90,7 @@
               </div>
             </div>
           </div>
-          <news flexBehaviour class="mr-auto" id="myNews" v-bind:posts="arr"/>
+          <news flexBehaviour v-bind:forUser = "parseInt(id)" class="mr-auto" id="myNews" v-bind:posts="arr"/>
         </div>
       </div>
     </div>
@@ -136,6 +136,7 @@ export default {
     }
   },
   created() {
+    this.$store.dispatch("FETCH_USER_DATA", parseInt(this.id));
     
     Axios.post(this.$store.getters.GET_URL + "/users", [parseInt(this.id)], {
       withCredentials: true
@@ -144,7 +145,6 @@ export default {
       this.firstName = response.data[0].firstName;
       this.secondName = response.data[0].secondName
     });
-    this.$store.dispatch("FETCH_USER_DATA", parseInt(this.id));
   },
 
   watch: {
@@ -163,9 +163,6 @@ export default {
 <style>
 #myNews {
   margin-top: 5%;
-}
-* {
-  font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
 }
 .line {
   height: 2px;
@@ -274,9 +271,6 @@ export default {
 /* breakpoints */
 /* selectors relative to radio inputs */
 
-* {
-  font-family: "Raleway";
-}
 
 .tabs {
   /* -webkit-transform: translateX(-50%); */

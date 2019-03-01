@@ -56,7 +56,7 @@ const getters = {
     GET_USER(state, getters, rootstate, rootgetters) { return rootstate.users },
     GET_FULL_NAME: (state) => (id) => { },
     GET_ID(state) { return parseInt(state.id) },
-    GET_URL(state){return state.URL}
+    GET_URL(state) { return state.URL }
 
 }
 
@@ -66,7 +66,7 @@ const actions = {
         // let uri = payload ? context.state.URL + "/posts/forUser" : context.state.URL + "/posts/last";
         await Axios
             .post(context.state.URL + "/posts/last",
-                20
+                50
                 , {
                     withCredentials: true
                 }
@@ -79,24 +79,15 @@ const actions = {
 
                     makeRequest(item, context);
                 }
-                context.commit('SET_TOKEN', response.data.token)
-                // TODO: change request here
-                // for (var i in answer) {
 
-                //     context.commit('PUSH_POST', {
-                //         name: '',//this.getters.GET_FULL_NAME(answer[i].postAuthor),//context.dispatch('GET_AUTHOR_NAME', [answer[i].postAuthor, i]),//GET_AUTHOR_NAME(answer[i].postAuthor, i),
-                //         postId: answer[i].postId,
-                //         postBody: answer[i].postBody,
-                //         num: context.state.columnToAdd
-                //     })
-                //     SET_NAME(context.state, [i, answer[i].postAuthor])
-                //     context.state.columnToAdd = context.state.columnToAdd == 0 ? 1 : 0;
-
-                // }
-            }).then(() => { context.state.isDataFetched = true; });
+            }).then(() => {
+               
+                context.state.isDataFetched = true;
+            });
     },
 
     async FETCH_USER_DATA(context, payload) {
+        context.state.userPosts = []
         let uri = context.state.URL + '/posts/forUser'
         await Axios.post(uri, {
             userId: payload,
@@ -105,7 +96,9 @@ const actions = {
             for (var item of response.data) {
                 makeUserRequest(item, context)
             }
-        }).then(() => { context.state.isUserDataFetched = true; })
+        }).then(() => { 
+            context.state.isUserDataFetched = true; 
+        })
     },
 
 
@@ -119,11 +112,12 @@ const actions = {
 const mutations = {
     SET_TOKEN(state, payload) { state.token = payload },
     PUSH_POST(state, payload) {
+
         state.posts.push({
             name: payload.name,
             postId: payload.postId,
             postBody: payload.postBody,
-            authorId:payload.authorId,
+            authorId: payload.authorId,
             num: payload.num
         })
     },
@@ -206,7 +200,7 @@ async function makeRequest(item, context) {
         //  console.log(response.data)
         SET_NAME(context.state, item.authorId).then((name) => {
             context.state.columnToAdd = context.state.columnToAdd == 0 ? 1 : 0;
-            context.commit("PUSH_POST",{
+            context.commit("PUSH_POST", {
                 name: name.data[0].firstName + " " + name.data[0].secondName,
                 postId: item.id,
                 postBody: item.body[0].markdown,
@@ -220,9 +214,8 @@ async function makeRequest(item, context) {
 
 async function makeUserRequest(item, context) {
     SET_NAME(context.state, item.authorId).then((name) => {
-        
         context.state.columnToAdd = context.state.columnToAdd == 0 ? 1 : 0;
-        context.state.userPosts.push({ 
+        context.state.userPosts.push({
             name: name.data[0].firstName + " " + name.data[0].secondName,
             postId: item.id,
             postBody: item.body[0].markdown,

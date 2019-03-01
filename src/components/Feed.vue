@@ -182,17 +182,22 @@ export default {
 
 <style scoped>
 
+
 #drop{
   display: none;
 }
 
 .exit {
-  position: sticky;
   font-weight: 600;
-  margin-left: 98%;
+  /* margin-left: 98%; */
+  /* float: right; */
   font-size: 30px;
-  margin-top: 45px;
+ top: 45px;
   position: absolute;
+  right: 1em;
+  margin: 0;
+  margin-left: 98%;
+  /* margin-right: 15px; */
   -webkit-transform: rotate(-90deg); /* разворот текста для разных браузеров */
   -moz-transform: rotate(-90deg);
   -ms-transform: rotate(-90deg);
@@ -294,7 +299,8 @@ img {
 }
 
 @media screen and (max-width: 1200px) {
-  #menu {
+
+#menu {
     display: none;
   }
   #drop{

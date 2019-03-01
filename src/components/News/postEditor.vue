@@ -333,7 +333,7 @@ textarea {
   /* position: absolute; */
   position: fixed;
   height: 100vh;
-  background-color: red;
+  background-color: transparent;
   z-index: 400;
   top: 0;
   left: 0;

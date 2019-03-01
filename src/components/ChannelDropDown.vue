@@ -119,11 +119,11 @@ body {
 }
 .autocomplete,
 #autocomplete-tpl {
-  position: fixed;
+  position: absolute;
   top: 5px;
 
   margin-left: 14%;
-  z-index: 31;
+  z-index: 505;
 }
 
 #app {
