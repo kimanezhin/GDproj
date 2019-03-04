@@ -64,6 +64,7 @@ const actions = {
 
     async FETCH_DATA(context, payload) {
         // let uri = payload ? context.state.URL + "/posts/forUser" : context.state.URL + "/posts/last";
+        context.state.posts = []
         await Axios
             .post(context.state.URL + "/posts/last",
                 50

@@ -46,7 +46,8 @@ export default {
       isEditorShown: false,
       currentSize: "51px",
       inputText: "",
-      readyToClose: false
+      readyToClose: false,
+      myText: "he"
     };
   },
   computed: {
@@ -135,11 +136,11 @@ export default {
   },
   mounted() {
     
-    this.$smoothReflow({
-      property: ["height", "width"],
-      transition: "height .25s ease-in-out, width 5.75s ease-in-out",
-      el: ".toOverlay"
-    });
+    // this.$smoothReflow({
+    //   property: ["height", "width"],
+    //   transition: "height .25s ease-in-out, width 5.75s ease-in-out",
+    //   el: ".toOverlay"
+    // });
 
     let socketURL =
       "ws://websuck1t.herokuapp.com/posts/subscribe/" + this.token;
@@ -175,8 +176,7 @@ export default {
   },
   created() {
     this.$store.dispatch("FETCH_DATA");
-  },
-  watch: {}
+  }
 };
 </script>
 

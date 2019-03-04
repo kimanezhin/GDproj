@@ -7,6 +7,19 @@
     <div class="d-flex flex-row mb-5">
       <img src="../../../img/chern.jpg" class="toAppend">
       <div class="toOverlay" id="ovr">
+        <multiselect
+          v-model="value"
+          tag-placeholder="Add this as new tag"
+          placeholder="Search or add a tag"
+          label="name"
+          track-by="code"
+          :options="options"
+          :multiple="true"
+          :taggable="true"
+          :max-height="600"
+          :disabled="!isEditorShown"
+          @tag="addTag"
+        ></multiselect>
         <textarea
           id="myText"
           @click="setCurrentSize"
@@ -45,7 +58,7 @@
             <div>
               <font-awesome-icon icon="user"/>
             </div>
-          </div> -->
+          </div>-->
           <input type="submit" @click="sendPost" id="submitButton" class="btn btn-secondary">
         </div>
       </div>
@@ -54,13 +67,15 @@
 </template>
 
 <script>
+import multiselect from "vue-multiselect";
 import smoothReflow from "vue-smooth-reflow";
 import vueMarkdown from "vue-markdown";
 import Axios from "axios";
 export default {
   mixins: [smoothReflow],
   components: {
-    vueMarkdown
+    vueMarkdown,
+    multiselect
   },
   data() {
     return {
@@ -70,22 +85,49 @@ export default {
       inputText: "",
       readyToClose: false,
       isPreviewReady: false,
-      editorText: ""
+      editorText: "",
+      value: [],
+      options: [
+        { name: "#Vue.js", code: "vu" },
+        { name: "#Javascript", code: "js" },
+        { name: "#OpenSource", code: "os" },
+        { name: "#Open", code: "oss" },
+        { name: "#Op", code: "ods" },
+        { name: "#O", code: "fos" }
+      ]
     };
   },
   methods: {
+    addTag(newTag) {
+      var t = newTag.lastIndexOf("#");
+      if (t !== -1) newTag = newTag.slice(t + 1);
+      newTag = "#" + newTag;
+      var reg = newTag.match(/#{1}[a-zA-Zа-яА-Я0-9]+/g);
+      if (reg) {
+
+      }
+
+      const tag = {
+        name: newTag,
+        code: newTag.substring(0, 2) + Math.floor(Math.random() * 10000000)
+      };
+      this.options.push(tag);
+      this.value.push(tag);
+    },
     showMyModal() {
       this.editorText = document.getElementById("myText").value;
       this.$modal.show("md");
     },
     closeEditor() {
       // this.readyToClose = false;
+      console.log("1");
       let myText = document.getElementById("myText");
       // myText.setAttribute('readonly')
-      if (this.isEditorShown) {
-        myText.readOnly = !myText.readOnly;
+      if (this.isEditorShown && myText.readOnly == false) {
+        console.log("here and");
+        myText.readOnly = true;
       }
-      console.log("1");
+
       this.readyToClose = true;
 
       myText.style.height = "51px";
@@ -97,6 +139,7 @@ export default {
         .classList.remove("extendedOverlay");
     },
     sendPost() {
+      this.value = [];
       this.closeEditor();
       this.$store.dispatch("SET_DRAFT", this.inputText).then(() => {
         this.$store.dispatch("SEND_POST", this.inputText).then(() => {
@@ -140,9 +183,8 @@ export default {
       }
     },
     setCurrentSize() {
-      console.trace();
       let myText = document.getElementById("myText");
-
+      console.log("2");
       this.isEditorShown = true;
       myText.style.height = "auto";
       myText.style.width = "55vw";
@@ -156,11 +198,10 @@ export default {
       document
         .getElementsByClassName("toOverlay")[0]
         .classList.add("extendedOverlay");
-      console.log("1");
-      if (!this.isEditorShown)
-        setTimeout(() => {
-          myText.readOnly = !myText.readOnly;
-        }, 300);
+      if (myText.readOnly == true) console.log("here");
+      setTimeout(() => {
+        myText.readOnly = false;
+      }, 300);
     },
     sendToServer(data) {
       //TODO: here should be adress to drafts
@@ -183,11 +224,11 @@ export default {
       this.$store.dispatch("SET_SCREEN_HEIGHT", { height: realHeight });
 
       if (localStorage.inputText) this.inputText = localStorage.inputText;
-      this.$smoothReflow({
-        property: ["height", "width"],
-        transition: "height .25s ease-in-out, width 5.75s ease-in-out",
-        el: ".toOverlay"
-      });
+      // this.$smoothReflow({
+      //   property: ["height", "width"],
+      //   transition: "height .25s ease-in-out, width 5.75s ease-in-out",
+      //   el: ".toOverlay"
+      // });
       document.getElementById("fantomPage").style.width =
         this.$store.getters.GET_WIDTH + "px";
 
@@ -219,7 +260,9 @@ export default {
       document.activeElement.blur();
     }
   },
-  mounted() {},
+  mounted() {
+    document.getElementById('ovr').classList.add('toOverlay')
+  },
   computed: {
     size() {
       return this.$store.state.dataStorage.posts.length;
@@ -241,6 +284,9 @@ export default {
   }
 };
 </script>
+
+<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
+
 <style scoped>
 svg:hover {
   fill: #428bff;

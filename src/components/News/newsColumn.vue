@@ -123,7 +123,7 @@ export default {
       var t = Array.from(document.getElementsByClassName("transit"));
       var texts = Array.from(document.getElementsByClassName("specialClass"));
       t.forEach((item, i) => {
-        if (item.clientHeight >= 100) {
+        if (item.clientHeight >= 200) {
           texts[i].classList.add("constantSize");
 
           if (!texts[i].classList.contains("eventReady")) {
@@ -150,19 +150,20 @@ export default {
   },
   computed: {
     myPosts() {
-       let arr = this.forUser ? this.$store.getters.GET_USER_POSTS: this.$store.getters.GET_POSTS;
+      let arr = this.forUser
+        ? this.$store.getters.GET_USER_POSTS
+        : this.$store.getters.GET_POSTS;
       if (this.index == -1) {
-       
         return arr.sort((first, second) => {
           return second.postId - first.postId;
         });
       }
 
-      return arr.filter(
-        p => p.num == this.index
-      ).sort((first, second) => {
-        return second.postId - first.postId;
-      });
+      return arr
+        .filter(p => p.num == this.index)
+        .sort((first, second) => {
+          return second.postId - first.postId;
+        });
     },
     getIndex: {
       get: function() {
@@ -173,7 +174,10 @@ export default {
       }
     },
     isFetched() {
-      return this.$store.state.dataStorage.isDataFetched || this.$store.state.dataStorage.isUserDataFetched;
+      return (
+        this.$store.state.dataStorage.isDataFetched ||
+        this.$store.state.dataStorage.isUserDataFetched
+      );
     },
     size() {
       return this.$store.state.dataStorage.posts.length;
@@ -235,7 +239,7 @@ img:hover {
   flex-direction: row;
 }
 .constantSize {
-  height: 100px;
+  height: 200px;
   display: inline-block;
   border: 0px solid #aaa;
   position: relative;
@@ -246,25 +250,59 @@ img:hover {
   content: "Read more..";
   font-size: 16px !important;
   font-weight: 600;
-  height: 70%;
+  height: 100%;
   position: absolute;
   z-index: 100;
   bottom: 0px;
   width: 100%;
-  background: transparent linear-gradient(rgba(255, 255, 255, 0), #fcfcfce0)
-    repeat scroll 0% 0%;
-  line-height: 10;
+  /* background: transparent linear-gradient(rgba(255, 255, 255, 0), #fcfcfc) */
+  /* repeat scroll 0% 0%; */
+  line-height: 28;
   text-align: right;
-  /* text-align: center; */
+
   font-size: 12px;
   font-family: monospace;
+
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#00ffffff',GradientType=0 );
+  background: -webkit-gradient(
+    linear,
+    left bottom,
+    left top,
+    color-stop(0%, rgba(255, 255, 255, 1)),
+    color-stop(100%, rgba(255, 255, 255, 0))
+  );
+  background: -webkit-linear-gradient(
+    bottom,
+    rgba(255, 255, 255, 1) 0%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background: -moz-linear-gradient(
+    bottom,
+    rgba(255, 255, 255, 1) 0%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background: -ms-linear-gradient(
+    bottom,
+    rgba(255, 255, 255, 1) 0%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background: -o-linear-gradient(
+    bottom,
+    rgba(255, 255, 255, 1) 0%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background: linear-gradient(
+    bottom,
+    rgba(255, 255, 255, 1) 0%,
+    rgba(255, 255, 255, 0) 100%
+  );
 }
 .constantSize:hover::after {
   text-decoration: underline;
 }
 
 .toCrop {
-  clip: rect(0px, auto, 100px, 0px);
+  clip: rect(0px, auto, 200px, 0px);
   position: absolute;
 }
 
