@@ -139,12 +139,13 @@ export default {
         .classList.remove("extendedOverlay");
     },
     sendPost() {
-      this.value = [];
+      
       this.closeEditor();
-      this.$store.dispatch("SET_DRAFT", this.inputText).then(() => {
-        this.$store.dispatch("SEND_POST", this.inputText).then(() => {
+      // this.$store.dispatch("SET_DRAFT", this.inputText).then(() => {
+        this.$store.dispatch("SEND_POST", [this.inputText, this.value]).then(() => {
           this.inputText = "";
-        });
+          // this.value = [];
+        // });
       });
       setTimeout(function() {
         document

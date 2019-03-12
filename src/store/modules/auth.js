@@ -18,7 +18,7 @@ const actions = {
         return new Promise((resolve, reject) => { // The Promise used for router redirect in login
             context.commit('AUTH_REQUEST')
             Axios.post(
-                context.rootState.dataStorage.URL + "/authenticate",
+                context.rootState.dataStorage.URL + "/authentication/login",
                 {
                     authenticationId: user
                 },
@@ -26,6 +26,7 @@ const actions = {
                     withCredentials: true
                 }
             ).then(resp => {
+                console.log(resp.data)
                 context.commit('AUTH_SUCCESS')
                 resolve(resp)
             })

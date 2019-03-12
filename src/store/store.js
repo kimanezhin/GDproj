@@ -5,6 +5,7 @@ import dataStorage from './modules/dataStorage'
 import systemData from './modules/systemData'
 import auth from './modules/auth'
 import draft from './modules/draft'
+import channelsData from './modules/channelsData'
 Vue.use(Vuex)
 
 
@@ -14,6 +15,7 @@ export default new Vuex.Store({
     dataStorage,
     systemData,
     auth,
-    draft
+    draft,
+    channelsData
    }
 })

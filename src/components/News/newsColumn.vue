@@ -3,29 +3,24 @@
     <div name="list" tag="p" v-if="this.index != -3">
       <div class="mb-4 post" v-for="post in myPosts" :key="post.postId">
         <div class="postHeader mb-1">
-          <img src="../../../img/chern.jpg" :name="post.authorId" v-on:click="openUser($event)">
-          <div class="align-self-end ml-3 font-weight-bold">{{post.name}}</div>
-          <div class="align-self-end mr-3 ml-auto font-weight-bold">01.01.2019</div>
+          <img src="../../../img/chern.jpg" :name="post.authorId" v-on:click="openUser($event)">          
+            <div class="align-self-end ml-3 font-weight-bold">{{post.name}}</div>
+
+          <div class="align-self-end mr-3 ml-auto font-weight-bold">{{transformTime(post.timeCreated)}}</div>
         </div>
         <div class="hashtags">
-          <div v-on:mouseover="checkHashtagCount" class="hash">#smth</div>
-          <div class="hash">#smth</div>
-          <div class="hash">#smth</div>
-          <div class="hash">#smth</div>
-          <div class="hash">#smth</div>
-          <div class="hash">#smth</div>
+          <!-- <div v-on:mouseover="checkHashtagCount" class="hash">#smth</div> -->
+          <div v-for = "(tag,i) in post.tags" :key="i" class="hash">#{{ tag }}</div>   
         </div>
-        <div class="text specialClass">
-          <!-- <vue-markdown> -->
-          <!-- {{post.postBody}} -->
+        <div class="text specialClass">  
           <div
             class="transit"
             :name="post.postId"
             v-html="makeMarkDown(post.postBody, post.postId)"
           >
-            <!-- {{makeMarkDown(post.postBody, post.postId)}} -->
+         
           </div>
-          <!-- </vue-markdown> -->
+         
         </div>
       </div>
     </div>
@@ -60,6 +55,13 @@ export default {
     }
   },
   methods: {
+    transformTime(time){
+      //1861-08-13T00:00:08Z - not transformed
+      //13.08.61 - transformed
+      let tmp = time.split("-")
+       tmp[2] = tmp[2].slice(0,2)
+      return tmp.reverse().join('.')
+    },
     checkPosts() {
       console.log("Hello");
     },

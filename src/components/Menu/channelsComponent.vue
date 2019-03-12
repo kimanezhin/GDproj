@@ -23,15 +23,15 @@
       <div
         class="d-flex flex-row hrefOption"
         v-on:mouseover="makeVisible(index)"
-        v-for="(channel,index) in channels"
-        :key="channel.num"
+        v-for="(channel,index) in channelList"
+        :key="index"
         v-on:mouseleave="makeInvisible(index)"
       >
         <a
           href="#"
           :class="{bold:boldText(index)}"
           v-on:click="changeChannel(index)"
-          :content="channel "
+          :content="channel.name"
         >{{channel}}</a>
         <div :name="index" v-on:click="showModal(index)" class="channelOption">
           <font-awesome-icon icon="cog"/>
@@ -48,15 +48,20 @@ export default {
     modalMenu,
     newChannelModal
   },
-  props: {
-    channels: Array
-  },
   data() {
     return {
-      currentChannel: 0
+      currentChannel: 0,
+      channels:[]
     };
   },
-
+  computed:{
+    channelList(){
+      return this.$store.getters.GET_CHANNELS
+    }
+  },
+  mounted(){
+    this.$store.dispatch('GET_ALL_CHANNELS')
+  },
   methods: {
     boldText(index) {
       return index == this.currentChannel;

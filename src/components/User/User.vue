@@ -7,7 +7,7 @@
       </div>
       <div class="col-10">
         <div class="d-flex flex-column">
-          <div class="userName">{{firstName}} {{secondName}}</div>
+          <div class="userName">{{lastName}} {{firstName}} {{middleName}}</div>
           <div class="line"></div>
           <div class>
             <div class="tabs mt-3">
@@ -108,7 +108,8 @@ export default {
     return {
       currentBlock: 1,
       firstName: "",
-      secondName: ""
+      lastName: "",
+      middleName:""
     };
   },
   props: ["id"],
@@ -136,16 +137,27 @@ export default {
     }
   },
   created() {
-    this.$store.dispatch("FETCH_USER_DATA", parseInt(this.id));
-    
-    Axios.post(this.$store.getters.GET_URL + "/users", [parseInt(this.id)], {
-      withCredentials: true
-    }).then((response) =>{
-      console.log(response.data)
-      this.firstName = response.data[0].firstName;
-      this.secondName = response.data[0].secondName
+    this.$store.dispatch("FETCH_USER_DATA", parseInt(this.id)).then(()=>{
+
+  let name = this.$store.getters.GET_MAP.get(parseInt(this.id))
+  console.log(name)
+    this.firstName = name.firstName
+    this.lastName = name.lastName
+    this.middleName = name.middleName
+
+
+
     });
-  },
+    
+  
+  //   Axios.post(this.$store.getters.GET_URL + "/users", [parseInt(this.id)], {
+  //     withCredentials: true
+  //   }).then((response) =>{
+  //     console.log(response.data)
+  //     this.firstName = response.data[0].firstName;
+  //     this.secondName = response.data[0].secondName
+  //   });
+   },
 
   watch: {
     id: function(newId) {

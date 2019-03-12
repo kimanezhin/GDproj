@@ -135,7 +135,6 @@ export default {
     }
   },
   mounted() {
-    
     // this.$smoothReflow({
     //   property: ["height", "width"],
     //   transition: "height .25s ease-in-out, width 5.75s ease-in-out",

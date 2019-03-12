@@ -7,7 +7,7 @@
   >
     <div id="imgCol" class="col-md-4 col-sm-12 mt-4">
       <post-editor/>
-      <news-column v-bind:forUser = "parseInt(forUser)" v-bind:columnNum="0"/>
+      <news-column style = "margin-top:75px;" v-bind:forUser = "parseInt(forUser)" v-bind:columnNum="0"/>
     </div>
     <div class="col-md-4 ml-5 col-sm-12 text mt-4">
       <div v-if="!isDataFetched && !isUserDataFetched" id="ld" class="loading">

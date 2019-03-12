@@ -6,7 +6,8 @@ Vue.use(Vuex)
 // Vue.use(Vuex)
 const state = {
     currentDraft: '',
-    currentId :''
+    currentId: '',
+    tags: []
 }
 
 const getters = {
@@ -15,25 +16,30 @@ const getters = {
 
 const actions = {
     SET_DRAFT(context, payload) {
-        context.state.currentDraft = payload;
+
     },
     SEND_POST(context, payload) {
-        console.log(context)
+        context.state.currentDraft = payload[0];
+        payload[1] = payload[1].map(x => x.name.slice(1, x.length))
+        context.state.tags = payload[1]
+        //  context.commit("CREATE_POST", context.rootState.dataStorage.URL)
+
         context.commit("CREATE_POST", context.rootState.dataStorage.URL)
-        
-        // context.commit("PUBLISH", context.rootState.dataStorage.URL)
     }
 }
 
 const mutations = {
     CREATE_POST(context, payload) {
         Axios.defaults.headers.post["Content-Type"] = "application/json";
-        Axios.post(payload + "/drafts/createAndPublish",
-            [
-                {
-                    "markdown": context.currentDraft
-                }
-            ]
+        Axios.post(payload + "/posts/publish",
+            {
+                body: [
+                    {
+                        "markdown": context.currentDraft
+                    }
+                ],
+                tags: context.tags
+            }
             , {
                 withCredentials: true
             }
@@ -43,10 +49,10 @@ const mutations = {
             // console.log(response.data)
         })
     },
-    PUBLISH(context, payload){
-       
-        
-       
+    PUBLISH(context, payload) {
+
+
+
     }
 }
 
