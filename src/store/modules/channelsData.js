@@ -17,25 +17,21 @@ const getters = {
 
 const actions = {
     UPDATE_CHANNEL(context, payload) {
-
         Axios.post(context.rootState.dataStorage.URL + '/channels/update',payload,{withCredentials: true})
+    },
+    CREATE_CHANNEL(context, payload) {
+        Axios.post(context.rootState.dataStorage.URL + '/channels/create',payload,{withCredentials: true})
     },
     async GET_ALL_CHANNELS(context) {
         Axios.post(context.rootState.dataStorage.URL + '/channels', {}, { withCredentials: true }).then((channels) => {
-            context.state.channels.push(channels.data)
+            channels.data.forEach(elem => {
+                context.state.channels.push(elem)
+            })
+            
             // console.log(context.channels)
 
         },
         )
-
-    },
-    CREATE_CHANNEL(context, payload) {
-        Axios.post(context.rootState.dataStorage.URL + '/channels/create', {
-            people: context.chosenPeople,
-            name: context.name,
-            tags: context.chosenTags
-
-        }, { withCredentials: true }).then(() => { })
     }
 }
 const mutations = {

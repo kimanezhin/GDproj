@@ -33,8 +33,8 @@
           :class="{bold:boldText(index)}"
           class = "ml-2"
           v-on:click="changeChannel(index)"
-          :content="channel[0].name"
-        >{{channel[0].name}}</a>
+          :content="channel.name"
+        >{{channel.name}}</a>
         <div :name="index" v-on:click="showModal(index)" class="channelOption">
           <font-awesome-icon icon="cog"/>
         </div>
@@ -58,6 +58,7 @@ export default {
   },
   computed:{
     channelList(){
+      
       return this.$store.getters.GET_CHANNELS
     }
   },

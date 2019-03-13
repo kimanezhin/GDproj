@@ -37,11 +37,11 @@ export default {
   data() {
     return {
       myName: "Hello",
-      channelId:-1,
-      tagChecks:[],
-      peopleChecks:[],
+      channelId: -1,
+      tagChecks: [],
+      peopleChecks: [],
       value: "Choose tags",
-      arePeopleSelected:true,
+      arePeopleSelected: true,
       menu: [
         {
           title: "Tags",
@@ -124,30 +124,61 @@ export default {
           ]
         }
       ],
-      avaliblePeople:[5051,9,42,228],
-      avalibleTags:["ялюблюсвоюработу","ильяСоси","пи","костяСоси","иадсосет"]
+      avaliblePeople: [5051, 9, 42, 228],
+      avalibleTags: [
+        "ялюблюсвоюработу",
+        "ильяСоси",
+        "пи",
+        "костяСоси",
+        "иадсосет"
+      ]
     };
   },
   methods: {
-    updateChannel(){
-      this.$store.dispatch("UPDATE_CHANNEL",{
-        people:this.avaliblePeople.filter((item,i) =>{return this.peopleChecks[i] == true}),
-        name:this.myName,
-        id:this.channelId,
-        tags:this.avalibleTags.filter((item, i) => {return this.tagChecks[i] == true})
-      })
+    updateChannel() {
+      if (this.channelId != -1) {
+        this.$store.dispatch("UPDATE_CHANNEL", {
+          people: this.avaliblePeople.filter((item, i) => {
+            return this.peopleChecks[i] == true;
+          }),
+          name: this.myName,
+          id: this.channelId,
+          tags: this.avalibleTags.filter((item, i) => {
+            return this.tagChecks[i] == true;
+          })
+        });
+      } else {
+        console.log(this.channelId)
+        console.log({
+          people: this.avaliblePeople.filter((item, i) => {
+            return this.peopleChecks[i] == true;
+          }),
+          name: this.myName,
+          tags: this.avalibleTags.filter((item, i) => {
+            return this.tagChecks[i] == true;
+          })
+        })
+        this.$store.dispatch("CREATE_CHANNEL", {
+          people: this.avaliblePeople.filter((item, i) => {
+            return this.peopleChecks[i] == true;
+          }),
+          name: this.myName,
+          tags: this.avalibleTags.filter((item, i) => {
+            return this.tagChecks[i] == true;
+          })
+        });
+      }
     },
     toRight() {
-      this.arePeopleSelected = !this.arePeopleSelected
+      this.arePeopleSelected = !this.arePeopleSelected;
       document
         .getElementsByClassName("slider")[0]
         .classList.add("slider-translate");
       document.getElementsByClassName("cl")[1].style.color = "black";
       document.getElementsByClassName("cl")[0].style.color = "#428bff";
-     
     },
     toLeft() {
-      this.arePeopleSelected = !this.arePeopleSelected
+      this.arePeopleSelected = !this.arePeopleSelected;
       document
         .getElementsByClassName("slider")[0]
         .classList.remove("slider-translate");
@@ -157,7 +188,7 @@ export default {
     selectHash(event) {
       this.menu[0].list[event.target.tabIndex].check = !this.menu[0].list[
         event.target.tabIndex
-      ].check;
+      ].check; //TODO: apply to the new list
     },
     setActive() {
       var first = document.getElementById("tags");
@@ -183,34 +214,29 @@ export default {
     tags() {
       return this.myChannels[this.hashId][0].tags;
     },
-    currentList(){  
-      return this.arePeopleSelected ?  this.avaliblePeople :  this.avalibleTags;
+    currentList() {
+      return this.arePeopleSelected ? this.avaliblePeople : this.avalibleTags;
     },
-    checked(){
-        return this.arePeopleSelected ?  this.peopleChecks :  this.tagChecks;
+    checked() {
+      return this.arePeopleSelected ? this.peopleChecks : this.tagChecks;
     }
   },
   mounted() {
-    this.avaliblePeople.forEach(element => {
-        if(this.myChannels[this.hashId][0].people.includes(element))
-        {
-          this.peopleChecks.push(true)
-        }
-        else this.peopleChecks.push(false)
+    if (this.hashId == -1) this.myName = "#newChannelName";
+    else {
+      this.avaliblePeople.forEach(element => {
+        if (this.myChannels[this.hashId].people.includes(element)) {
+          this.peopleChecks.push(true);
+        } else this.peopleChecks.push(false);
       });
 
       this.avalibleTags.forEach(element => {
-        if(this.myChannels[this.hashId][0].tags.includes(element))
-        {
-          this.tagChecks.push(true)
-        }
-        else this.tagChecks.push(false)
+        if (this.myChannels[this.hashId].tags.includes(element)) {
+          this.tagChecks.push(true);
+        } else this.tagChecks.push(false);
       });
-
-    if (this.hashId == -1) this.myName = "#newChannelName";
-    else {
-      this.myName = this.myChannels[this.hashId][0].name;
-      this.channelId = this.myChannels[this.hashId][0].id
+      this.myName = this.myChannels[this.hashId].name;
+      this.channelId = this.myChannels[this.hashId].id;
     }
   },
   props: ["hashId"]
