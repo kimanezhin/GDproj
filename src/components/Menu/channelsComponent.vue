@@ -27,12 +27,14 @@
         :key="index"
         v-on:mouseleave="makeInvisible(index)"
       >
+      
         <a
           href="#"
           :class="{bold:boldText(index)}"
+          class = "ml-2"
           v-on:click="changeChannel(index)"
-          :content="channel.name"
-        >{{channel}}</a>
+          :content="channel[0].name"
+        >{{channel[0].name}}</a>
         <div :name="index" v-on:click="showModal(index)" class="channelOption">
           <font-awesome-icon icon="cog"/>
         </div>

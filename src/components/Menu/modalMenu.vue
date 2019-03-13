@@ -12,22 +12,22 @@
     <ul class="list-group">
       <li
         class="list-group-item listHash"
-        v-for="(item, i) in menu[0].list"
+        v-for="(item, i) in currentList"
         :tabindex="i"
-        :key="item.id"
+        :key="i"
         @click="selectHash($event)"
       >
-        {{item.name}}
+        {{item}}
         <p-check
           name="check"
           class="myCheck p-round p-default p-smooth p-bigger"
           color="primary"
-          v-model="item.check"
+          v-model="checked[i]"
         ></p-check>
       </li>
     </ul>
-    <button class="btn btn-danger" v-if = "hashId != -1">Удалить</button>
-    <button class="btn btn-secondary">Сохранить</button>
+    <button class="btn btn-danger" v-if="hashId != -1">Удалить</button>
+    <button class="btn btn-secondary" @click="updateChannel">Сохранить</button>
   </div>
 </template>
 
@@ -37,8 +37,11 @@ export default {
   data() {
     return {
       myName: "Hello",
+      channelId:-1,
+      tagChecks:[],
+      peopleChecks:[],
       value: "Choose tags",
-
+      arePeopleSelected:true,
       menu: [
         {
           title: "Tags",
@@ -120,18 +123,31 @@ export default {
             }
           ]
         }
-      ]
+      ],
+      avaliblePeople:[5051,9,42,228],
+      avalibleTags:["ялюблюсвоюработу","ильяСоси","пи","костяСоси","иадсосет"]
     };
   },
   methods: {
+    updateChannel(){
+      this.$store.dispatch("UPDATE_CHANNEL",{
+        people:this.avaliblePeople.filter((item,i) =>{return this.peopleChecks[i] == true}),
+        name:this.myName,
+        id:this.channelId,
+        tags:this.avalibleTags.filter((item, i) => {return this.tagChecks[i] == true})
+      })
+    },
     toRight() {
+      this.arePeopleSelected = !this.arePeopleSelected
       document
         .getElementsByClassName("slider")[0]
         .classList.add("slider-translate");
       document.getElementsByClassName("cl")[1].style.color = "black";
       document.getElementsByClassName("cl")[0].style.color = "#428bff";
+     
     },
     toLeft() {
+      this.arePeopleSelected = !this.arePeopleSelected
       document
         .getElementsByClassName("slider")[0]
         .classList.remove("slider-translate");
@@ -157,12 +173,44 @@ export default {
       second.classList.add("active");
     }
   },
+  computed: {
+    myChannels() {
+      return this.$store.getters.GET_CHANNELS;
+    },
+    people() {
+      return this.myChannels[this.hashId][0].people;
+    },
+    tags() {
+      return this.myChannels[this.hashId][0].tags;
+    },
+    currentList(){  
+      return this.arePeopleSelected ?  this.avaliblePeople :  this.avalibleTags;
+    },
+    checked(){
+        return this.arePeopleSelected ?  this.peopleChecks :  this.tagChecks;
+    }
+  },
   mounted() {
+    this.avaliblePeople.forEach(element => {
+        if(this.myChannels[this.hashId][0].people.includes(element))
+        {
+          this.peopleChecks.push(true)
+        }
+        else this.peopleChecks.push(false)
+      });
+
+      this.avalibleTags.forEach(element => {
+        if(this.myChannels[this.hashId][0].tags.includes(element))
+        {
+          this.tagChecks.push(true)
+        }
+        else this.tagChecks.push(false)
+      });
+
     if (this.hashId == -1) this.myName = "#newChannelName";
     else {
-      this.myName = this.$store.state.dataStorage.channels[
-        parseInt(this.hashId)
-      ].name;
+      this.myName = this.myChannels[this.hashId][0].name;
+      this.channelId = this.myChannels[this.hashId][0].id
     }
   },
   props: ["hashId"]
