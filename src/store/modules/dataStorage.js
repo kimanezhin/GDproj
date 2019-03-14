@@ -9,9 +9,9 @@ const vm = new Vue();
 Vue.use(Vuex)
 const state = {
     id: '',
-
     isDataFetched: false,
     isUserDataFetched: false,
+    currentChannel:1,
     m: new Map(),
     messages: ['s'],
     URL: "https://valera-denis.herokuapp.com",
@@ -58,7 +58,8 @@ const getters = {
     GET_FULL_NAME: (state) => (id) => { },
     GET_ID(state) { return parseInt(state.id) },
     GET_URL(state) { return state.URL },
-    GET_MAP(state){return state.m}
+    GET_MAP(state){return state.m},
+    
 
 }
 

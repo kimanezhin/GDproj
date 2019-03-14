@@ -392,7 +392,7 @@ textarea {
 .toOverlay {
   /* display: inline-block; */
   background-color: white;
-  width: 75%;
+  width: 50%;
   position: absolute;
   z-index: 502;
   left: 70px;

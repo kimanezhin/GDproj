@@ -26,6 +26,7 @@
         ></p-check>
       </li>
     </ul>
+    
     <button class="btn btn-danger" v-if="hashId != -1">Удалить</button>
     <button class="btn btn-secondary" @click="updateChannel">Сохранить</button>
   </div>
@@ -137,18 +138,22 @@ export default {
   methods: {
     updateChannel() {
       if (this.channelId != -1) {
-        this.$store.dispatch("UPDATE_CHANNEL", {
-          people: this.avaliblePeople.filter((item, i) => {
-            return this.peopleChecks[i] == true;
-          }),
-          name: this.myName,
-          id: this.channelId,
-          tags: this.avalibleTags.filter((item, i) => {
-            return this.tagChecks[i] == true;
+        this.$store
+          .dispatch("UPDATE_CHANNEL", {
+            people: this.avaliblePeople.filter((item, i) => {
+              return this.peopleChecks[i] == true;
+            }),
+            name: this.myName,
+            id: this.channelId,
+            tags: this.avalibleTags.filter((item, i) => {
+              return this.tagChecks[i] == true;
+            })
           })
-        });
+          .then(() => {
+            this.$emit("close");
+          });
       } else {
-        console.log(this.channelId)
+        console.log(this.channelId);
         console.log({
           people: this.avaliblePeople.filter((item, i) => {
             return this.peopleChecks[i] == true;
@@ -157,7 +162,7 @@ export default {
           tags: this.avalibleTags.filter((item, i) => {
             return this.tagChecks[i] == true;
           })
-        })
+        });
         this.$store.dispatch("CREATE_CHANNEL", {
           people: this.avaliblePeople.filter((item, i) => {
             return this.peopleChecks[i] == true;

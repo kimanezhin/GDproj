@@ -27,14 +27,14 @@
         :key="index"
         v-on:mouseleave="makeInvisible(index)"
       >
-      
         <a
           href="#"
           :class="{bold:boldText(index)}"
-          class = "ml-2"
-          v-on:click="changeChannel(index)"
+          class="ml-2"
+          :name="channel.id"
+          v-on:click="changeChannel(index,$event)"
           :content="channel.name"
-        >{{channel.name}}</a>
+        >{{cutName(channel.name)}}</a>
         <div :name="index" v-on:click="showModal(index)" class="channelOption">
           <font-awesome-icon icon="cog"/>
         </div>
@@ -42,9 +42,12 @@
     </div>
   </div>
 </template>
+
+
 <script>
 import modalMenu from "./modalMenu";
 import newChannelModal from "./newChannelModal";
+import _ from "lodash";
 export default {
   components: {
     modalMenu,
@@ -53,32 +56,39 @@ export default {
   data() {
     return {
       currentChannel: 0,
-      channels:[]
+      channels: [],
+      flag: false
     };
   },
-  computed:{
-    channelList(){
-      
-      return this.$store.getters.GET_CHANNELS
+  computed: {
+    channelList() {
+      return this.$store.getters.GET_CHANNELS;
     }
   },
-  mounted(){
-    this.$store.dispatch('GET_ALL_CHANNELS')
+  mounted() {
+    this.$store.dispatch("GET_ALL_CHANNELS")
+    
   },
   methods: {
+    cutName(name) {
+      if (name.length > 7) {
+        return name.slice(0, 7) + "..";
+      }
+      return name;
+    },
     boldText(index) {
       return index == this.currentChannel;
     },
     createNewChannel() {
       // this.$modal.show(newChannelModal, { height: "480px" });
-      this.showModal(-1)
+      this.showModal(-1);
     },
     showModal(id) {
       this.$modal.show(
         modalMenu,
         { hashId: id },
         {
-          adaptive:true, 
+          adaptive: true,
           height: "auto"
         }
       );
@@ -91,8 +101,20 @@ export default {
       // document.getElementsByClassName('channelOption')[0].classList.add('middleOpacity');
       document.getElementsByName(index)[0].classList.remove("middleOpacity");
     },
-    changeChannel(index) {
+    changeChannel(index, event) {
+      let tmp = _.find(this.channelList, {"id":parseInt(event.target.name)})
+      console.log(tmp)
+        this.$store.dispatch("CHANGE_CHANNEL",tmp);
       this.currentChannel = index;
+    }
+  },
+  watch:{
+    channelList: function(newVal, oldVal){
+      if(newVal[0]&& !this.flag)
+       {
+         this.$store.dispatch("CHANGE_CHANNEL",newVal[0]); 
+         this.flag = true
+       }
     }
   }
 };

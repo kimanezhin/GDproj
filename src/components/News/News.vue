@@ -5,7 +5,7 @@
     v-if="isDataFetched || isUserDataFetched"
     :class="flexBehaviour"
   >
-    <div id="imgCol" class="col-md-4 col-sm-12 mt-4">
+    <div id="imgCol" style = "margin-left:200px;" class="col-md-12 col-sm-12 mt-4">
       <post-editor/>
       <news-column style = "margin-top:75px;" v-bind:forUser = "parseInt(forUser)" v-bind:columnNum="0"/>
     </div>
@@ -15,7 +15,7 @@
         <!-- <img src="https://loading.io/spinners/coolors/lg.palette-rotating-ring-loader.gif" alt=""> -->
       </div>
 
-      <news-column v-bind:forUser = "parseInt(forUser)" id="second" class="ml-0" v-bind:columnNum="1"/>
+      <!-- <news-column v-bind:forUser = "parseInt(forUser)" id="second" class="ml-0" v-bind:columnNum="1"/> -->
     </div>
   </div>
 </template>

@@ -1,9 +1,10 @@
 <template>
-  <div id = "main">
+  <div id="main">
     <Navbar/>
     <div class="row mr-0">
       <div class="col-2">
         <img src="../../../img/chern.jpg" class="avatar">
+        <button id="followButton" @click="addUserToChannel" class="btn btn-outline-primary">Follow</button>
       </div>
       <div class="col-10">
         <div class="d-flex flex-column">
@@ -90,7 +91,13 @@
               </div>
             </div>
           </div>
-          <news flexBehaviour v-bind:forUser = "parseInt(id)" class="mr-auto" id="myNews" v-bind:posts="arr"/>
+          <news
+            flexBehaviour
+            v-bind:forUser="parseInt(id)"
+            class="mr-auto"
+            id="myNews"
+            v-bind:posts="arr"
+          />
         </div>
       </div>
     </div>
@@ -103,13 +110,14 @@ import News from "./../News/News";
 import { mapState, mapGetters } from "vuex";
 import store from "../../store/store.js";
 import Axios from "axios";
+import addUserModal from "./../modals/addUserModal";
 export default {
   data() {
     return {
       currentBlock: 1,
       firstName: "",
       lastName: "",
-      middleName:""
+      middleName: ""
     };
   },
   props: ["id"],
@@ -120,6 +128,16 @@ export default {
     })
   },
   methods: {
+    addUserToChannel() {
+      this.$modal.show(
+        addUserModal,
+        { hashId: this.id },
+        {
+          adaptive: true,
+          height: "auto"
+        }
+      );
+    },
     changeCurrentBlock(index) {
       switch (index) {
         case 1:
@@ -137,27 +155,14 @@ export default {
     }
   },
   created() {
-    this.$store.dispatch("FETCH_USER_DATA", parseInt(this.id)).then(()=>{
-
-  let name = this.$store.getters.GET_MAP.get(parseInt(this.id))
-  console.log(name)
-    this.firstName = name.firstName
-    this.lastName = name.lastName
-    this.middleName = name.middleName
-
-
-
+    this.$store.dispatch("FETCH_USER_DATA", parseInt(this.id)).then(() => {
+      let name = this.$store.getters.GET_MAP.get(parseInt(this.id));
+      console.log(name);
+      this.firstName = name.firstName;
+      this.lastName = name.lastName;
+      this.middleName = name.middleName;
     });
-    
-  
-  //   Axios.post(this.$store.getters.GET_URL + "/users", [parseInt(this.id)], {
-  //     withCredentials: true
-  //   }).then((response) =>{
-  //     console.log(response.data)
-  //     this.firstName = response.data[0].firstName;
-  //     this.secondName = response.data[0].secondName
-  //   });
-   },
+  },
 
   watch: {
     id: function(newId) {
@@ -167,7 +172,8 @@ export default {
   },
   components: {
     Navbar,
-    News
+    News,
+    addUserModal
   }
 };
 </script>
@@ -188,6 +194,12 @@ export default {
   font-weight: 500;
 
   font-size: 28px;
+}
+
+#followButton {
+  width: 80%;
+  margin-left: 10%;
+  margin-right: 10%;
 }
 
 .avatar {
@@ -282,7 +294,6 @@ export default {
 /* tab setting */
 /* breakpoints */
 /* selectors relative to radio inputs */
-
 
 .tabs {
   /* -webkit-transform: translateX(-50%); */
@@ -397,7 +408,7 @@ export default {
 .tabs .content {
   margin-top: 30px;
 }
-.content{
+.content {
   margin-left: 30px;
 }
 .tabs .content section {

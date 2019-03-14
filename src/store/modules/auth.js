@@ -36,6 +36,9 @@ const actions = {
                     reject(err)
                 })
         })
+    },
+    LOG_OUT(context){
+        Axios.post(context.rootState.dataStorage.URL + '/authentication/logout',{},{withCredentials:true})
     }
 }
 

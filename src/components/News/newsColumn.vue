@@ -1,26 +1,26 @@
 <template>
   <div>
     <div name="list" tag="p" v-if="this.index != -3">
-      <div class="mb-4 post" v-for="post in myPosts" :key="post.postId">
+      <div class="mb-4 post" v-for="post in mPosts" :key="post.postId">
         <div class="postHeader mb-1">
-          <img src="../../../img/chern.jpg" :name="post.authorId" v-on:click="openUser($event)">          
-            <div class="align-self-end ml-3 font-weight-bold">{{post.name}}</div>
+          <img src="../../../img/chern.jpg" :name="post.authorId" v-on:click="openUser($event)">
+          <div class="align-self-end ml-3 font-weight-bold">{{post.name}}</div>
 
-          <div class="align-self-end mr-3 ml-auto font-weight-bold">{{transformTime(post.timeCreated)}}</div>
+          <div
+            style="margin-right:150px;"
+            class="align-self-end ml-auto font-weight-bold"
+          >{{transformTime(post.timeCreated)}}</div>
         </div>
         <div class="hashtags">
           <!-- <div v-on:mouseover="checkHashtagCount" class="hash">#smth</div> -->
-          <div v-for = "(tag,i) in post.tags" :key="i" class="hash">#{{ tag }}</div>   
+          <div v-for="(tag,i) in post.tags" :key="i" class="hash">#{{ tag }}</div>
         </div>
-        <div class="text specialClass">  
+        <div class="text specialClass">
           <div
             class="transit"
             :name="post.postId"
             v-html="makeMarkDown(post.postBody, post.postId)"
-          >
-         
-          </div>
-         
+          ></div>
         </div>
       </div>
     </div>
@@ -33,7 +33,9 @@ import marked from "marked";
 export default {
   data() {
     return {
-      index: -2
+      index: -1,
+      currentChannel: {},
+      mPosts: []
     };
   },
   components: {
@@ -55,12 +57,12 @@ export default {
     }
   },
   methods: {
-    transformTime(time){
+    transformTime(time) {
       //1861-08-13T00:00:08Z - not transformed
       //13.08.61 - transformed
-      let tmp = time.split("-")
-       tmp[2] = tmp[2].slice(0,2)
-      return tmp.reverse().join('.')
+      let tmp = time.split("-");
+      tmp[2] = tmp[2].slice(0, 2);
+      return tmp.reverse().join(".");
     },
     checkPosts() {
       console.log("Hello");
@@ -138,35 +140,20 @@ export default {
           item.classList.add("toCrop");
         }
       });
-
-      // var sm = document.getElementsByClassName("toCrop");
-      // Array.from(sm).forEach(item => {
-      //   if (item.clientHeight >= 100) {
-      //     item.classList.add('constantSize')
-      //   }
-      // });
-      // console.log(sm)
-
-      //  console.log(t)
+    },
+    channelFilter(p) {
+      console.log(this.currentChannel.people.includes(p.authorId));
+      console.log(p.tags.some(x => this.currentChannel.tags.includes(x)));
+      
+      return this.currentChannel.people.includes(p.authorId) ||
+        p.tags.some(x => this.currentChannel.tags.includes(x));
     }
   },
   computed: {
-    myPosts() {
-      let arr = this.forUser
-        ? this.$store.getters.GET_USER_POSTS
-        : this.$store.getters.GET_POSTS;
-      if (this.index == -1) {
-        return arr.sort((first, second) => {
-          return second.postId - first.postId;
-        });
-      }
-
-      return arr
-        .filter(p => p.num == this.index)
-        .sort((first, second) => {
-          return second.postId - first.postId;
-        });
+    getCurrentChannel() {
+      return this.$store.getters.GET_CURRENT_CHANNEL;
     },
+    myPosts() {},
     getIndex: {
       get: function() {
         return this.index;
@@ -189,14 +176,16 @@ export default {
     }
   },
   mounted() {
-    this.index = this.columnNum;
     let that = this;
+    that.readMore();
     if (this.isFetched || that.forUser) {
       that.$nextTick(() => {
         this.checkHashtagCount();
+        this.readMore();
         if (window.outerWidth < 768 || window.innerWidth < 768) {
           if (that.index == 1) that.index = -3;
           if (that.index == 0) that.index = -1;
+          this.checkHashtagCount();
           that.readMore();
         }
       });
@@ -227,6 +216,28 @@ export default {
     userSize: function(params) {
       this.checkHashtagCount();
       this.readMore();
+    },
+    getCurrentChannel: function(newValue, oldValue) {
+      console.log(newValue);
+      this.currentChannel = newValue;
+      let arr = this.forUser
+        ? this.$store.getters.GET_USER_POSTS
+        : this.$store.getters.GET_POSTS;
+      if (this.index == -1 && !this.forUser) {
+        console.log(arr[0]);
+        arr = arr
+          .filter(p => this.channelFilter(p))
+          .sort((first, second) => {
+            return second.postId - first.postId;
+          });
+      }
+      this.mPosts = arr;
+      this.readMore();
+      // return arr
+      //   .filter(p => p.num == this.index)
+      //   .sort((first, second) => {
+      //     return second.postId - first.postId;
+      //   });
     }
   }
 };

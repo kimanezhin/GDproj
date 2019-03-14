@@ -5,6 +5,7 @@ import Axios from 'axios'
 
 Vue.use(Vuex)
 const state = {
+    currentChannel: {},
     channels: [],
     chosenPeople: [],
     chosenTags: [],
@@ -12,22 +13,28 @@ const state = {
 }
 
 const getters = {
-    GET_CHANNELS(state) { return state.channels }
+    GET_CHANNELS(state) { return state.channels },
+    GET_CURRENT_CHANNEL(state) { return state.currentChannel }
 }
 
 const actions = {
+    CHANGE_CHANNEL(context, payload) {
+        context.state.currentChannel = {}
+        Object.assign(context.state.currentChannel,payload)
+    },
     UPDATE_CHANNEL(context, payload) {
-        Axios.post(context.rootState.dataStorage.URL + '/channels/update',payload,{withCredentials: true})
+        Axios.post(context.rootState.dataStorage.URL + '/channels/update', payload, { withCredentials: true })
     },
     CREATE_CHANNEL(context, payload) {
-        Axios.post(context.rootState.dataStorage.URL + '/channels/create',payload,{withCredentials: true})
+        Axios.post(context.rootState.dataStorage.URL + '/channels/create', payload, { withCredentials: true })
     },
     async GET_ALL_CHANNELS(context) {
+        context.state.channels = []
         Axios.post(context.rootState.dataStorage.URL + '/channels', {}, { withCredentials: true }).then((channels) => {
             channels.data.forEach(elem => {
                 context.state.channels.push(elem)
             })
-            
+
             // console.log(context.channels)
 
         },
