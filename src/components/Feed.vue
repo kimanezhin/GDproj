@@ -58,7 +58,7 @@ export default {
     }),
     myArr() {
       return this.$store.getters.GET_POSTS;
-    },
+    }
   },
   methods: {
     logOut() {
@@ -141,8 +141,10 @@ export default {
       window.setTimeout(this.resize, 0);
     }
   },
+  created() {
+    localStorage.setItem("currenChannel", 1);
+  },
   mounted() {
-
     //fixed textarea
     var observe;
     if (window.attachEvent) {
@@ -173,9 +175,7 @@ export default {
   created() {
     this.$store.dispatch("FETCH_DATA");
   },
-  watch: {
-   
-  }
+  watch: {}
 };
 </script>
 

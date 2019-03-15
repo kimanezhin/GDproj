@@ -4,8 +4,8 @@
       <vue-markdown>{{editorText}}</vue-markdown>
     </modal>
     <div v-show="isEditorShown" @click="closeEditor" id="fantomPage"></div>
-    <div class="d-flex flex-row mb-5" style = "width:40vw;">
-      <img src="../../../img/chern.jpg" class="toAppend">
+    <div class="d-flex flex-row mb-5" style="width:40vw;">
+      <img :src="imgSource" class="toAppend">
       <div class="toOverlay" id="ovr">
         <multiselect
           v-model="value"
@@ -86,6 +86,7 @@ export default {
       readyToClose: false,
       isPreviewReady: false,
       editorText: "",
+      imgSource:"",
       value: [],
       options: [
         { name: "#Vue.js", code: "vu" },
@@ -98,13 +99,23 @@ export default {
     };
   },
   methods: {
+    getImgUrl() {
+      
+      Axios.post(
+        this.$store.getters.GET_URL + "/authentication/me",
+        {},
+        { withCredentials: true }
+      ).then(resp => {
+        
+        this.imgSource =  require("../../../img/" + resp.data + ".png");
+      });
+    },
     addTag(newTag) {
       var t = newTag.lastIndexOf("#");
       if (t !== -1) newTag = newTag.slice(t + 1);
       newTag = "#" + newTag;
       var reg = newTag.match(/#{1}[a-zA-Zа-яА-Я0-9]+/g);
       if (reg) {
-
       }
 
       const tag = {
@@ -139,14 +150,15 @@ export default {
         .classList.remove("extendedOverlay");
     },
     sendPost() {
-      
       this.closeEditor();
       // this.$store.dispatch("SET_DRAFT", this.inputText).then(() => {
-        this.$store.dispatch("SEND_POST", [this.inputText, this.value]).then(() => {
+      this.$store
+        .dispatch("SEND_POST", [this.inputText, this.value])
+        .then(() => {
           this.inputText = "";
           // this.value = [];
-        // });
-      });
+          // });
+        });
       setTimeout(function() {
         document
           .getElementsByClassName("toOverlay")[0]
@@ -204,6 +216,7 @@ export default {
         myText.readOnly = false;
       }, 300);
     },
+
     sendToServer(data) {
       //TODO: here should be adress to drafts
       Axios.post("", {});
@@ -219,8 +232,12 @@ export default {
       window.setTimeout(this.resize, 0);
     },
     initialSettings() {
-      let realWidth = document.getElementById("main").scrollWidth;
-      let realHeight = document.getElementById("main").scrollHeight;
+      let realWidth = window.innerWidth;
+      //  document.getElementById("main").clientWidth;
+      // realWidth = 2000
+      let realHeight = window.innerHeight;
+      // document.getElementById("main").clientHeight;
+
       this.$store.dispatch("SET_SCREEN_WIDTH", { width: realWidth });
       this.$store.dispatch("SET_SCREEN_HEIGHT", { height: realHeight });
 
@@ -230,8 +247,9 @@ export default {
       //   transition: "height .25s ease-in-out, width 5.75s ease-in-out",
       //   el: ".toOverlay"
       // });
-      document.getElementById("fantomPage").style.width =
-        this.$store.getters.GET_WIDTH + "px";
+      //   document.getElementById("fantomPage").style.width = realWidth
+      // document.getElementById("fantomPage").style.height = realHeight
+      // this.$store.getters.GET_WIDTH + "px";
 
       //fixed textarea
       var observe;
@@ -262,7 +280,9 @@ export default {
     }
   },
   mounted() {
-    document.getElementById('ovr').classList.add('toOverlay')
+    this.getImgUrl()
+    document.getElementById("ovr").classList.add("toOverlay");
+    this.initialSettings();
   },
   computed: {
     size() {

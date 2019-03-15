@@ -1,44 +1,49 @@
 <template>
   <div>
-    <div class="container p-2" style = "word-wrap: break-word; ">
-    <h2>{{myName}}</h2>
+    <div class="container p-2" style="word-wrap: break-word; ">
+      <h2>{{myName}}</h2>
     </div>
     <div class="container">
       <input type="text" class="form-control" v-model="myName">
     </div>
     <div class="container selectable mt-2">
-      
-    <div class="d-flex">
-      <div @click="toRight" class="cl el">Hashtags</div>
-      <div @click="toLeft" class="cl el">People</div>
-      <div class="slider align-self-end"></div>
-    </div>
-    <input type="text" @input="findEntered($event)" class = "form-control">
-    <ul class="list-group">
-      <li
-        class="list-group-item listHash"
-        v-for="(item, i) in currentList"
-        :tabindex="i"
-        :key="i"
-        @click="selectHash($event)"
+      <div class="d-flex">
+        <div @click="toRight" class="cl el">Hashtags</div>
+        <div @click="toLeft" class="cl el">People</div>
+        <div class="slider align-self-end"></div>
+      </div>
+      <input
+        placeholder="Search"
+        type="text"
+        @input="findEntered($event)"
+        class="form-control mb-2"
       >
-        {{item}}
-        <p-check
-          name="check"
-          class="myCheck p-round p-default p-smooth p-bigger"
-          color="primary"
-          v-model="checked[i]"
-        ></p-check>
-      </li>
-    </ul>
-</div>
+      <ul class="list-group">
+        <li
+          class="list-group-item listHash"
+          v-for="(item, i) in currentList"
+          :tabindex="i"
+          :key="i"
+          @click="selectHash($event)"
+        >
+          {{applyHash(item)}}
+          <p-check
+            name="check"
+            class="myCheck p-round p-default p-smooth p-bigger"
+            color="primary"
+            v-model="checked[i]"
+          ></p-check>
+        </li>
+      </ul>
+    </div>
     <button class="btn btn-danger" @click="deleteChannel" v-if="hashId != -1">Удалить</button>
     <button class="btn btn-secondary" @click="updateChannel">Сохранить</button>
   </div>
 </template>
 
 <script>
-import Axios from 'axios';
+import Axios from "axios";
+import _ from "lodash";
 export default {
   components: {},
   data() {
@@ -131,30 +136,58 @@ export default {
           ]
         }
       ],
-      searchPeople:'',
-      searchTags:'',
-      constPeople:[],
-      constTags:[],
+      searchPeople: "",
+      searchTags: "",
+      peopleId: [],
+      constPeople: [],
+      constTags: [],
       avaliblePeople: [],
       avalibleTags: []
     };
   },
   methods: {
-    findEntered(event){
-
-      // if(this.arePeopleSelected)
-        // this.avaliblePeople = 
+    applyHash(smth) {
+      return this.arePeopleSelected ? smth : "#" + smth;
     },
-    deleteChannel(){
+    findEntered(event) {
+      let currentStr = event.srcElement.value;
+      if (this.arePeopleSelected) {
+        this.avaliblePeople = this.constPeople.filter(x => {
+          return _.startsWith(x, currentStr) || currentStr == "";
+        });
+      } else {
+        this.avalibleTags = this.constTags.filter(x => {
+          return (
+            _.startsWith(x, currentStr) ||
+            _.startsWith("#" + x, currentStr) ||
+            currentStr === ""
+          );
+        });
+      }
+    },
+    deleteChannel() {
       this.$store.dispatch("DELETE_CHANNEL", this.channelId).then(() => {
-        this.$emit('close')
-      })
+        // if(this.channelId == localStorage.getItem('currentChannel'))
+        if (this.hashId == localStorage.getItem("currentChannel")) {
+          let a = this.$store.getters.GET_CHANNELS;
+          if (this.hashId == 0 && a.length > 0) {
+            let tmp = a[1];
+            this.$store.dispatch("CHANGE_CHANNEL", tmp);
+          } else if (a.length > this.hashId + 1) {
+            this.$store.dispatch("CHANGE_CHANNEL", a[this.hashId + 1]);
+            console.log("b");
+          } else if (this.hashId == a.length - 1) {
+            
+            
+          }
+        }
+        this.$emit("close");
+      });
     },
     updateChannel() {
       if (this.channelId != -1) {
-        this.$store
-          .dispatch("UPDATE_CHANNEL", {
-            people: this.avaliblePeople.filter((item, i) => {
+        let newChan = {
+            people: this.peopleId.filter((item, i) => {
               return this.peopleChecks[i] == true;
             }),
             name: this.myName,
@@ -162,29 +195,30 @@ export default {
             tags: this.avalibleTags.filter((item, i) => {
               return this.tagChecks[i] == true;
             })
-          })
+          }
+
+        this.$store
+          .dispatch("UPDATE_CHANNEL",newChan )
           .then(() => {
+            this.$store.dispatch("CHANGE_CHANNEL",newChan)
             this.$emit("close");
           });
       } else {
-        console.log(this.channelId);
-        console.log({
-          people: this.avaliblePeople.filter((item, i) => {
+        let newChan = {
+          people: this.peopleId.filter((item, i) => {
             return this.peopleChecks[i] == true;
           }),
           name: this.myName,
           tags: this.avalibleTags.filter((item, i) => {
             return this.tagChecks[i] == true;
           })
-        });
-        this.$store.dispatch("CREATE_CHANNEL", {
-          people: this.avaliblePeople.filter((item, i) => {
-            return this.peopleChecks[i] == true;
-          }),
-          name: this.myName,
-          tags: this.avalibleTags.filter((item, i) => {
-            return this.tagChecks[i] == true;
-          })
+        };
+        this.$store.dispatch("CREATE_CHANNEL", newChan).then(() => {
+          console.log(localStorage.getItem("currentChannel"));
+          if (localStorage.getItem("currentChannel") == 0) {
+            this.$store.dispatch("CHANGE_CHANNEL", newChan);
+          }
+          this.$emit("close");
         });
       }
     },
@@ -245,55 +279,63 @@ export default {
   },
   mounted() {
     this.$store.dispatch("FETCH_DATA");
-      Axios.post(this.$store.getters.GET_URL+'/users/all',{},{withCredentials:true}).then ((response) =>{
-        response.data.forEach(elem =>{
-          if(!this.avaliblePeople.includes(elem))
-          this.avaliblePeople.push(elem)
-        })
-      })
-    if (this.hashId == -1) this.myName = "#newChannelName";
-    else {
-      this.avaliblePeople.forEach(element => {
-        if (this.myChannels[this.hashId].people.includes(element)) {
-          this.peopleChecks.push(true);
-        } else this.peopleChecks.push(false);
-      });
 
-      this.avalibleTags.forEach(element => {
-        if (this.myChannels[this.hashId].tags.includes(element)) {
-          this.tagChecks.push(true);
-        } else this.tagChecks.push(false);
+    Axios.post(
+      this.$store.getters.GET_URL + "/users/all",
+      {},
+      { withCredentials: true }
+    )
+      .then(response => {
+        response.data.forEach(elem => {
+          if (!this.peopleId.includes(elem.id)) {
+            this.avaliblePeople.push(elem.lastName + " " + elem.firstName);
+            this.constPeople.push(elem.lastName + " " + elem.firstName);
+            this.peopleId.push(elem.id);
+          }
+        });
+      })
+      .then(() => {
+        if (this.hashId == -1) this.myName = "newChannelName";
+        else {
+          this.peopleId.forEach(element => {
+            if (this.myChannels[this.hashId].people.includes(element)) {
+              this.peopleChecks.push(true);
+            } else this.peopleChecks.push(false);
+          });
+
+          this.constTags.forEach(element => {
+            if (this.myChannels[this.hashId].tags.includes(element)) {
+              this.tagChecks.push(true);
+            } else this.tagChecks.push(false);
+          });
+          this.myName = this.myChannels[this.hashId].name;
+          this.channelId = this.myChannels[this.hashId].id;
+        }
       });
-      this.myName = this.myChannels[this.hashId].name;
-      this.channelId = this.myChannels[this.hashId].id;
-    }
   },
   props: ["hashId"],
   watch: {
     myPosts(newVal, oldVal) {
-
-      this.avaliblePeople = []
-      this.avalibleTags = []
-      if(this.myPosts)
-      this.$nextTick(() => {
-        
-        newVal.forEach(elem => {
-          console.log(elem);
-          elem.tags.forEach(tag => {
-            if(!this.avalibleTags.includes("#"+tag))
-            this.avalibleTags.push("#"+tag)
-          })
+      this.avalibleTags = [];
+      this.constTags = [];
+      if (this.myPosts)
+        this.$nextTick(() => {
+          newVal.forEach(elem => {
+            elem.tags.forEach(tag => {
+              if (!this.avalibleTags.includes(tag)) {
+                this.avalibleTags.push(tag);
+                this.constTags.push(tag);
+              }
+            });
+          });
         });
-      });
     }
   }
 };
 </script>
 
 <style scoped>
-
-.selectable{
-
+.selectable {
 }
 .cl {
   height: 40px;

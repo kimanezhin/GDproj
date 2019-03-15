@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import Axios from 'axios'
-// import _ from "lodash";
+import _ from "lodash";
 
 Vue.use(Vuex)
 const state = {
@@ -9,7 +9,8 @@ const state = {
     channels: [],
     chosenPeople: [],
     chosenTags: [],
-    name: ""
+    name: "",
+    lastAdded: ''
 }
 
 const getters = {
@@ -26,13 +27,19 @@ const actions = {
     CHANGE_CHANNEL(context, payload) {
         context.state.currentChannel = {}
         Object.assign(context.state.currentChannel, payload)
-        console.log(context.state.currentChannel)
     },
     UPDATE_CHANNEL(context, payload) {
-        Axios.post(context.rootState.dataStorage.URL + '/channels/update', payload, { withCredentials: true })
+        Axios.post(context.rootState.dataStorage.URL + '/channels/update', payload, { withCredentials: true }).then(() => {
+            context.dispatch('GET_ALL_CHANNELS')
+        })
     },
     CREATE_CHANNEL(context, payload) {
-        Axios.post(context.rootState.dataStorage.URL + '/channels/create', payload, { withCredentials: true })
+        Axios.post(context.rootState.dataStorage.URL + '/channels/create', payload, { withCredentials: true }).then((channelId) => {
+            context.dispatch('GET_ALL_CHANNELS')
+            // if (localStorage.getItem('currentChannel') == 0) {
+                // context.dispatch("CHANGE_CHANNEL", context.state.channels[0])
+            // }
+        })
     },
     async GET_ALL_CHANNELS(context) {
         context.state.channels = []
@@ -40,9 +47,7 @@ const actions = {
             channels.data.forEach(elem => {
                 context.state.channels.push(elem)
             })
-
-            // console.log(context.channels)
-
+            
         },
         )
     }

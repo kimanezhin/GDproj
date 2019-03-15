@@ -20,7 +20,12 @@
       </svg>
     </div>
     <div class="ml-2 smth">
-      <div class="d-flex flex-row hrefOption">
+      <div
+        :name="-2"
+        v-on:click="setDefaultChannel($event)"
+        
+        class="d-flex flex-row hrefOption"
+      >
         <a
           href="#"
           :class="{bold:boldText(-2)}"
@@ -36,6 +41,7 @@
         v-for="(channel,index) in channelList"
         :key="index"
         v-on:mouseleave="makeInvisible(index)"
+        :name="channel.id"
       >
         <a
           href="#"
@@ -45,8 +51,8 @@
           v-on:click="changeChannel(index,$event)"
           :content="channel.name"
         >{{cutName(channel.name)}}</a>
-        <div :name="index" v-on:click="showModal(index)" class="channelOption">
-          <font-awesome-icon icon="cog"/>
+        <div :name="index" :tabindex="channel.id" v-on:click="showModal(index)" class="channelOption">
+          <font-awesome-icon :name = "channel.id" icon="cog"/>
         </div>
       </div>
     </div>
@@ -77,8 +83,13 @@ export default {
   },
   mounted() {
     this.$store.dispatch("GET_ALL_CHANNELS");
+    if(!localStorage.getItem('currentChannel'))
+      localStorage.setItem('currentChannel',-2)
   },
   methods: {
+    moveChannel() {
+      console.log("aaaa");
+    },
     cutName(name) {
       if (name.length > 7) {
         return name.slice(0, 7) + "..";
@@ -112,23 +123,32 @@ export default {
     },
     changeChannel(index, event) {
       let tmp = _.find(this.channelList, { id: parseInt(event.target.name) });
-      console.log(tmp);
+      
       this.$store.dispatch("CHANGE_CHANNEL", tmp);
       this.currentChannel = index;
+      localStorage.setItem("currentChannel", index);
     },
     setDefaultChannel(event) {
-      
+      console.log("asasasas");
       if (parseInt(event.target.name) == -2) {
-        
         this.$store.dispatch("CHANGE_CHANNEL", {});
       }
       this.currentChannel = -2;
+      localStorage.setItem("currentChannel", -2);
     }
   },
   watch: {
     channelList: function(newVal, oldVal) {
       if (newVal[0] && !this.flag) {
-        this.$store.dispatch("CHANGE_CHANNEL", newVal[0]);
+        if (localStorage.getItem("currentChannel") == -2)
+          this.$store.dispatch("CHANGE_CHANNEL", {});
+        else
+          this.$store.dispatch(
+            "CHANGE_CHANNEL",
+            newVal[localStorage.getItem("currentChannel")]
+          );
+        console.log("aaaaa");
+        this.currentChannel = localStorage.getItem("currentChannel");
         this.flag = true;
       }
     }

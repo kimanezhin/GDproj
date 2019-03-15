@@ -3,7 +3,7 @@
     <div name="list" tag="p" v-if="this.index != -3">
       <div class="mb-4 post" v-for="post in mPosts" :key="post.postId">
         <div class="postHeader mb-1">
-          <img src="../../../img/chern.jpg" :name="post.authorId" v-on:click="openUser($event)">
+          <img :src="getImgUrl(post.authorId)" v-bind:alt="post.authorId" :name="post.authorId" v-on:click="openUser($event)">
           <div class="align-self-end ml-3 font-weight-bold">{{post.name}}</div>
 
           <div
@@ -57,13 +57,25 @@ export default {
       type: Number
     }
   },
+  // ../../../
   methods: {
+    getImgUrl(id){
+      // return "../../../img/" +id+'.png'
+       return require('../../../img/'+id+".png")
+    // var images = require.context('../../../img/', false, /\.png$/)
+    // return images( id + ".png")
+    
+
+
+      // return "../../../img/"+id+".png"
+    },
     transformTime(time) {
       //1861-08-13T00:00:08Z - not transformed
       //13.08.61 - transformed
       let tmp = time.split("-");
       tmp[2] = tmp[2].slice(0, 2);
       return tmp.reverse().join(".");
+      
     },
     checkPosts() {
       console.log("Hello");
@@ -215,6 +227,7 @@ export default {
     isFetched: function(params) {
       console.log(params + "Hellllll");
       // this.checkHashtagCount();
+      
     },
     size: function(params) {
       this.checkHashtagCount();
@@ -230,9 +243,8 @@ export default {
       let arr = this.forUser
         ? this.$store.getters.GET_USER_POSTS
         : this.$store.getters.GET_POSTS;
-      console.log(newValue);
       if (_.isEqual(newValue, {})) {
-        console.log("here");
+        
         arr = arr.sort((first, second) => {
           return second.postId - first.postId;
         });
