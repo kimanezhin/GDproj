@@ -4,7 +4,7 @@
       <vue-markdown>{{editorText}}</vue-markdown>
     </modal>
     <div v-show="isEditorShown" @click="closeEditor" id="fantomPage"></div>
-    <div class="d-flex flex-row mb-5">
+    <div class="d-flex flex-row mb-5" style = "width:40vw;">
       <img src="../../../img/chern.jpg" class="toAppend">
       <div class="toOverlay" id="ovr">
         <multiselect

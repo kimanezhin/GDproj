@@ -30,6 +30,7 @@
 <script>
 import vueMarkdown from "vue-markdown";
 import marked from "marked";
+import _ from "lodash";
 export default {
   data() {
     return {
@@ -142,11 +143,10 @@ export default {
       });
     },
     channelFilter(p) {
-      console.log(this.currentChannel.people.includes(p.authorId));
-      console.log(p.tags.some(x => this.currentChannel.tags.includes(x)));
-      
-      return this.currentChannel.people.includes(p.authorId) ||
-        p.tags.some(x => this.currentChannel.tags.includes(x));
+      return (
+        this.currentChannel.people.includes(p.authorId) ||
+        p.tags.some(x => this.currentChannel.tags.includes(x))
+      );
     }
   },
   computed: {
@@ -176,6 +176,13 @@ export default {
     }
   },
   mounted() {
+    if (this.forUser) {
+      let arr = this.$store.getters.GET_USER_POSTS;
+      console.log(arr);
+      this.mPosts = arr;
+      this.readMore();
+    }
+
     let that = this;
     that.readMore();
     if (this.isFetched || that.forUser) {
@@ -218,13 +225,18 @@ export default {
       this.readMore();
     },
     getCurrentChannel: function(newValue, oldValue) {
-      console.log(newValue);
       this.currentChannel = newValue;
+
       let arr = this.forUser
         ? this.$store.getters.GET_USER_POSTS
         : this.$store.getters.GET_POSTS;
-      if (this.index == -1 && !this.forUser) {
-        console.log(arr[0]);
+      console.log(newValue);
+      if (_.isEqual(newValue, {})) {
+        console.log("here");
+        arr = arr.sort((first, second) => {
+          return second.postId - first.postId;
+        });
+      } else if (this.index == -1 && !this.forUser) {
         arr = arr
           .filter(p => this.channelFilter(p))
           .sort((first, second) => {
@@ -233,11 +245,6 @@ export default {
       }
       this.mPosts = arr;
       this.readMore();
-      // return arr
-      //   .filter(p => p.num == this.index)
-      //   .sort((first, second) => {
-      //     return second.postId - first.postId;
-      //   });
     }
   }
 };

@@ -5,7 +5,7 @@
     v-if="isDataFetched || isUserDataFetched"
     :class="flexBehaviour"
   >
-    <div id="imgCol" style = "margin-left:200px;" class="col-md-12 col-sm-12 mt-4">
+    <div id="imgCol" :class="{'margin':!forUser, 'smallMargin':forUser}" class="col-md-12 col-sm-12 mt-4">
       <post-editor/>
       <news-column style = "margin-top:75px;" v-bind:forUser = "parseInt(forUser)" v-bind:columnNum="0"/>
     </div>
@@ -35,6 +35,10 @@ export default {
       type: Array,
       default: function() {
         return [];
+      },
+      isMargin:{
+        type: Boolean,
+        default: true
       }
     },
     flexBehaviour: {
@@ -84,6 +88,15 @@ export default {
 <style scoped>
 #imgCol {
   min-width: 51px;
+ 
+}
+
+.margin{
+  margin-left:200px;
+}
+
+.smallMargin{
+  margin-left: 100px;
 }
 .loadText {
   font-size: 36px;

@@ -18,9 +18,15 @@ const getters = {
 }
 
 const actions = {
+    DELETE_CHANNEL(context, payload) {
+        Axios.post(context.rootState.dataStorage.URL + '/channels/delete', payload, { withCredentials: true }).then(() => {
+            context.dispatch('GET_ALL_CHANNELS')
+        })
+    },
     CHANGE_CHANNEL(context, payload) {
         context.state.currentChannel = {}
-        Object.assign(context.state.currentChannel,payload)
+        Object.assign(context.state.currentChannel, payload)
+        console.log(context.state.currentChannel)
     },
     UPDATE_CHANNEL(context, payload) {
         Axios.post(context.rootState.dataStorage.URL + '/channels/update', payload, { withCredentials: true })

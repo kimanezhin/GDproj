@@ -92,6 +92,7 @@
             </div>
           </div>
           <news
+            
             flexBehaviour
             v-bind:forUser="parseInt(id)"
             class="mr-auto"
@@ -177,6 +178,8 @@ export default {
   }
 };
 </script>
+
+
 
 <style>
 #myNews {

@@ -20,6 +20,16 @@
       </svg>
     </div>
     <div class="ml-2 smth">
+      <div class="d-flex flex-row hrefOption">
+        <a
+          href="#"
+          :class="{bold:boldText(-2)}"
+          class="ml-2"
+          :name="-2"
+          v-on:click="setDefaultChannel($event)"
+        >Feed</a>
+      </div>
+
       <div
         class="d-flex flex-row hrefOption"
         v-on:mouseover="makeVisible(index)"
@@ -66,8 +76,7 @@ export default {
     }
   },
   mounted() {
-    this.$store.dispatch("GET_ALL_CHANNELS")
-    
+    this.$store.dispatch("GET_ALL_CHANNELS");
   },
   methods: {
     cutName(name) {
@@ -102,19 +111,26 @@ export default {
       document.getElementsByName(index)[0].classList.remove("middleOpacity");
     },
     changeChannel(index, event) {
-      let tmp = _.find(this.channelList, {"id":parseInt(event.target.name)})
-      console.log(tmp)
-        this.$store.dispatch("CHANGE_CHANNEL",tmp);
+      let tmp = _.find(this.channelList, { id: parseInt(event.target.name) });
+      console.log(tmp);
+      this.$store.dispatch("CHANGE_CHANNEL", tmp);
       this.currentChannel = index;
+    },
+    setDefaultChannel(event) {
+      
+      if (parseInt(event.target.name) == -2) {
+        
+        this.$store.dispatch("CHANGE_CHANNEL", {});
+      }
+      this.currentChannel = -2;
     }
   },
-  watch:{
-    channelList: function(newVal, oldVal){
-      if(newVal[0]&& !this.flag)
-       {
-         this.$store.dispatch("CHANGE_CHANNEL",newVal[0]); 
-         this.flag = true
-       }
+  watch: {
+    channelList: function(newVal, oldVal) {
+      if (newVal[0] && !this.flag) {
+        this.$store.dispatch("CHANGE_CHANNEL", newVal[0]);
+        this.flag = true;
+      }
     }
   }
 };

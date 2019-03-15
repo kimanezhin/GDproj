@@ -1,14 +1,19 @@
 <template>
   <div>
+    <div class="container p-2" style = "word-wrap: break-word; ">
     <h2>{{myName}}</h2>
+    </div>
     <div class="container">
       <input type="text" class="form-control" v-model="myName">
     </div>
+    <div class="container selectable mt-2">
+      
     <div class="d-flex">
       <div @click="toRight" class="cl el">Hashtags</div>
       <div @click="toLeft" class="cl el">People</div>
       <div class="slider align-self-end"></div>
     </div>
+    <input type="text" @input="findEntered($event)" class = "form-control">
     <ul class="list-group">
       <li
         class="list-group-item listHash"
@@ -26,13 +31,14 @@
         ></p-check>
       </li>
     </ul>
-    
-    <button class="btn btn-danger" v-if="hashId != -1">Удалить</button>
+</div>
+    <button class="btn btn-danger" @click="deleteChannel" v-if="hashId != -1">Удалить</button>
     <button class="btn btn-secondary" @click="updateChannel">Сохранить</button>
   </div>
 </template>
 
 <script>
+import Axios from 'axios';
 export default {
   components: {},
   data() {
@@ -125,17 +131,25 @@ export default {
           ]
         }
       ],
-      avaliblePeople: [5051, 9, 42, 228],
-      avalibleTags: [
-        "ялюблюсвоюработу",
-        "ильяСоси",
-        "пи",
-        "костяСоси",
-        "иадсосет"
-      ]
+      searchPeople:'',
+      searchTags:'',
+      constPeople:[],
+      constTags:[],
+      avaliblePeople: [],
+      avalibleTags: []
     };
   },
   methods: {
+    findEntered(event){
+
+      // if(this.arePeopleSelected)
+        // this.avaliblePeople = 
+    },
+    deleteChannel(){
+      this.$store.dispatch("DELETE_CHANNEL", this.channelId).then(() => {
+        this.$emit('close')
+      })
+    },
     updateChannel() {
       if (this.channelId != -1) {
         this.$store
@@ -213,6 +227,9 @@ export default {
     myChannels() {
       return this.$store.getters.GET_CHANNELS;
     },
+    myPosts() {
+      return this.$store.getters.GET_POSTS;
+    },
     people() {
       return this.myChannels[this.hashId][0].people;
     },
@@ -227,6 +244,13 @@ export default {
     }
   },
   mounted() {
+    this.$store.dispatch("FETCH_DATA");
+      Axios.post(this.$store.getters.GET_URL+'/users/all',{},{withCredentials:true}).then ((response) =>{
+        response.data.forEach(elem =>{
+          if(!this.avaliblePeople.includes(elem))
+          this.avaliblePeople.push(elem)
+        })
+      })
     if (this.hashId == -1) this.myName = "#newChannelName";
     else {
       this.avaliblePeople.forEach(element => {
@@ -244,11 +268,33 @@ export default {
       this.channelId = this.myChannels[this.hashId].id;
     }
   },
-  props: ["hashId"]
+  props: ["hashId"],
+  watch: {
+    myPosts(newVal, oldVal) {
+
+      this.avaliblePeople = []
+      this.avalibleTags = []
+      if(this.myPosts)
+      this.$nextTick(() => {
+        
+        newVal.forEach(elem => {
+          console.log(elem);
+          elem.tags.forEach(tag => {
+            if(!this.avalibleTags.includes("#"+tag))
+            this.avalibleTags.push("#"+tag)
+          })
+        });
+      });
+    }
+  }
 };
 </script>
 
 <style scoped>
+
+.selectable{
+
+}
 .cl {
   height: 40px;
   width: 50%;
