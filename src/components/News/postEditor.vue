@@ -1,7 +1,9 @@
 <template>
   <div>
     <modal name="md">
-      <vue-markdown>{{editorText}}</vue-markdown>
+      <div class="container" style="word-wrap: break-word; ">
+        <vue-markdown>{{editorText}}</vue-markdown>
+      </div>
     </modal>
     <div v-show="isEditorShown" @click="closeEditor" id="fantomPage"></div>
     <div class="d-flex flex-row mb-5" style="width:40vw;">
@@ -75,7 +77,7 @@ export default {
       readyToClose: false,
       isPreviewReady: false,
       editorText: "",
-      imgSource:"",
+      imgSource: "",
       value: [],
       options: [
         { name: "#Vue.js", code: "vu" },
@@ -89,14 +91,12 @@ export default {
   },
   methods: {
     getImgUrl() {
-      
       Axios.post(
         this.$store.getters.GET_URL + "/authentication/me",
         {},
         { withCredentials: true }
       ).then(resp => {
-        
-        this.imgSource =  require("../../../img/" + resp.data + ".png");
+        this.imgSource = require("../../../img/" + resp.data + ".png");
       });
     },
     addTag(newTag) {
@@ -145,7 +145,7 @@ export default {
         .dispatch("SEND_POST", [this.inputText, this.value])
         .then(() => {
           this.inputText = "";
-          // this.value = [];
+          this.value = [];
           // });
         });
       setTimeout(function() {
@@ -269,7 +269,7 @@ export default {
     }
   },
   mounted() {
-    this.getImgUrl()
+    this.getImgUrl();
     document.getElementById("ovr").classList.add("toOverlay");
     this.initialSettings();
   },

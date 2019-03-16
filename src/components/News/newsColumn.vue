@@ -81,7 +81,8 @@ export default {
       this.$router.push("/user/" + parseInt(event.target.name));
     },
     checkHashtagCount() {
-      let parent = document.getElementsByClassName("hashtags");
+      this.$nextTick(() => {
+          let parent = document.getElementsByClassName("hashtags");
 
       var that = this;
       var arr = Array.from(parent);
@@ -119,6 +120,7 @@ export default {
           }
         });
       });
+      })
     },
     showAllHashtags(parent, index, points, innerArray) {
       parent[index].removeChild(points);
