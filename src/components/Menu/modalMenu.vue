@@ -150,16 +150,16 @@ export default {
       return this.arePeopleSelected ? smth : "#" + smth;
     },
     findEntered(event) {
-      let currentStr = event.srcElement.value;
+      let currentStr = event.srcElement.value.toLowerCase();
       if (this.arePeopleSelected) {
         this.avaliblePeople = this.constPeople.filter(x => {
-          return _.startsWith(x, currentStr) || currentStr == "";
+          return _.startsWith(x.toLowerCase(), currentStr) || currentStr == "";
         });
       } else {
         this.avalibleTags = this.constTags.filter(x => {
           return (
-            _.startsWith(x, currentStr) ||
-            _.startsWith("#" + x, currentStr) ||
+            _.startsWith(x.toLowerCase(), currentStr) ||
+            _.startsWith("#" + x.toLowerCase(), currentStr) ||
             currentStr === ""
           );
         });

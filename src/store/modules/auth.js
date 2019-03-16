@@ -38,7 +38,13 @@ const actions = {
         })
     },
     LOG_OUT(context){
-        Axios.post(context.rootState.dataStorage.URL + '/authentication/logout',{},{withCredentials:true})
+        return new Promise((resolve, reject) => {
+            Axios.post(context.rootState.dataStorage.URL + '/authentication/logout',{},{withCredentials:true}).then(() =>{
+                resolve();
+            }).catch(() =>{
+                reject()
+            })
+        })
     }
 }
 

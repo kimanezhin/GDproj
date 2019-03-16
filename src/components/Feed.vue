@@ -63,6 +63,7 @@ export default {
   methods: {
     logOut() {
       this.$store.dispatch("LOG_OUT").then(() => {
+        console.log('adas')
         this.$router.push("/");
       });
     },
@@ -93,9 +94,7 @@ export default {
     sendPost() {},
 
     test() {},
-    onOptionSelect(selected) {
-      
-    },
+    onOptionSelect(selected) {},
     setInitialSize() {
       {
         document.getElementById("myText").style.height = "51px";
@@ -130,10 +129,12 @@ export default {
 
     resize() {
       var text = document.getElementById("myText");
-
-      text.style.height = "auto";
-      text.style.height = text.scrollHeight + 1 + "px";
-      this.currentSize = text.scrollHeight + 1 + "px";
+      if (text) {
+        text.style.height = "auto";
+        text.style.height = text.scrollHeight + 1 + "px";
+          this.currentSize = text.scrollHeight + 1 + "px";
+      }
+    
 
       var flag = true;
     },
@@ -153,7 +154,7 @@ export default {
       };
     } else {
       observe = function(element, event, handler) {
-        element.addEventListener(event, handler, false);
+        if (element) element.addEventListener(event, handler, false);
       };
     }
 
@@ -166,9 +167,10 @@ export default {
     observe(text, "paste", this.delayedResize);
     observe(text, "drop", this.delayedResize);
     observe(text, "keydown", this.delayedResize);
-
-    text.focus();
-    text.select();
+    if (text) {
+      text.focus();
+      text.select();
+    }
     this.resize();
     document.activeElement.blur();
   },
