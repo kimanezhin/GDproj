@@ -1,31 +1,26 @@
 <template>
   <div>
-    <div name="list" tag="p">
-      <div class="mb-4 post" v-for="post in posts" :key="post.postId">
+    <div name="list" tag="p" v-if="this.index != -3">
+      <div class="mb-4 post" v-for="post in mPosts" :key="post.postId">
         <div class="postHeader mb-1">
-          <img src="../../../img/chern.jpg" :name="post.authorId" v-on:click = "openUser($event)">
+          <img :src="getImgUrl(post.authorId)" v-bind:alt="post.authorId" :name="post.authorId" v-on:click="openUser($event)">
           <div class="align-self-end ml-3 font-weight-bold">{{post.name}}</div>
-          <div class="align-self-end mr-3 ml-auto font-weight-bold">01.01.2019</div>
+
+          <div
+            style="margin-right:150px;"
+            class="align-self-end ml-auto font-weight-bold"
+          >{{transformTime(post.timeCreated)}}</div>
         </div>
         <div class="hashtags">
-          <div v-on:mouseover="checkHashtagCount" class="hash">#smth</div>
-          <div class="hash">#smth</div>
-          <div class="hash">#smth</div>
-          <div class="hash">#smth</div>
-          <div class="hash">#smth</div>
-          <div class="hash">#smth</div>
+          <!-- <div v-on:mouseover="checkHashtagCount" class="hash">#smth</div> -->
+          <div v-for="(tag,i) in post.tags" :key="i" class="hash">#{{ tag }}</div>
         </div>
         <div class="text specialClass">
-          <!-- <vue-markdown> -->
-          <!-- {{post.postBody}} -->
           <div
             class="transit"
             :name="post.postId"
             v-html="makeMarkDown(post.postBody, post.postId)"
-          >
-            <!-- {{makeMarkDown(post.postBody, post.postId)}} -->
-          </div>
-          <!-- </vue-markdown> -->
+          ></div>
         </div>
       </div>
     </div>
@@ -35,7 +30,15 @@
 <script>
 import vueMarkdown from "vue-markdown";
 import marked from "marked";
+import _ from "lodash";
 export default {
+  data() {
+    return {
+      index: -1,
+      currentChannel: {},
+      mPosts: []
+    };
+  },
   components: {
     vueMarkdown,
     marked
@@ -46,9 +49,27 @@ export default {
       default: function() {
         return [];
       }
+    },
+    columnNum: {
+      type: Number
+    },
+    forUser: {
+      type: Number
     }
   },
+  // ../../../
   methods: {
+    getImgUrl(id){
+       return require('../../../img/'+id+".png")
+    },
+    transformTime(time) {
+      //1861-08-13T00:00:08Z - not transformed
+      //13.08.61 - transformed
+      let tmp = time.split("-");
+      tmp[2] = tmp[2].slice(0, 2);
+      return tmp.reverse().join(".");
+      
+    },
     checkPosts() {
       console.log("Hello");
     },
@@ -56,8 +77,8 @@ export default {
       //document.getElementsByName(name).innerHTML =
       return marked(preText);
     },
-    openUser(event){
-      this.$router.push('/user/'+parseInt(event.target.name))
+    openUser(event) {
+      this.$router.push("/user/" + parseInt(event.target.name));
     },
     checkHashtagCount() {
       let parent = document.getElementsByClassName("hashtags");
@@ -109,11 +130,14 @@ export default {
       });
     },
     readMore() {
-
-      var t = Array.from(document.getElementsByClassName("transit"));
+      
+     this.$nextTick(() => {
+        var t = Array.from(document.getElementsByClassName("transit"));
       var texts = Array.from(document.getElementsByClassName("specialClass"));
+        // console.log(t)
+        // console.log(texts)
       t.forEach((item, i) => {
-        if (item.clientHeight >= 100) {
+        if (item.clientHeight >= 200) {
           texts[i].classList.add("constantSize");
 
           if (!texts[i].classList.contains("eventReady")) {
@@ -126,48 +150,115 @@ export default {
           item.classList.add("toCrop");
         }
       });
-
-      // var sm = document.getElementsByClassName("toCrop");
-      // Array.from(sm).forEach(item => {
-      //   if (item.clientHeight >= 100) {
-      //     item.classList.add('constantSize')
-      //   }
-      // });
-      // console.log(sm)
-
-      //  console.log(t)
+     })
+    },
+    channelFilter(p) {
+      return (
+        this.currentChannel.people.includes(p.authorId) ||
+        p.tags.some(x => this.currentChannel.tags.includes(x))
+      );
     }
   },
   computed: {
+    getCurrentChannel() {
+      return this.$store.getters.GET_CURRENT_CHANNEL;
+    },
+    myPosts() {},
+    getIndex: {
+      get: function() {
+        return this.index;
+      },
+      set: function(param) {
+        this.index = param;
+      }
+    },
     isFetched() {
-      return this.$store.state.dataStorage.isDataFetched;
+      return (
+        this.$store.state.dataStorage.isDataFetched ||
+        this.$store.state.dataStorage.isUserDataFetched
+      );
     },
     size() {
       return this.$store.state.dataStorage.posts.length;
     },
-    userSize(){
+    userSize() {
       return this.$store.state.dataStorage.userPosts.length;
     }
   },
   mounted() {
-    if (this.isFetched) {
-      var that = this;
+    if (this.forUser) {
+      let arr = this.$store.getters.GET_USER_POSTS;
+      console.log(arr);
+      this.mPosts = arr;
+      this.readMore();
+    }
+
+    let that = this;
+    that.readMore();
+    if (this.isFetched || that.forUser) {
       that.$nextTick(() => {
         this.checkHashtagCount();
+        this.readMore();
+        if (window.outerWidth < 768 || window.innerWidth < 768) {
+          if (that.index == 1) that.index = -3;
+          if (that.index == 0) that.index = -1;
+          this.checkHashtagCount();
+          that.readMore();
+        }
       });
     } else console.log("(((");
+
+    window.addEventListener("resize", function() {
+      if (window.outerWidth < 768 || window.innerWidth < 768) {
+        // that.firstArray = that.$options.propsData.posts;
+        // console.log(that.getPosts(-1)
+        if (that.index == 1) that.index = -3;
+        if (that.index == 0) that.index = -1;
+      } else {
+        if (that.index == -3) that.index = 1;
+        if (that.index == -1) that.index = 0;
+      }
+      that.readMore();
+    });
   },
   watch: {
     isFetched: function(params) {
       console.log(params + "Hellllll");
       // this.checkHashtagCount();
+      
     },
     size: function(params) {
       this.checkHashtagCount();
       this.readMore();
     },
-    userSize: function (params) {
-       this.checkHashtagCount();
+    userSize: function(params) {
+      this.checkHashtagCount();
+      this.readMore();
+    },
+    mPosts : function(newV, oldV){
+      var that = this;
+      that.readMore();
+      console.log('i was here')
+    },
+    getCurrentChannel: function(newValue, oldValue) {
+      this.currentChannel = newValue;
+
+      let arr = this.forUser
+        ? this.$store.getters.GET_USER_POSTS
+        : this.$store.getters.GET_POSTS;
+      if (_.isEqual(newValue, {})) {
+        
+        arr = arr.sort((first, second) => {
+          return second.postId - first.postId;
+        });
+      } else if (this.index == -1 && !this.forUser) {
+        arr = arr
+          .filter(p => this.channelFilter(p))
+          .sort((first, second) => {
+            return second.postId - first.postId;
+          });
+      }
+      this.mPosts = arr;
       this.readMore();
     }
   }
@@ -175,7 +266,7 @@ export default {
 </script>
 
 <style scoped>
-img:hover{
+img:hover {
   cursor: pointer;
 }
 .hashtags {
@@ -183,7 +274,7 @@ img:hover{
   flex-direction: row;
 }
 .constantSize {
-  height: 100px;
+  height: 200px;
   display: inline-block;
   border: 0px solid #aaa;
   position: relative;
@@ -194,25 +285,59 @@ img:hover{
   content: "Read more..";
   font-size: 16px !important;
   font-weight: 600;
-  height: 70%;
+  height: 100%;
   position: absolute;
   z-index: 100;
   bottom: 0px;
   width: 100%;
-  background: transparent linear-gradient(rgba(255, 255, 255, 0), #fcfcfce0)
-    repeat scroll 0% 0%;
-  line-height: 10;
+  /* background: transparent linear-gradient(rgba(255, 255, 255, 0), #fcfcfc) */
+  /* repeat scroll 0% 0%; */
+  line-height: 28;
   text-align: right;
-  /* text-align: center; */
+
   font-size: 12px;
   font-family: monospace;
+
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#00ffffff',GradientType=0 );
+  background: -webkit-gradient(
+    linear,
+    left bottom,
+    left top,
+    color-stop(0%, rgba(255, 255, 255, 1)),
+    color-stop(100%, rgba(255, 255, 255, 0))
+  );
+  background: -webkit-linear-gradient(
+    bottom,
+    rgba(255, 255, 255, 1) 0%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background: -moz-linear-gradient(
+    bottom,
+    rgba(255, 255, 255, 1) 0%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background: -ms-linear-gradient(
+    bottom,
+    rgba(255, 255, 255, 1) 0%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background: -o-linear-gradient(
+    bottom,
+    rgba(255, 255, 255, 1) 0%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background: linear-gradient(
+    bottom,
+    rgba(255, 255, 255, 1) 0%,
+    rgba(255, 255, 255, 0) 100%
+  );
 }
 .constantSize:hover::after {
   text-decoration: underline;
 }
 
 .toCrop {
-  clip: rect(0px, auto, 100px, 0px);
+  clip: rect(0px, auto, 200px, 0px);
   position: absolute;
 }
 
@@ -240,6 +365,8 @@ img:hover{
 }
 .text {
   width: 35vw;
+
+  border-top: none;
 }
 div {
   max-width: 100%;

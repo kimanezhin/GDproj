@@ -12,9 +12,8 @@ import projectsComponent from "./projectsComponent";
 export default {
   data() {
     return {
-      // channels:['#general', '#notGeneral','#soci','#cs'],
-      projects: ["#grudina", "#minorProject", "#soci", "#algosi"],
-      messages: ["Anna Androidovna", "Darya Aiphonovna", "Maria Konstantinovna"]
+      projects: ["BSEPRoj", "minorProject", "ADSproj"],
+      messages: ["Manezhin Konstantin", "Kostyuchenko Ilya", "Rednikina Darya", "Mikhaleva Anna"]
     };
   },
 

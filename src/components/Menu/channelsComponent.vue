@@ -11,8 +11,8 @@
         xmlns:xlink="http://www.w3.org/1999/xlink"
         enable-background="new 0 0 24 24"
         width="17"
-        v-on:click = "createNewChannel"
-        class = "mb-2"
+        v-on:click="createNewChannel"
+        class="mb-2"
       >
         <path
           d="m23,10h-8.5c-0.3,0-0.5-0.2-0.5-0.5v-8.5c0-0.6-0.4-1-1-1h-2c-0.6,0-1,0.4-1,1v8.5c0,0.3-0.2,0.5-0.5,0.5h-8.5c-0.6,0-1,0.4-1,1v2c0,0.6 0.4,1 1,1h8.5c0.3,0 0.5,0.2 0.5,0.5v8.5c0,0.6 0.4,1 1,1h2c0.6,0 1-0.4 1-1v-8.5c0-0.3 0.2-0.5 0.5-0.5h8.5c0.6,0 1-0.4 1-1v-2c0-0.6-0.4-1-1-1z"
@@ -21,51 +21,97 @@
     </div>
     <div class="ml-2 smth">
       <div
+        :name="-2"
+        v-on:click="setDefaultChannel($event)"
+        
+        class="d-flex flex-row hrefOption"
+      >
+        <a
+          href="#"
+          :class="{bold:boldText(-2)}"
+          class="ml-2"
+          :name="-2"
+          v-on:click="setDefaultChannel($event)"
+        >Feed</a>
+      </div>
+
+      <div
         class="d-flex flex-row hrefOption"
         v-on:mouseover="makeVisible(index)"
-        v-for="(channel,index) in channels"
-        :key="channel.num"
+        v-for="(channel,index) in channelList"
+        :key="index"
         v-on:mouseleave="makeInvisible(index)"
+        :name="channel.id"
       >
         <a
           href="#"
           :class="{bold:boldText(index)}"
-          v-on:click="changeChannel(index)"
-          :content="channel "
-        >{{channel}}</a>
-        <div :name="index" v-on:click="showModal(index)" class="channelOption">
-          <font-awesome-icon icon="cog"/>
+          class="ml-2"
+          :name="channel.id"
+          v-on:click="changeChannel(index,$event)"
+          :content="channel.name"
+        >{{cutName(channel.name)}}</a>
+        <div :name="index" :tabindex="channel.id" v-on:click="showModal(index)" class="channelOption">
+          <font-awesome-icon :name = "channel.id" icon="cog"/>
         </div>
       </div>
     </div>
   </div>
 </template>
+
+
 <script>
 import modalMenu from "./modalMenu";
 import newChannelModal from "./newChannelModal";
+import _ from "lodash";
 export default {
   components: {
     modalMenu,
     newChannelModal
   },
-  props: {
-    channels: Array
-  },
   data() {
     return {
-      currentChannel: 0
+      currentChannel: 0,
+      channels: [],
+      flag: false
     };
   },
-
+  computed: {
+    channelList() {
+      return this.$store.getters.GET_CHANNELS;
+    }
+  },
+  mounted() {
+    this.$store.dispatch("GET_ALL_CHANNELS");
+    if(!localStorage.getItem('currentChannel'))
+      localStorage.setItem('currentChannel',-2)
+  },
   methods: {
+    moveChannel() {
+      console.log("aaaa");
+    },
+    cutName(name) {
+      if (name.length > 7) {
+        return name.slice(0, 7) + "..";
+      }
+      return name;
+    },
     boldText(index) {
       return index == this.currentChannel;
     },
     createNewChannel() {
-      this.$modal.show(newChannelModal, { height: "480px" });
+      // this.$modal.show(newChannelModal, { height: "480px" });
+      this.showModal(-1);
     },
     showModal(id) {
-      this.$modal.show(modalMenu, { hashId: id });
+      this.$modal.show(
+        modalMenu,
+        { hashId: id },
+        {
+          adaptive: true,
+          height: "auto"
+        }
+      );
     },
     makeVisible(index) {
       // document.getElementsByClassName('channelOption')[0].classList.add('middleOpacity');
@@ -75,8 +121,36 @@ export default {
       // document.getElementsByClassName('channelOption')[0].classList.add('middleOpacity');
       document.getElementsByName(index)[0].classList.remove("middleOpacity");
     },
-    changeChannel(index) {
+    changeChannel(index, event) {
+      let tmp = _.find(this.channelList, { id: parseInt(event.target.name) });
+      
+      this.$store.dispatch("CHANGE_CHANNEL", tmp);
       this.currentChannel = index;
+      localStorage.setItem("currentChannel", index);
+    },
+    setDefaultChannel(event) {
+      console.log("asasasas");
+      if (parseInt(event.target.name) == -2) {
+        this.$store.dispatch("CHANGE_CHANNEL", {});
+      }
+      this.currentChannel = -2;
+      localStorage.setItem("currentChannel", -2);
+    }
+  },
+  watch: {
+    channelList: function(newVal, oldVal) {
+      if (newVal[0] && !this.flag) {
+        if (localStorage.getItem("currentChannel") == -2)
+          this.$store.dispatch("CHANGE_CHANNEL", {});
+        else
+          this.$store.dispatch(
+            "CHANGE_CHANNEL",
+            newVal[localStorage.getItem("currentChannel")]
+          );
+        console.log("aaaaa");
+        this.currentChannel = localStorage.getItem("currentChannel");
+        this.flag = true;
+      }
     }
   }
 };

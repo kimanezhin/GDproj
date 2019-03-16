@@ -3,7 +3,7 @@
     <div class="ml-4 title">messages</div>
     <div class="ml-2 smth">
       <a href="#" 
-       v-for="(message, index) in messages" :key="index">{{message}}</a>//TODO:
+       v-for="(message, index) in messages" :key="index">{{message}}</a>
     </div>
   </div>
 </template>

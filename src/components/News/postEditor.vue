@@ -4,9 +4,22 @@
       <vue-markdown>{{editorText}}</vue-markdown>
     </modal>
     <div v-show="isEditorShown" @click="closeEditor" id="fantomPage"></div>
-    <div class="d-flex flex-row mb-5">
-      <img src="../../../img/chern.jpg" class="toAppend">
+    <div class="d-flex flex-row mb-5" style="width:40vw;">
+      <img :src="imgSource" class="toAppend">
       <div class="toOverlay" id="ovr">
+        <multiselect
+          v-model="value"
+          tag-placeholder="Add this as new tag"
+          placeholder="Search or add a tag"
+          label="name"
+          track-by="code"
+          :options="options"
+          :multiple="true"
+          :taggable="true"
+          :max-height="600"
+          :disabled="!isEditorShown"
+          @tag="addTag"
+        ></multiselect>
         <textarea
           id="myText"
           @click="setCurrentSize"
@@ -35,17 +48,6 @@
 		c33.4-2.1,61,25.4,58.8,58.8C297.925,275.625,275.525,297.925,248.025,299.625z"
             ></path>
           </svg>
-          <div class="addSmth">
-            <div>
-              <font-awesome-icon icon="user"/>
-            </div>
-            <div>
-              <font-awesome-icon icon="user"/>
-            </div>
-            <div>
-              <font-awesome-icon icon="user"/>
-            </div>
-          </div>
           <input type="submit" @click="sendPost" id="submitButton" class="btn btn-secondary">
         </div>
       </div>
@@ -54,13 +56,15 @@
 </template>
 
 <script>
+import multiselect from "vue-multiselect";
 import smoothReflow from "vue-smooth-reflow";
 import vueMarkdown from "vue-markdown";
 import Axios from "axios";
 export default {
   mixins: [smoothReflow],
   components: {
-    vueMarkdown
+    vueMarkdown,
+    multiselect
   },
   data() {
     return {
@@ -70,20 +74,64 @@ export default {
       inputText: "",
       readyToClose: false,
       isPreviewReady: false,
-      editorText: ""
+      editorText: "",
+      imgSource:"",
+      value: [],
+      options: [
+        { name: "#Vue.js", code: "vu" },
+        { name: "#Javascript", code: "js" },
+        { name: "#OpenSource", code: "os" },
+        { name: "#Open", code: "oss" },
+        { name: "#Op", code: "ods" },
+        { name: "#O", code: "fos" }
+      ]
     };
   },
   methods: {
+    getImgUrl() {
+      
+      Axios.post(
+        this.$store.getters.GET_URL + "/authentication/me",
+        {},
+        { withCredentials: true }
+      ).then(resp => {
+        
+        this.imgSource =  require("../../../img/" + resp.data + ".png");
+      });
+    },
+    addTag(newTag) {
+      var t = newTag.lastIndexOf("#");
+      if (t !== -1) newTag = newTag.slice(t + 1);
+      newTag = "#" + newTag;
+      var reg = newTag.match(/#{1}[a-zA-Zа-яА-Я0-9]+/g);
+      if (reg) {
+      }
+
+      const tag = {
+        name: newTag,
+        code: newTag.substring(0, 2) + Math.floor(Math.random() * 10000000)
+      };
+      this.options.push(tag);
+      this.value.push(tag);
+    },
     showMyModal() {
       this.editorText = document.getElementById("myText").value;
       this.$modal.show("md");
     },
     closeEditor() {
       // this.readyToClose = false;
+      console.log("1");
+      let myText = document.getElementById("myText");
+      // myText.setAttribute('readonly')
+      if (this.isEditorShown && myText.readOnly == false) {
+        console.log("here and");
+        myText.readOnly = true;
+      }
+
       this.readyToClose = true;
 
-      document.getElementById("myText").style.height = "51px";
-      document.getElementById("myText").style.width = "65%";
+      myText.style.height = "51px";
+      myText.style.width = "65%";
       this.isEditorShown = false;
 
       document
@@ -92,11 +140,14 @@ export default {
     },
     sendPost() {
       this.closeEditor();
-      this.$store.dispatch("SET_DRAFT", this.inputText).then(() => {
-        this.$store.dispatch("SEND_POST", this.inputText).then(() => {
+      // this.$store.dispatch("SET_DRAFT", this.inputText).then(() => {
+      this.$store
+        .dispatch("SEND_POST", [this.inputText, this.value])
+        .then(() => {
           this.inputText = "";
+          // this.value = [];
+          // });
         });
-      });
       setTimeout(function() {
         document
           .getElementsByClassName("toOverlay")[0]
@@ -123,8 +174,8 @@ export default {
 
     setInitialSize() {
       {
-        document.getElementById("myText").style.height = "21px";
-        document.getElementById("myText").style.width = "65%";
+        myText.style.height = "21px";
+        myText.style.width = "65%";
 
         document
           .getElementsByClassName("toOverlay")[0]
@@ -134,11 +185,12 @@ export default {
       }
     },
     setCurrentSize() {
+      let myText = document.getElementById("myText");
+      console.log("2");
       this.isEditorShown = true;
-
-      document.getElementById("myText").style.height = "auto";
-      document.getElementById("myText").style.width = "55vw";
-      document.getElementById("myText").style.height = this.currentSize;
+      myText.style.height = "auto";
+      myText.style.width = "55vw";
+      myText.style.height = this.currentSize;
 
       document.getElementById("fantomPage").style.width =
         this.$store.getters.GET_WIDTH + "px";
@@ -148,7 +200,12 @@ export default {
       document
         .getElementsByClassName("toOverlay")[0]
         .classList.add("extendedOverlay");
+      if (myText.readOnly == true) console.log("here");
+      setTimeout(() => {
+        myText.readOnly = false;
+      }, 300);
     },
+
     sendToServer(data) {
       //TODO: here should be adress to drafts
       Axios.post("", {});
@@ -162,53 +219,84 @@ export default {
     },
     delayedResize() {
       window.setTimeout(this.resize, 0);
+    },
+    initialSettings() {
+      let realWidth = window.innerWidth;
+      //  document.getElementById("main").clientWidth;
+      // realWidth = 2000
+      let realHeight = window.innerHeight;
+      // document.getElementById("main").clientHeight;
+
+      this.$store.dispatch("SET_SCREEN_WIDTH", { width: realWidth });
+      this.$store.dispatch("SET_SCREEN_HEIGHT", { height: realHeight });
+
+      if (localStorage.inputText) this.inputText = localStorage.inputText;
+      // this.$smoothReflow({
+      //   property: ["height", "width"],
+      //   transition: "height .25s ease-in-out, width 5.75s ease-in-out",
+      //   el: ".toOverlay"
+      // });
+      //   document.getElementById("fantomPage").style.width = realWidth
+      // document.getElementById("fantomPage").style.height = realHeight
+      // this.$store.getters.GET_WIDTH + "px";
+
+      //fixed textarea
+      var observe;
+      if (window.attachEvent) {
+        observe = function(element, event, handler) {
+          element.attachEvent("on" + event, handler);
+        };
+      } else {
+        observe = function(element, event, handler) {
+          element.addEventListener(event, handler, false);
+        };
+      }
+
+      var text = document.getElementById("myText");
+
+      /* 0-timeout to get the already changed text */
+
+      observe(text, "change", this.resize);
+      observe(text, "cut", this.delayedResize);
+      observe(text, "paste", this.delayedResize);
+      observe(text, "drop", this.delayedResize);
+      observe(text, "keydown", this.delayedResize);
+
+      text.focus();
+      text.select();
+      this.resize();
+      document.activeElement.blur();
     }
   },
   mounted() {
-    if (localStorage.inputText) this.inputText = localStorage.inputText;
-    this.$smoothReflow({
-      property: ["height", "width"],
-      transition: "height .25s ease-in-out, width 5.75s ease-in-out",
-      el: ".toOverlay"
-    });
-    console.log(this.$store.getters.GET_WIDTH);
-    document.getElementById("fantomPage").style.width =
-      this.$store.getters.GET_WIDTH + "px";
-
-    //fixed textarea
-    var observe;
-    if (window.attachEvent) {
-      observe = function(element, event, handler) {
-        element.attachEvent("on" + event, handler);
-      };
-    } else {
-      observe = function(element, event, handler) {
-        element.addEventListener(event, handler, false);
-      };
-    }
-
-    var text = document.getElementById("myText");
-
-    /* 0-timeout to get the already changed text */
-
-    observe(text, "change", this.resize);
-    observe(text, "cut", this.delayedResize);
-    observe(text, "paste", this.delayedResize);
-    observe(text, "drop", this.delayedResize);
-    observe(text, "keydown", this.delayedResize);
-
-    text.focus();
-    text.select();
-    this.resize();
-    document.activeElement.blur();
+    this.getImgUrl()
+    document.getElementById("ovr").classList.add("toOverlay");
+    this.initialSettings();
   },
-  watch:{
-    inputText(newText){
-      localStorage.inputText = newText
+  computed: {
+    size() {
+      return this.$store.state.dataStorage.posts.length;
+    },
+    userSize() {
+      return this.$store.state.dataStorage.userPosts.length;
+    }
+  },
+  watch: {
+    inputText(newText) {
+      localStorage.inputText = newText;
+    },
+    size(newText) {
+      this.initialSettings();
+    },
+    userSize(newText) {
+      this.initialSettings();
     }
   }
 };
 </script>
+
+<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
+
 <style scoped>
 svg:hover {
   fill: #428bff;
@@ -292,7 +380,7 @@ textarea {
   resize: none;
 
   /* width: 65%; */
-
+  z-index: 502;
   left: 60px;
   overflow-y: hidden;
 }
@@ -302,7 +390,7 @@ textarea {
   position: fixed;
   height: 100vh;
   background-color: transparent;
-  z-index: 9;
+  z-index: 400;
   top: 0;
   left: 0;
 }
@@ -313,9 +401,9 @@ textarea {
 .toOverlay {
   /* display: inline-block; */
   background-color: white;
-  width: 75%;
+  width: 50%;
   position: absolute;
-  z-index: 30;
+  z-index: 502;
   left: 70px;
   border: 2px solid black;
   transition-property: width height;
@@ -323,7 +411,7 @@ textarea {
   transition-duration: 0.75s;
 }
 .extendedOverlay {
-  z-index: 20;
+  z-index: 500;
   outline: none !important;
   box-shadow: 0px 1px 8px 0px black;
   width: 60vw;
@@ -372,7 +460,7 @@ img {
     /* width: 27vw !important; */
   }
   .toOverlay {
-    width: 75%;
+    /* width: 75%; */
   }
 }
 

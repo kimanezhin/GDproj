@@ -13,15 +13,16 @@ import ReadMore from 'vue-read-more'
 import VModal from 'vue-js-modal'
 import vSelectMenu from 'v-selectmenu'
 Vue.use(VModal, { dynamic: true, injectModalsContainer: true })
-Vue.use(vSelectMenu,{language:'en'});
+Vue.use(vSelectMenu, { language: 'en' });
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faPlus, faUserSecret, faEnvelope, faUser, faNewspaper, faProjectDiagram, faTasks, faCog, faPaperPlane, faImage } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+library.add(faPlus, faUserSecret, faEnvelope, faUser, faNewspaper, faProjectDiagram, faTasks, faCog, faPaperPlane, faImage)
+import PrettyCheckbox from 'pretty-checkbox-vue';
 
-library.add(faPlus, faUserSecret, faEnvelope, faUser,faNewspaper,faProjectDiagram,faTasks,faCog,faPaperPlane, faImage )
- 
+Vue.use(PrettyCheckbox);
 Vue.component('font-awesome-icon', FontAwesomeIcon)
- 
+
 Vue.use(ReadMore)
 Vue.use(VueNativeSock, 'ws://websuck1t.herokuapp.com/', {
   connectionManually: true

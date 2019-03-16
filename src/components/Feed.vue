@@ -1,14 +1,14 @@
 <template>
   <div id="main">
     <Navbar id="nv"></Navbar>
-    <channel-drop-down id = "drop" @select-item="onOptionSelect">
+    <channel-drop-down id="drop" @select-item="onOptionSelect">
       <!-- <template slot="item" slot-scope="option">
         <span>
           <img :src="option.thumbnail">
         </span>
-      </template> -->
+      </template>-->
     </channel-drop-down>
-    <div class="d-flex exit">Exit</div>
+    <div class="exit" @click="logOut">Log out</div>
     <div class="row">
       <div class="col-md-2 mt-5" id="menu">
         <feedMenu></feedMenu>
@@ -46,16 +46,26 @@ export default {
       isEditorShown: false,
       currentSize: "51px",
       inputText: "",
-      readyToClose: false
+      readyToClose: false,
+      myText: "he",
+      arr: []
     };
   },
   computed: {
     ...mapGetters({
-      arr: "GET_POSTS",
+      // arr: "GET_POSTS",
       token: "GET_TOKEN"
-    })
+    }),
+    myArr() {
+      return this.$store.getters.GET_POSTS;
+    }
   },
   methods: {
+    logOut() {
+      this.$store.dispatch("LOG_OUT").then(() => {
+        this.$router.push("/");
+      });
+    },
     getName(id, num) {
       let name = "";
       axios
@@ -82,11 +92,9 @@ export default {
     },
     sendPost() {},
 
-    test() {
-      
-    },
-    onOptionSelect(selected){
-      console.log(selected)
+    test() {},
+    onOptionSelect(selected) {
+      console.log(selected);
     },
     setInitialSize() {
       {
@@ -133,23 +141,10 @@ export default {
       window.setTimeout(this.resize, 0);
     }
   },
+  created() {
+    localStorage.setItem("currenChannel", 1);
+  },
   mounted() {
-    
-    this.$smoothReflow({
-      property: ["height", "width"],
-      transition: "height .25s ease-in-out, width 5.75s ease-in-out",
-      el: ".toOverlay"
-    });
-    let realWidth = document.getElementById("main").scrollWidth;
-    let realHeight = document.getElementById("main").scrollHeight;
-    this.$store.dispatch("SET_SCREEN_WIDTH", { width: realWidth });
-    this.$store.dispatch("SET_SCREEN_HEIGHT", { height: realHeight });
-
-    let socketURL =
-      "ws://websuck1t.herokuapp.com/posts/subscribe/" + this.token;
-    try {
-      //  vm.$connect(socketURL, { store: store });
-    } catch (err) {}
     //fixed textarea
     var observe;
     if (window.attachEvent) {
@@ -185,25 +180,32 @@ export default {
 </script>
 
 <style scoped>
-
-#drop{
+#drop {
   display: none;
 }
 
 .exit {
-  position: sticky;
   font-weight: 600;
-  margin-left: 98%;
+  /* margin-left: 98%; */
+  /* float: right; */
   font-size: 30px;
-  margin-top: 45px;
+  top: 65px;
   position: absolute;
+  right: -0.8em;
+  /* margin: 0; */
+  margin-left: 99%;
   -webkit-transform: rotate(-90deg); /* разворот текста для разных браузеров */
   -moz-transform: rotate(-90deg);
   -ms-transform: rotate(-90deg);
   -o-transform: rotate(-90deg);
   transform: rotate(-90deg);
-  width: 1px;
-  /* height: 50px; */
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.exit:hover {
+  cursor: pointer;
 }
 
 #submitButton {
@@ -301,7 +303,7 @@ img {
   #menu {
     display: none;
   }
-  #drop{
+  #drop {
     display: initial;
   }
   div {

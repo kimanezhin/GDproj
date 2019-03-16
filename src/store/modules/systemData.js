@@ -28,7 +28,7 @@ const actions = {
 const mutations = {
     SET_SCREEN_WIDTH(state, payload){
         state.currentScreenWidth = payload;
-        console.log(state.currentScreenWidth)
+        
     },
     SET_SCREEN_HEIGHT(state, payload){
         state.currentScreenHeight = payload;

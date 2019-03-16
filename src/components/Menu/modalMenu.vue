@@ -1,71 +1,112 @@
 <template>
   <div>
-    <div class="container nameContainer">
-      <h1>{{myName}}</h1>
+    <div class="container p-2" style="word-wrap: break-word; ">
+      <h2>{{myName}}</h2>
     </div>
     <div class="container">
-      <input
-        type="text"
-        class="form-control p-3 mb-2 mt-2"
-        v-model="myName"
-        v-on:keyup="changeName($event)"
-      >
+      <input type="text" class="form-control" v-model="myName">
     </div>
-    <div class="container d-flex justify-content-center">
-      <div class="mt-1">
-        <v-selectmenu
-          :data="menu"
-         
-          title="Helo"
-          :multiple="true"
-          key-field="id"
-          show-field="name"
-          v-model="value"
-        ></v-selectmenu>
+    <div class="container selectable mt-2">
+      <div class="d-flex">
+        <div @click="toRight" class="cl el">Hashtags</div>
+        <div @click="toLeft" class="cl el">People</div>
+        <div class="slider align-self-end"></div>
       </div>
+      <input
+        placeholder="Search"
+        type="text"
+        @input="findEntered($event)"
+        class="form-control mb-2"
+      >
+      <ul class="list-group">
+        <li
+          class="list-group-item listHash"
+          v-for="(item, i) in currentList"
+          :tabindex="i"
+          :key="i"
+          @click="selectHash($event)"
+        >
+          {{applyHash(item)}}
+          <p-check
+            name="check"
+            class="myCheck p-round p-default p-smooth p-bigger"
+            color="primary"
+            v-model="checked[i]"
+          ></p-check>
+        </li>
+      </ul>
     </div>
-    <!-- <div class="container d-flex align-items-end" style="margin-top:210px;">
-      <button class="btn btn-outline-secondary" id="save">Сохранить</button>
-      <button class="btn btn-outline-danger ml-5" id="delete">Удалить</button>
-    </div> -->
-    <div class = "container-fluid d-flex mt-5 mr-5 justify-content-end">
-      <button class = "btn btn-outline-primary">Сохранить</button>
-      <button class = "btn btn-outline-danger ml-2">Удалить канал</button>
-    </div>
+    <button class="btn btn-danger" @click="deleteChannel" v-if="hashId != -1">Удалить</button>
+    <button class="btn btn-secondary" @click="updateChannel">Сохранить</button>
   </div>
 </template>
 
 <script>
+import Axios from "axios";
+import _ from "lodash";
 export default {
   components: {},
   data() {
     return {
       myName: "Hello",
+      channelId: -1,
+      tagChecks: [],
+      peopleChecks: [],
       value: "Choose tags",
-
+      arePeopleSelected: true,
       menu: [
         {
           title: "Tags",
           list: [
             {
               id: 1,
-              name: "#someHash"
+              name: "#someHash",
+              check: false
             },
             {
               id: 2,
-              name: "#someHash"
+              name: "#someHash",
+              check: false
             },
             {
               id: 3,
-              name: "#someHash"
+              name: "#someHash",
+              check: false
             },
             {
               id: 4,
-              name: "#someHash"
+              name: "#someHash",
+              check: false
             },
             {
               id: 5,
-              name: "#someHash"
+              name: "#someHash",
+              check: false
+            },
+            {
+              id: 6,
+              name: "#someHash",
+              check: false
+            },
+            {
+              id: 7,
+              name: "#someHash",
+              check: false
+            },
+            {
+              id: 8,
+              name: "#someHash",
+              check: false
+            },
+            {
+              id: 9,
+              name: "#someHash",
+              check: false
+            },
+            {
+              id: 10,
+              name: "#someHash",
+              check: false
             }
           ]
         },
@@ -94,11 +135,114 @@ export default {
             }
           ]
         }
-      ]
+      ],
+      searchPeople: "",
+      searchTags: "",
+      peopleId: [],
+      constPeople: [],
+      constTags: [],
+      avaliblePeople: [],
+      avalibleTags: []
     };
   },
   methods: {
-    changeName(event) {},
+    applyHash(smth) {
+      return this.arePeopleSelected ? smth : "#" + smth;
+    },
+    findEntered(event) {
+      let currentStr = event.srcElement.value;
+      if (this.arePeopleSelected) {
+        this.avaliblePeople = this.constPeople.filter(x => {
+          return _.startsWith(x, currentStr) || currentStr == "";
+        });
+      } else {
+        this.avalibleTags = this.constTags.filter(x => {
+          return (
+            _.startsWith(x, currentStr) ||
+            _.startsWith("#" + x, currentStr) ||
+            currentStr === ""
+          );
+        });
+      }
+    },
+    deleteChannel() {
+      this.$store.dispatch("DELETE_CHANNEL", this.channelId).then(() => {
+        // if(this.channelId == localStorage.getItem('currentChannel'))
+        if (this.hashId == localStorage.getItem("currentChannel")) {
+          let a = this.$store.getters.GET_CHANNELS;
+          if (this.hashId == 0 && a.length > 0) {
+            let tmp = a[1];
+            this.$store.dispatch("CHANGE_CHANNEL", tmp);
+          } else if (a.length > this.hashId + 1) {
+            this.$store.dispatch("CHANGE_CHANNEL", a[this.hashId + 1]);
+            console.log("b");
+          } else if (this.hashId == a.length - 1) {
+            
+            
+          }
+        }
+        this.$emit("close");
+      });
+    },
+    updateChannel() {
+      if (this.channelId != -1) {
+        let newChan = {
+            people: this.peopleId.filter((item, i) => {
+              return this.peopleChecks[i] == true;
+            }),
+            name: this.myName,
+            id: this.channelId,
+            tags: this.avalibleTags.filter((item, i) => {
+              return this.tagChecks[i] == true;
+            })
+          }
+
+        this.$store
+          .dispatch("UPDATE_CHANNEL",newChan )
+          .then(() => {
+            this.$store.dispatch("CHANGE_CHANNEL",newChan)
+            this.$emit("close");
+          });
+      } else {
+        let newChan = {
+          people: this.peopleId.filter((item, i) => {
+            return this.peopleChecks[i] == true;
+          }),
+          name: this.myName,
+          tags: this.avalibleTags.filter((item, i) => {
+            return this.tagChecks[i] == true;
+          })
+        };
+        this.$store.dispatch("CREATE_CHANNEL", newChan).then(() => {
+          console.log(localStorage.getItem("currentChannel"));
+          if (localStorage.getItem("currentChannel") == 0) {
+            this.$store.dispatch("CHANGE_CHANNEL", newChan);
+          }
+          this.$emit("close");
+        });
+      }
+    },
+    toRight() {
+      this.arePeopleSelected = !this.arePeopleSelected;
+      document
+        .getElementsByClassName("slider")[0]
+        .classList.add("slider-translate");
+      document.getElementsByClassName("cl")[1].style.color = "black";
+      document.getElementsByClassName("cl")[0].style.color = "#428bff";
+    },
+    toLeft() {
+      this.arePeopleSelected = !this.arePeopleSelected;
+      document
+        .getElementsByClassName("slider")[0]
+        .classList.remove("slider-translate");
+      document.getElementsByClassName("cl")[0].style.color = "black";
+      document.getElementsByClassName("cl")[1].style.color = "#428bff";
+    },
+    selectHash(event) {
+      this.menu[0].list[event.target.tabIndex].check = !this.menu[0].list[
+        event.target.tabIndex
+      ].check; //TODO: apply to the new list
+    },
     setActive() {
       var first = document.getElementById("tags");
       var second = document.getElementById("people");
@@ -113,16 +257,143 @@ export default {
       second.classList.add("active");
     }
   },
-  mounted() {
-    this.myName = this.$store.state.dataStorage.channels[
-      parseInt(this.hashId)
-    ].name;
+  computed: {
+    myChannels() {
+      return this.$store.getters.GET_CHANNELS;
+    },
+    myPosts() {
+      return this.$store.getters.GET_POSTS;
+    },
+    people() {
+      return this.myChannels[this.hashId][0].people;
+    },
+    tags() {
+      return this.myChannels[this.hashId][0].tags;
+    },
+    currentList() {
+      return this.arePeopleSelected ? this.avaliblePeople : this.avalibleTags;
+    },
+    checked() {
+      return this.arePeopleSelected ? this.peopleChecks : this.tagChecks;
+    }
   },
-  props: ["hashId"]
+  mounted() {
+    this.$store.dispatch("FETCH_DATA");
+
+    Axios.post(
+      this.$store.getters.GET_URL + "/users/all",
+      {},
+      { withCredentials: true }
+    )
+      .then(response => {
+        response.data.forEach(elem => {
+          if (!this.peopleId.includes(elem.id)) {
+            this.avaliblePeople.push(elem.lastName + " " + elem.firstName);
+            this.constPeople.push(elem.lastName + " " + elem.firstName);
+            this.peopleId.push(elem.id);
+          }
+        });
+      })
+      .then(() => {
+        if (this.hashId == -1) this.myName = "newChannelName";
+        else {
+          this.peopleId.forEach(element => {
+            if (this.myChannels[this.hashId].people.includes(element)) {
+              this.peopleChecks.push(true);
+            } else this.peopleChecks.push(false);
+          });
+
+          this.constTags.forEach(element => {
+            if (this.myChannels[this.hashId].tags.includes(element)) {
+              this.tagChecks.push(true);
+            } else this.tagChecks.push(false);
+          });
+          this.myName = this.myChannels[this.hashId].name;
+          this.channelId = this.myChannels[this.hashId].id;
+        }
+      });
+  },
+  props: ["hashId"],
+  watch: {
+    myPosts(newVal, oldVal) {
+      this.avalibleTags = [];
+      this.constTags = [];
+      if (this.myPosts)
+        this.$nextTick(() => {
+          newVal.forEach(elem => {
+            elem.tags.forEach(tag => {
+              if (!this.avalibleTags.includes(tag)) {
+                this.avalibleTags.push(tag);
+                this.constTags.push(tag);
+              }
+            });
+          });
+        });
+    }
+  }
 };
 </script>
 
 <style scoped>
+.selectable {
+}
+.cl {
+  height: 40px;
+  width: 50%;
+  text-align: center;
+  z-index: 10;
+  font-weight: 600;
+  font-size: 22px;
+}
+.cl:hover {
+  cursor: pointer;
+}
+.slider {
+  left: 50%;
+  z-index: 9;
+  position: absolute;
+  background-color: #428bff;
+  width: 30%;
+  margin-left: 10%;
+  margin-right: 10%;
+
+  height: 5px;
+  transition: 0.3s ease;
+}
+
+.slider-translate {
+  transform: translateX(-170%);
+  transition: 0.3s ease;
+}
+
+.myCheck {
+  float: right;
+}
+button {
+  float: right;
+  margin: 10px;
+}
+li:focus {
+  border: none !important;
+
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+
+li {
+  border: none !important;
+}
+ul {
+  height: 200px;
+}
+ul {
+  overflow: hidden;
+  overflow-y: scroll;
+}
+
+li:hover {
+  cursor: pointer;
+}
 #tags:hover,
 #people:hover {
   cursor: pointer;
@@ -130,4 +401,8 @@ export default {
 .nameContainer {
   height: 40px;
 }
+</style>
+
+<style lang="scss">
+@import "~pretty-checkbox/src/pretty-checkbox.scss";
 </style>

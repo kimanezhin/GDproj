@@ -7,17 +7,12 @@ import currentUsers from './currentUsers'
 import { rejects } from 'assert';
 const vm = new Vue();
 Vue.use(Vuex)
-
-
-
-
-
-
 const state = {
     id: '',
-
     isDataFetched: false,
     isUserDataFetched: false,
+    currentChannel:1,
+    m: new Map(),
     messages: ['s'],
     URL: "https://valera-denis.herokuapp.com",
     posts: [
@@ -62,7 +57,9 @@ const getters = {
     GET_USER(state, getters, rootstate, rootgetters) { return rootstate.users },
     GET_FULL_NAME: (state) => (id) => { },
     GET_ID(state) { return parseInt(state.id) },
-    GET_URL(state){return state.URL}
+    GET_URL(state) { return state.URL },
+    GET_MAP(state){return state.m},
+    
 
 }
 
@@ -70,48 +67,71 @@ const actions = {
 
     async FETCH_DATA(context, payload) {
         // let uri = payload ? context.state.URL + "/posts/forUser" : context.state.URL + "/posts/last";
+        context.state.posts = []
         await Axios
             .post(context.state.URL + "/posts/last",
-                20
+                50
                 , {
                     withCredentials: true
                 }
             )
             .then(response => {
-
-                let answer = response.data.response;
-
-                for (var item of response.data) {
-
-                    makeRequest(item, context);
+                let tt = new Map(Object.entries(response.data.users));
+                context.commit('SET_MAP', tt)
+                console.log(response.data)
+                for (var item of response.data.posts) {
+                    // context.commit('PUSH_POST', item)
+                    makeRequest(context.state, item, context.state.posts)
                 }
-                context.commit('SET_TOKEN', response.data.token)
-                // TODO: change request here
-                // for (var i in answer) {
 
-                //     context.commit('PUSH_POST', {
-                //         name: '',//this.getters.GET_FULL_NAME(answer[i].postAuthor),//context.dispatch('GET_AUTHOR_NAME', [answer[i].postAuthor, i]),//GET_AUTHOR_NAME(answer[i].postAuthor, i),
-                //         postId: answer[i].postId,
-                //         postBody: answer[i].postBody,
-                //         num: context.state.columnToAdd
-                //     })
-                //     SET_NAME(context.state, [i, answer[i].postAuthor])
-                //     context.state.columnToAdd = context.state.columnToAdd == 0 ? 1 : 0;
+            }).then(() => {
 
-                // }
-            }).then(() => { context.state.isDataFetched = true; });
+                context.state.isDataFetched = true;
+            });
     },
 
     async FETCH_USER_DATA(context, payload) {
-        let uri = context.state.URL + '/posts/forUser'
-        await Axios.post(uri, {
-            userId: payload,
-            limit: 20
-        }, { withCredentials: true }).then((response) => {
-            for (var item of response.data) {
-                makeUserRequest(item, context)
-            }
-        }).then(() => { context.state.isUserDataFetched = true; })
+
+
+        context.state.userPosts = []
+        await Axios
+            .post(context.state.URL + "/posts/forUser",
+                {
+                    limit:50,
+                    request:payload
+                },
+                 {
+                    withCredentials: true
+                }
+            )
+            .then(response => {
+                let tt = new Map(Object.entries(response.data.users));
+                context.commit('SET_MAP', tt)
+                
+                for (var item of response.data.posts) {
+                    // context.commit('PUSH_POST', item)
+                    makeRequest(context.state, item, context.state.userPosts)
+                }
+
+            }).then(() => {
+
+                context.state.isUserDataFetched = true;
+            });
+
+
+
+        // context.state.userPosts = []
+        // let uri = context.state.URL + '/posts/forUser'
+        // await Axios.post(uri, { 
+        //     limit: 20,
+        //     request: payload,
+        // }, { withCredentials: true }).then((response) => {
+        //     for (var item of response.data) {
+        //         makeUserRequest(item, context)
+        //     }
+        // }).then(() => {
+        //     context.state.isUserDataFetched = true;
+        // })
     },
 
 
@@ -124,15 +144,14 @@ const actions = {
 }
 const mutations = {
     SET_TOKEN(state, payload) { state.token = payload },
-    PUSH_POST(state, payload) {
-        state.posts.push({
-            name: payload.name,
-            postId: payload.postId,
-            postBody: payload.postBody,
-            authorId:payload.authorId,
-            num: payload.num
-        })
+    SET_MAP(state, payload) {
+
+        state.m = new Map(Array.from(payload).map(x => [parseInt(x[0]), x[1]]))
     },
+    async PUSH_POST(state, payload) {
+       
+    },
+    
     UNSHIFT_POST(state, payload) { },
 
     SOCKET_ONOPEN(state, event) {
@@ -206,29 +225,28 @@ const mutations = {
         state.socket.reconnectError = true
     }
 }
-async function makeRequest(item, context) {
-    try {
-        // Axios.get("http://websuck1t.herokuapp.com/posts/" + item).then(response => {
-        //  console.log(response.data)
-        SET_NAME(context.state, item.authorId).then((name) => {
-            context.state.columnToAdd = context.state.columnToAdd == 0 ? 1 : 0;
-            context.commit("PUSH_POST",{
-                name: name.data[0].firstName + " " + name.data[0].secondName,
-                postId: item.id,
-                postBody: item.body[0].markdown,
-                authorId: item.authorId,
-                num: context.state.columnToAdd
-            });
-        })
-    } catch (Exc) { console.log('aaaa') }
+async function makeRequest(state, payload, array) {
+    // console.log(payload)
+    const id = payload.authorId;
+    const localMap = state.m.get(id)
+    array.push({
+        name: localMap.firstName + " " + localMap.lastName,
+        postId: payload.id,
+        postBody: payload.body[0].markdown,
+        authorId: id,
+        num: state.columnToAdd,
+        middleName: payload.middleName,
+        timeCreated: payload.updated,
+        tags: payload.tags    
+    })
+    state.columnToAdd = state.columnToAdd == 0 ? 1 : 0;
 }
 
 
 async function makeUserRequest(item, context) {
     SET_NAME(context.state, item.authorId).then((name) => {
-        
         context.state.columnToAdd = context.state.columnToAdd == 0 ? 1 : 0;
-        context.state.userPosts.push({ 
+        context.state.userPosts.push({
             name: name.data[0].firstName + " " + name.data[0].secondName,
             postId: item.id,
             postBody: item.body[0].markdown,
