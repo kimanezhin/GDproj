@@ -1,7 +1,7 @@
 <template>
-  <div >
+  <div>
     <h2>Channels</h2>
- 
+
     <ul class="list-group">
       <li
         class="list-group-item listHash"
@@ -20,13 +20,12 @@
       </li>
     </ul>
     <button class="btn btn-secondary" @click="updateChannel">Сохранить</button>
-  
   </div>
-
 </template>
 
 <script>
-import _ from 'lodash'
+import _ from "lodash";
+import Axios from "axios";
 export default {
   components: {},
   data() {
@@ -38,7 +37,7 @@ export default {
     selectHash(event) {},
     updateChannel() {
       let changed = [];
-      
+
       let currentId = parseInt(this.hashId);
       let copy = this.currentList;
       let tmp = copy.map((elem, i) => {
@@ -46,21 +45,20 @@ export default {
           elem.people.push(currentId);
           changed.push(true);
         } else if (!this.checked[i] && elem.people.includes(currentId)) {
-            
-             elem.people = _.without(elem.people,currentId)
+          elem.people = _.without(elem.people, currentId);
           changed.push(true);
         } else changed.push(true);
-        
+
         return elem;
       });
-
+      console.log(tmp);
       tmp.forEach((elem, i) => {
         if (changed[i]) this.$store.dispatch("UPDATE_CHANNEL", elem);
       });
-        this.$emit('close')
+      this.$emit("close");
     },
     setAvalibleChannels() {
-        this.checked = []
+      this.checked = [];
       this.currentList.forEach(element => {
         console.log(element);
         if (element.people.includes(parseInt(this.hashId)))

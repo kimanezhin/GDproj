@@ -28,8 +28,8 @@ const actions = {
         context.state.currentChannel = {}
         Object.assign(context.state.currentChannel, payload)
     },
-    UPDATE_CHANNEL(context, payload) {
-        Axios.post(context.rootState.dataStorage.URL + '/channels/update', payload, { withCredentials: true }).then(() => {
+    async UPDATE_CHANNEL(context, payload) {
+        await Axios.post(context.rootState.dataStorage.URL + '/channels/update', payload, { withCredentials: true }).then(() => {
             context.dispatch('GET_ALL_CHANNELS')
         })
     },
@@ -43,7 +43,8 @@ const actions = {
     },
     async GET_ALL_CHANNELS(context) {
         context.state.channels = []
-        Axios.post(context.rootState.dataStorage.URL + '/channels', {}, { withCredentials: true }).then((channels) => {
+        await Axios.post(context.rootState.dataStorage.URL + '/channels', {}, { withCredentials: true }).then((channels) => {
+            context.state.channels = []
             channels.data.forEach(elem => {
                 context.state.channels.push(elem)
             })

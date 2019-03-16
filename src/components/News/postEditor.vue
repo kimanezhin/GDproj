@@ -48,17 +48,6 @@
 		c33.4-2.1,61,25.4,58.8,58.8C297.925,275.625,275.525,297.925,248.025,299.625z"
             ></path>
           </svg>
-          <!-- <div class="addSmth">
-            <div>
-              <font-awesome-icon icon="user"/>
-            </div>
-            <div>
-              <font-awesome-icon icon="user"/>
-            </div>
-            <div>
-              <font-awesome-icon icon="user"/>
-            </div>
-          </div>-->
           <input type="submit" @click="sendPost" id="submitButton" class="btn btn-secondary">
         </div>
       </div>

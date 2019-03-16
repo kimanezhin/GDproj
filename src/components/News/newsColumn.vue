@@ -60,14 +60,7 @@ export default {
   // ../../../
   methods: {
     getImgUrl(id){
-      // return "../../../img/" +id+'.png'
        return require('../../../img/'+id+".png")
-    // var images = require.context('../../../img/', false, /\.png$/)
-    // return images( id + ".png")
-    
-
-
-      // return "../../../img/"+id+".png"
     },
     transformTime(time) {
       //1861-08-13T00:00:08Z - not transformed
@@ -137,8 +130,12 @@ export default {
       });
     },
     readMore() {
-      var t = Array.from(document.getElementsByClassName("transit"));
+      
+     this.$nextTick(() => {
+        var t = Array.from(document.getElementsByClassName("transit"));
       var texts = Array.from(document.getElementsByClassName("specialClass"));
+        // console.log(t)
+        // console.log(texts)
       t.forEach((item, i) => {
         if (item.clientHeight >= 200) {
           texts[i].classList.add("constantSize");
@@ -153,6 +150,7 @@ export default {
           item.classList.add("toCrop");
         }
       });
+     })
     },
     channelFilter(p) {
       return (
@@ -236,6 +234,11 @@ export default {
     userSize: function(params) {
       this.checkHashtagCount();
       this.readMore();
+    },
+    mPosts : function(newV, oldV){
+      var that = this;
+      that.readMore();
+      console.log('i was here')
     },
     getCurrentChannel: function(newValue, oldValue) {
       this.currentChannel = newValue;

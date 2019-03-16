@@ -5,9 +5,17 @@
     v-if="isDataFetched || isUserDataFetched"
     :class="flexBehaviour"
   >
-    <div id="imgCol" :class="{'margin':!forUser, 'smallMargin':forUser}" class="col-md-12 col-sm-12 mt-4">
-      <post-editor/>
-      <news-column style = "margin-top:75px;" v-bind:forUser = "parseInt(forUser)" v-bind:columnNum="0"/>
+    <div
+      id="imgCol"
+      :class="{'margin':!forUser, 'smallMargin':forUser}"
+      class="col-md-12 col-sm-12 mt-4"
+    >
+      <post-editor v-if="isThisUser"/>
+      <news-column
+        style="margin-top:75px;"
+        v-bind:forUser="parseInt(forUser)"
+        v-bind:columnNum="0"
+      />
     </div>
     <div class="col-md-4 ml-5 col-sm-12 text mt-4">
       <div v-if="!isDataFetched && !isUserDataFetched" id="ld" class="loading">
@@ -24,10 +32,12 @@
 import newsColumn from "./newsColumn";
 import postEditor from "./postEditor";
 import store from "./../../store/store.js";
+import Axios from "axios";
 export default {
   data() {
     return {
       Loading: "Loading",
+      isThisUser: true
     };
   },
   props: {
@@ -36,7 +46,7 @@ export default {
       default: function() {
         return [];
       },
-      isMargin:{
+      isMargin: {
         type: Boolean,
         default: true
       }
@@ -45,7 +55,7 @@ export default {
       type: String,
       default: "justify-content-around"
     },
-    forUser:{
+    forUser: {
       type: Number
     }
   },
@@ -66,7 +76,15 @@ export default {
   },
   mounted() {
     this.enableLoading();
-  
+    if (!this.forUser) this.isThisUser = true;
+    else
+      Axios.post(
+        this.$store.getters.GET_URL + "/authentication/me",
+        {},
+        { withCredentials: true }
+      ).then(resp => {
+        this.isThisUser = resp.data == this.forUser;
+      });
   },
   methods: {
     enableLoading() {
@@ -82,20 +100,19 @@ export default {
         count++;
       }, 400);
     }
-  },
+  }
 };
 </script>
 <style scoped>
 #imgCol {
   min-width: 51px;
- 
 }
 
-.margin{
-  margin-left:200px;
+.margin {
+  margin-left: 200px;
 }
 
-.smallMargin{
+.smallMargin {
   margin-left: 100px;
 }
 .loadText {

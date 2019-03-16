@@ -3,7 +3,7 @@
     <Navbar/>
     <div class="row mr-0">
       <div class="col-2">
-        <img src="../../../img/chern.jpg" class="avatar">
+        <img :src="getImgUrl()" class="avatar">
         <button id="followButton" @click="addUserToChannel" class="btn btn-outline-primary">Follow</button>
       </div>
       <div class="col-10">
@@ -92,7 +92,6 @@
             </div>
           </div>
           <news
-            
             flexBehaviour
             v-bind:forUser="parseInt(id)"
             class="mr-auto"
@@ -129,6 +128,9 @@ export default {
     })
   },
   methods: {
+    getImgUrl(){
+     return  require("../../../img/" + this.id + ".png");
+    },
     addUserToChannel() {
       this.$modal.show(
         addUserModal,
