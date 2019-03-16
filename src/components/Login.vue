@@ -46,13 +46,14 @@ export default {
   methods: {
     signIn() {
       this.$store.dispatch("SET_ID", this.id);
-      this.showNotification();
+       this.showNotification();
     },
     showNotification() {
       var pattern = /^\w+@{1}(edu.)?(hse.ru){1}$/;
       var email = $(document.getElementById("inputEmail")).val();
 
       // if (pattern.test(email))
+      if(false)
       {
         event.preventDefault();
 

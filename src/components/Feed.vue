@@ -94,7 +94,7 @@ export default {
 
     test() {},
     onOptionSelect(selected) {
-      console.log(selected);
+      
     },
     setInitialSize() {
       {

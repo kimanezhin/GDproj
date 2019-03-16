@@ -71,7 +71,7 @@ export default {
       
     },
     checkPosts() {
-      console.log("Hello");
+      
     },
     makeMarkDown(preText, name) {
       //document.getElementsByName(name).innerHTML =
@@ -136,8 +136,7 @@ export default {
      this.$nextTick(() => {
         var t = Array.from(document.getElementsByClassName("transit"));
       var texts = Array.from(document.getElementsByClassName("specialClass"));
-        // console.log(t)
-        // console.log(texts)
+      
       t.forEach((item, i) => {
         if (item.clientHeight >= 200) {
           texts[i].classList.add("constantSize");
@@ -190,11 +189,31 @@ export default {
   mounted() {
     if (this.forUser) {
       let arr = this.$store.getters.GET_USER_POSTS;
-      console.log(arr);
+      
       this.mPosts = arr;
       this.readMore();
     }
-
+    else{
+      let arr = this.forUser
+        ? this.$store.getters.GET_USER_POSTS
+        : this.$store.getters.GET_POSTS;
+        
+         if (_.isEqual(this.getCurrentChannel, {})) {
+        
+        arr = arr.sort((first, second) => {
+          return second.postId - first.postId;
+        });
+      } else if (this.index == -1 && !this.forUser) {
+        
+        arr = arr
+          .filter(p => this.channelFilter(p))
+          .sort((first, second) => {
+            return second.postId - first.postId;
+          });
+      }
+      this.mPosts = arr
+    }
+    
     let that = this;
     that.readMore();
     if (this.isFetched || that.forUser) {
@@ -225,7 +244,7 @@ export default {
   },
   watch: {
     isFetched: function(params) {
-      console.log(params + "Hellllll");
+      
       // this.checkHashtagCount();
       
     },
@@ -240,7 +259,7 @@ export default {
     mPosts : function(newV, oldV){
       var that = this;
       that.readMore();
-      console.log('i was here')
+      
     },
     getCurrentChannel: function(newValue, oldValue) {
       this.currentChannel = newValue;

@@ -88,7 +88,7 @@ export default {
   },
   methods: {
     moveChannel() {
-      console.log("aaaa");
+      
     },
     cutName(name) {
       if (name.length > 7) {
@@ -129,7 +129,7 @@ export default {
       localStorage.setItem("currentChannel", index);
     },
     setDefaultChannel(event) {
-      console.log("asasasas");
+      
       if (parseInt(event.target.name) == -2) {
         this.$store.dispatch("CHANGE_CHANNEL", {});
       }
@@ -147,7 +147,7 @@ export default {
             "CHANGE_CHANNEL",
             newVal[localStorage.getItem("currentChannel")]
           );
-        console.log("aaaaa");
+        
         this.currentChannel = localStorage.getItem("currentChannel");
         this.flag = true;
       }

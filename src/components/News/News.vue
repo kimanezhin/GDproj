@@ -126,4 +126,12 @@ export default {
   flex-direction: column;
   align-items: center;
 }
+
+@media (max-width: 600px){
+  .margin{
+    margin-left: 10px;
+  }
+}
+
+
 </style>

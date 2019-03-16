@@ -175,10 +175,8 @@ export default {
             this.$store.dispatch("CHANGE_CHANNEL", tmp);
           } else if (a.length > this.hashId + 1) {
             this.$store.dispatch("CHANGE_CHANNEL", a[this.hashId + 1]);
-            console.log("b");
+            
           } else if (this.hashId == a.length - 1) {
-            
-            
           }
         }
         this.$emit("close");
@@ -187,22 +185,20 @@ export default {
     updateChannel() {
       if (this.channelId != -1) {
         let newChan = {
-            people: this.peopleId.filter((item, i) => {
-              return this.peopleChecks[i] == true;
-            }),
-            name: this.myName,
-            id: this.channelId,
-            tags: this.avalibleTags.filter((item, i) => {
-              return this.tagChecks[i] == true;
-            })
-          }
+          people: this.peopleId.filter((item, i) => {
+            return this.peopleChecks[i] == true;
+          }),
+          name: this.myName,
+          id: this.channelId,
+          tags: this.avalibleTags.filter((item, i) => {
+            return this.tagChecks[i] == true;
+          })
+        };
 
-        this.$store
-          .dispatch("UPDATE_CHANNEL",newChan )
-          .then(() => {
-            this.$store.dispatch("CHANGE_CHANNEL",newChan)
-            this.$emit("close");
-          });
+        this.$store.dispatch("UPDATE_CHANNEL", newChan).then(() => {
+          this.$store.dispatch("CHANGE_CHANNEL", newChan);
+          this.$emit("close");
+        });
       } else {
         let newChan = {
           people: this.peopleId.filter((item, i) => {
@@ -214,7 +210,7 @@ export default {
           })
         };
         this.$store.dispatch("CREATE_CHANNEL", newChan).then(() => {
-          console.log(localStorage.getItem("currentChannel"));
+          
           if (localStorage.getItem("currentChannel") == 0) {
             this.$store.dispatch("CHANGE_CHANNEL", newChan);
           }
@@ -239,9 +235,11 @@ export default {
       document.getElementsByClassName("cl")[1].style.color = "#428bff";
     },
     selectHash(event) {
-      this.menu[0].list[event.target.tabIndex].check = !this.menu[0].list[
-        event.target.tabIndex
-      ].check; //TODO: apply to the new list
+      // if(this.arePeopleSelected)
+        // this.checked[event.target.tabIndex] = !this.checked[event.target.tabIndex]
+        
+        
+     //TODO: apply to the new list
     },
     setActive() {
       var first = document.getElementById("tags");
@@ -302,7 +300,7 @@ export default {
               this.peopleChecks.push(true);
             } else this.peopleChecks.push(false);
           });
-
+          
           this.constTags.forEach(element => {
             if (this.myChannels[this.hashId].tags.includes(element)) {
               this.tagChecks.push(true);
@@ -327,6 +325,12 @@ export default {
                 this.constTags.push(tag);
               }
             });
+          });
+          if(this.hashId>=0)
+          this.constTags.forEach(element => {
+            if (this.myChannels[this.hashId].tags.includes(element)) {
+              this.tagChecks.push(true);
+            } else this.tagChecks.push(false);
           });
         });
     }

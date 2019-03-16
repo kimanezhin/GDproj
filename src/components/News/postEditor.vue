@@ -120,11 +120,11 @@ export default {
     },
     closeEditor() {
       // this.readyToClose = false;
-      console.log("1");
+      
       let myText = document.getElementById("myText");
       // myText.setAttribute('readonly')
       if (this.isEditorShown && myText.readOnly == false) {
-        console.log("here and");
+        
         myText.readOnly = true;
       }
 
