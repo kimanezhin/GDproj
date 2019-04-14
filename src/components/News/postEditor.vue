@@ -1,6 +1,6 @@
 <template>
   <div>
-    <modal name="md">
+    <modal name="md" height = "auto" :scrollable = "true">
       <div class="container" style="word-wrap: break-word; ">
         <vue-markdown>{{editorText}}</vue-markdown>
       </div>
@@ -116,7 +116,9 @@ export default {
     },
     showMyModal() {
       this.editorText = document.getElementById("myText").value;
-      this.$modal.show("md");
+      this.$modal.show("md",{},{
+        height:5000
+      });
     },
     closeEditor() {
       // this.readyToClose = false;
