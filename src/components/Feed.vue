@@ -2,11 +2,6 @@
   <div id="main">
     <Navbar id="nv"></Navbar>
     <channel-drop-down id="drop" @select-item="onOptionSelect">
-      <!-- <template slot="item" slot-scope="option">
-        <span>
-          <img :src="option.thumbnail">
-        </span>
-      </template>-->
     </channel-drop-down>
     <div class="exit" @click="logOut">Log out</div>
     <div class="row">
@@ -317,7 +312,7 @@ img {
   }
 
   .post {
-    width: 85vw;
+    width: 55vw;
   }
 }
 </style>

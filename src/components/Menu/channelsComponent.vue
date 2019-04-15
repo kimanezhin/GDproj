@@ -123,7 +123,9 @@ export default {
     },
     changeChannel(index, event) {
       let tmp = _.find(this.channelList, { id: parseInt(event.target.name) });
-      
+      let i = JSON.stringify(tmp)
+      console.log(i)
+      localStorage.setItem("channel",JSON.stringify(tmp))
       this.$store.dispatch("CHANGE_CHANNEL", tmp);
       this.currentChannel = index;
       localStorage.setItem("currentChannel", index);

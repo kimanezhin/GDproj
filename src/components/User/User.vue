@@ -3,7 +3,7 @@
     <Navbar/>
     <div class="row mr-0">
       <div class="col-2">
-        <img :src="getImgUrl()" class="avatar">
+        <img :src="getImgUrl()" class="rounded avatar">
         <button id="followButton" @click="addUserToChannel" class="btn btn-outline-primary">Follow</button>
       </div>
       <div class="col-10">

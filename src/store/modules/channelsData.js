@@ -27,6 +27,8 @@ const actions = {
     CHANGE_CHANNEL(context, payload) {
         context.state.currentChannel = {}
         Object.assign(context.state.currentChannel, payload)
+
+        
     },
     async UPDATE_CHANNEL(context, payload) {
         await Axios.post(context.rootState.dataStorage.URL + '/channels/update', payload, { withCredentials: true }).then(() => {

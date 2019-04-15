@@ -7,7 +7,7 @@
     </modal>
     <div v-show="isEditorShown" @click="closeEditor" id="fantomPage"></div>
     <div class="d-flex flex-row mb-5" style="width:40vw;">
-      <img :src="imgSource" class="toAppend">
+      <img :src="imgSource" class="toAppend rounded">
       <div class="toOverlay" id="ovr">
         <multiselect
           v-model="value"
