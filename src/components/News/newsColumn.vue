@@ -434,7 +434,7 @@ img:hover {
   transform: translateX(30px);
 }
 .post {
-  padding: 8px;
+  /* padding: 8px; */
   /* border: 1px solid #939393; */
   /* background-color: red; */
   width: 35vw;
@@ -473,7 +473,7 @@ img {
   }
 
   .post {
-    width: 65vw;
+    width: 85vw;
   }
   .transit {
     width: 85vw;

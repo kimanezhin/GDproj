@@ -1,8 +1,62 @@
 <template>
   <div id="main">
+    <div id="drop">
+      <div class="sub-header">
+        <!-- <div class="channel-name" @click.prevent="showChannels"> -->
+          <DropDown/>
+         
+        <!-- </div> -->
+
+        <div class="icon">
+          <svg
+            version="1.1"
+            id="Capa_1"
+            xmlns="http://www.w3.org/2000/svg"
+            xmlns:xlink="http://www.w3.org/1999/xlink"
+            x="0px"
+            y="0px"
+            viewBox="0 0 490.3 490.3"
+            style="enable-background:new 0 0 490.3 490.3;"
+            xml:space="preserve"
+          >
+            <g>
+              <g>
+                <path
+                  d="M0,121.05v248.2c0,34.2,27.9,62.1,62.1,62.1h200.6c34.2,0,62.1-27.9,62.1-62.1v-40.2c0-6.8-5.5-12.3-12.3-12.3
+			s-12.3,5.5-12.3,12.3v40.2c0,20.7-16.9,37.6-37.6,37.6H62.1c-20.7,0-37.6-16.9-37.6-37.6v-248.2c0-20.7,16.9-37.6,37.6-37.6h200.6
+			c20.7,0,37.6,16.9,37.6,37.6v40.2c0,6.8,5.5,12.3,12.3,12.3s12.3-5.5,12.3-12.3v-40.2c0-34.2-27.9-62.1-62.1-62.1H62.1
+			C27.9,58.95,0,86.75,0,121.05z"
+                ></path>
+                <path
+                  d="M385.4,337.65c2.4,2.4,5.5,3.6,8.7,3.6s6.3-1.2,8.7-3.6l83.9-83.9c4.8-4.8,4.8-12.5,0-17.3l-83.9-83.9
+			c-4.8-4.8-12.5-4.8-17.3,0s-4.8,12.5,0,17.3l63,63H218.6c-6.8,0-12.3,5.5-12.3,12.3c0,6.8,5.5,12.3,12.3,12.3h229.8l-63,63
+			C380.6,325.15,380.6,332.95,385.4,337.65z"
+                ></path>
+              </g>
+            </g>
+            <g></g>
+            <g></g>
+            <g></g>
+            <g></g>
+            <g></g>
+            <g></g>
+            <g></g>
+            <g></g>
+            <g></g>
+            <g></g>
+            <g></g>
+            <g></g>
+            <g></g>
+            <g></g>
+            <g></g>
+          </svg>
+        </div>
+      </div>
+    </div>
     <Navbar id="nv"></Navbar>
-    <channel-drop-down id="drop" @select-item="onOptionSelect">
-    </channel-drop-down>
+    <!-- <channel-drop-down id="drop" @select-item="onOptionSelect"> -->
+    <!-- </channel-drop-down> -->
+
     <div class="exit" @click="logOut">Log out</div>
     <div class="row">
       <div class="col-md-2 mt-5" id="menu">
@@ -27,13 +81,15 @@ import { mapState, mapGetters } from "vuex";
 import smoothReflow from "vue-smooth-reflow";
 import News from "./News/News";
 import ChannelDropDown from "./ChannelDropDown";
+import DropDown from './News/DropDown'
 export default {
   mixins: [smoothReflow],
   components: {
     feedMenu,
     Navbar,
     News,
-    ChannelDropDown
+    ChannelDropDown, 
+    DropDown
   },
   data() {
     return {
@@ -43,7 +99,8 @@ export default {
       inputText: "",
       readyToClose: false,
       myText: "he",
-      arr: []
+      arr: [],
+      eventFlag:true
     };
   },
   computed: {
@@ -58,7 +115,7 @@ export default {
   methods: {
     logOut() {
       this.$store.dispatch("LOG_OUT").then(() => {
-        console.log('adas')
+        console.log("adas");
         this.$router.push("/");
       });
     },
@@ -101,6 +158,18 @@ export default {
         this.isEditorShown = false;
       }
     },
+
+    showChannels() {
+      
+      let list = document.getElementsByClassName("shevron");
+      if (list[0].classList.contains("shevron-down"))
+        {
+          list[0].classList.remove("shevron-down");
+        }
+      else
+        list[0].classList.add("shevron-down");
+      
+    },
     setCurrentSize() {
       this.isEditorShown = true;
 
@@ -127,9 +196,8 @@ export default {
       if (text) {
         text.style.height = "auto";
         text.style.height = text.scrollHeight + 1 + "px";
-          this.currentSize = text.scrollHeight + 1 + "px";
+        this.currentSize = text.scrollHeight + 1 + "px";
       }
-    
 
       var flag = true;
     },
@@ -142,6 +210,7 @@ export default {
   },
   mounted() {
     //fixed textarea
+
     var observe;
     if (window.attachEvent) {
       observe = function(element, event, handler) {
@@ -271,6 +340,39 @@ img {
   text-decoration: none;
 }
 
+.sub-header {
+  width: 100%;
+  height: 50px;
+  background-color: #373a47;
+  margin-top: 0;
+  position: absolute;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.icon {
+  /* justify-self: flex-end; */
+  width: 35px;
+  height: 35px;
+  fill: white;
+  stroke: white;
+  stroke-width: 5;
+  margin-right: 1%;
+  margin-left: auto;
+}
+
+
+.openButton {
+  margin-left: auto;
+  color: white;
+}
+
+.channel-name:hover {
+  cursor: pointer;
+}
+
 #sendIco {
   font-size: 30px;
   color: rgb(45, 49, 49);
@@ -298,6 +400,10 @@ img {
 
 @media screen and (max-width: 1200px) {
   #menu {
+    display: none;
+  }
+
+  .exit {
     display: none;
   }
   #drop {

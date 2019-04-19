@@ -58,11 +58,19 @@ export default {
   background-color: #373a47;
 }
 
+
+
 .line-style {
   position: absolute;
   height: 19%;
   left: 0;
   right: 0;
+}
+
+@media screen and (max-width: 1200px) {
+ .bm-burger-bars{
+   background-color: white;
+ } 
 }
 </style>
 
@@ -113,4 +121,9 @@ img {
   font-weight: 600;
   font-size: 18px;
 }
+
+
+
+
+
 </style>
