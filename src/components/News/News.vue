@@ -2,7 +2,6 @@
   <div
     id="resizable"
     class="row d-flex"
-    v-if="isDataFetched || isUserDataFetched"
     :class="flexBehaviour"
   >
     <div

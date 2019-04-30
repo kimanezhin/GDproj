@@ -12,7 +12,11 @@ Vue.use(Router)
 import dataStorage from '../store/modules/dataStorage'
 
 const ifAuthenticated = (to, from, next) => {
-  Axios.post(dataStorage.state.URL + "/posts/last", 1, { withCredentials: true }).then(() => {
+  Axios.post(dataStorage.state.URL + "/posts/last", {
+    limit: 1,
+    exclusiveFrom: null,
+    request: []
+  }, { withCredentials: true }).then(() => {
     next('/feed')
     return
   }).catch(() => {
@@ -21,7 +25,11 @@ const ifAuthenticated = (to, from, next) => {
 }
 
 const ifNotAuthenticated = (to, from, next) => {
-  Axios.post(dataStorage.state.URL + "/posts/last", 1, { withCredentials: true }).then(() => {
+  Axios.post(dataStorage.state.URL + "/posts/last", {
+    limit: 1,
+    exclusiveFrom: null,
+    request: []
+  }, { withCredentials: true }).then(() => {
     next()
     return
   }).catch(() => {
@@ -47,7 +55,7 @@ export default new Router({
       path: '/user/:id',
       name: 'acc',
       component: Acc,
-      props:true,
+      props: true,
       beforeEnter: ifNotAuthenticated
     }
   ]

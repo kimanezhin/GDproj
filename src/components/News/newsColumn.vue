@@ -36,7 +36,7 @@
             xmlns="http://www.w3.org/2000/svg"
             xmlns:xlink="http://www.w3.org/1999/xlink"
             viewBox="0 0 50 50"
-            class = "postButtons"
+            class="postButtons"
             version="1.1"
             width="50px"
             height="50px"
@@ -98,7 +98,16 @@ export default {
     },
     checkPosts() {},
     makeMarkDown(preText, name) {
-      //document.getElementsByName(name).innerHTML =
+      preText = preText
+        .split("")
+        .map(x => {
+          if (x == "<") return " &Aacute; ";
+          if (x == ">") return "&gt;";
+          if (x === "&") return "&amp;";
+
+          return x;
+        })
+        .join("");
       return marked(preText);
     },
     openUser(event) {
@@ -179,10 +188,13 @@ export default {
       });
     },
     channelFilter(p) {
-      this.currentChannel = JSON.parse(localStorage.getItem('channel'))
-      if(!this.currentChannel || !this.currentChannel.people || !this.currentChannel.tags)
-      {
-        console.log("Error in filter parsing")
+      
+      if (
+        !this.currentChannel ||
+        !this.currentChannel.people ||
+        !this.currentChannel.tags
+      ) {
+        console.log("Error in filter parsing");
         return true;
       }
       return (
@@ -218,49 +230,51 @@ export default {
     }
   },
   mounted() {
-    console.log(this.currentChannel)
-    if (this.forUser) {
-      let arr = this.$store.getters.GET_USER_POSTS;
+    console.log('aa')
+    this.$store.dispatch("FETCH_DATA").then(() => {
+      
+      if (this.forUser) {
+        let arr = this.$store.getters.GET_USER_POSTS;
 
-      this.mPosts = arr;
-      this.readMore();
-    } else {
-      
-      let arr = this.forUser
-        ? this.$store.getters.GET_USER_POSTS
-        : this.$store.getters.GET_POSTS;
-      // if(arr.length == 0)
-      
-      
+        this.mPosts = arr;
+        this.readMore();
+      } else {
+        let arr = this.forUser
+          ? this.$store.getters.GET_USER_POSTS
+          : this.$store.getters.GET_POSTS;
+        // if(arr.length == 0)
+        console.log(arr.length);
+        this.currentChannel = JSON.parse(localStorage.getItem("channel"));
 
-      if (_.isEqual(this.getCurrentChannel, {})) {
-        arr = arr.sort((first, second) => {
-          return second.postId - first.postId;
-        });
-      } else if (this.index == -1 && !this.forUser) {
-        arr = arr
-          .filter(p => this.channelFilter(p))
-          .sort((first, second) => {
+        if (_.isEqual(this.currentChannel, {})) {
+          arr = arr.sort((first, second) => {
             return second.postId - first.postId;
           });
-      }
-      this.mPosts = arr;
-    }
-
-    let that = this;
-    that.readMore();
-    if (this.isFetched || that.forUser) {
-      that.$nextTick(() => {
-        this.checkHashtagCount();
-        this.readMore();
-        if (window.outerWidth < 768 || window.innerWidth < 768) {
-          if (that.index == 1) that.index = -3;
-          if (that.index == 0) that.index = -1;
-          this.checkHashtagCount();
-          that.readMore();
+        } else if (this.index == -1 && !this.forUser) {
+          arr = arr
+            .filter(p => this.channelFilter(p))
+            .sort((first, second) => {
+              return second.postId - first.postId;
+            });
         }
-      });
-    } else console.log("(((");
+        this.mPosts = arr;
+      }
+
+      let that = this;
+      that.readMore();
+     
+        that.$nextTick(() => {
+          this.checkHashtagCount();
+          this.readMore();
+          if (window.outerWidth < 768 || window.innerWidth < 768) {
+            if (that.index == 1) that.index = -3;
+            if (that.index == 0) that.index = -1;
+            this.checkHashtagCount();
+            that.readMore();
+          }
+        });
+      
+    });
 
     window.addEventListener("resize", function() {
       if (window.outerWidth < 768 || window.innerWidth < 768) {
@@ -293,7 +307,7 @@ export default {
     },
     getCurrentChannel: function(newValue, oldValue) {
       this.currentChannel = newValue;
-    
+
       let arr = this.forUser
         ? this.$store.getters.GET_USER_POSTS
         : this.$store.getters.GET_POSTS;
@@ -406,16 +420,16 @@ img:hover {
   /*
   //TODO: comment "display" 
   */
-  display: none; 
+  display: none;
   height: 24px;
   width: 24px;
   stroke-width: 2;
   stroke: #8b8f97;
   opacity: 0.6;
 }
-.postButtons:hover{
+.postButtons:hover {
   opacity: 1;
-  transition: opacity .2s ease;
+  transition: opacity 0.2s ease;
   cursor: pointer;
 }
 

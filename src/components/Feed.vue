@@ -205,12 +205,8 @@ export default {
       window.setTimeout(this.resize, 0);
     }
   },
-  created() {
-    localStorage.setItem("currenChannel", 1);
-  },
   mounted() {
     //fixed textarea
-
     var observe;
     if (window.attachEvent) {
       observe = function(element, event, handler) {
@@ -237,9 +233,6 @@ export default {
     }
     this.resize();
     document.activeElement.blur();
-  },
-  created() {
-    this.$store.dispatch("FETCH_DATA");
   },
   watch: {}
 };

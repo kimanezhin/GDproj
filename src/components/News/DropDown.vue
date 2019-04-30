@@ -2,7 +2,7 @@
   <div class="channel-name">
     <div class="menu" @click="showOrHideMenu">
       <div class="flex-display">
-        Menu
+        {{channelName}}
         <div class="shevron shevron-down">
           <!-- Svg Vector Icons : http://www.onlinewebfonts.com/icon -->
           <svg
@@ -40,12 +40,19 @@
 
 <script>
 export default {
+  data() {
+    return {
+      channelName: ""
+    };
+  },
   computed: {
     channelList() {
       return this.$store.getters.GET_CHANNELS;
     }
   },
   mounted() {
+	  console.log(JSON.parse(localStorage.getItem('currentChannel')))
+	this.channelName = JSON.parse(localStorage.getItem('channel')).name
     let menu = document.getElementsByClassName("menu")[0];
     //    this.showOrHideMenu();
 

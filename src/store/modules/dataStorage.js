@@ -11,7 +11,7 @@ const state = {
     id: '',
     isDataFetched: false,
     isUserDataFetched: false,
-    currentChannel:1,
+    currentChannel: 1,
     m: new Map(),
     messages: ['s'],
     URL: "https://valera-denis.herokuapp.com",
@@ -58,36 +58,48 @@ const getters = {
     GET_FULL_NAME: (state) => (id) => { },
     GET_ID(state) { return parseInt(state.id) },
     GET_URL(state) { return state.URL },
-    GET_MAP(state){return state.m},
-    
+    GET_MAP(state) { return state.m },
+
 
 }
 
 const actions = {
 
     async FETCH_DATA(context, payload) {
+        return new Promise((resolve, reject) => {
+
+            context.state.posts = []
+            Axios
+                .post(context.state.URL + "/posts/last",
+                    {
+                        limit: 50,
+                        exclusiveFrom: null,
+                        request: []
+                    }
+                    , {
+                        withCredentials: true
+                    }
+                )
+                .then(response => {
+                    let tt = new Map(Object.entries(response.data.users));
+                    context.commit('SET_MAP', tt)
+                    console.log(response.data)
+                    for (var item of response.data.response) {
+                        // context.commit('PUSH_POST', item)
+                        makeRequest(context.state, item, context.state.posts)
+                    }
+
+                }).then(() => {
+
+                    context.state.isDataFetched = true;
+                }).then(() => {
+                    resolve();
+                }).catch(() => {
+                    reject();
+                });
+        })
         // let uri = payload ? context.state.URL + "/posts/forUser" : context.state.URL + "/posts/last";
-        context.state.posts = []
-        await Axios
-            .post(context.state.URL + "/posts/last",
-                50
-                , {
-                    withCredentials: true
-                }
-            )
-            .then(response => {
-                let tt = new Map(Object.entries(response.data.users));
-                context.commit('SET_MAP', tt)
-                console.log(response.data)
-                for (var item of response.data.posts) {
-                    // context.commit('PUSH_POST', item)
-                    makeRequest(context.state, item, context.state.posts)
-                }
 
-            }).then(() => {
-
-                context.state.isDataFetched = true;
-            });
     },
 
     async FETCH_USER_DATA(context, payload) {
@@ -97,18 +109,19 @@ const actions = {
         await Axios
             .post(context.state.URL + "/posts/forUser",
                 {
-                    limit:50,
-                    request:payload
+                    limit: 50,
+                    exclusiveFrom: null,
+                    request: payload
                 },
-                 {
+                {
                     withCredentials: true
                 }
             )
             .then(response => {
                 let tt = new Map(Object.entries(response.data.users));
                 context.commit('SET_MAP', tt)
-                
-                for (var item of response.data.posts) {
+
+                for (var item of response.data.response) {
                     // context.commit('PUSH_POST', item)
                     makeRequest(context.state, item, context.state.userPosts)
                 }
@@ -149,9 +162,9 @@ const mutations = {
         state.m = new Map(Array.from(payload).map(x => [parseInt(x[0]), x[1]]))
     },
     async PUSH_POST(state, payload) {
-       
+
     },
-    
+
     UNSHIFT_POST(state, payload) { },
 
     SOCKET_ONOPEN(state, event) {
@@ -237,7 +250,7 @@ async function makeRequest(state, payload, array) {
         num: state.columnToAdd,
         middleName: payload.middleName,
         timeCreated: payload.updated,
-        tags: payload.tags    
+        tags: payload.tags
     })
     state.columnToAdd = state.columnToAdd == 0 ? 1 : 0;
 }
