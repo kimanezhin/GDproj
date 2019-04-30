@@ -1,7 +1,8 @@
 <template>
   <div>
     <modal name="editChannel">Hello</modal>
-    <div class="ml-4 title">channels
+    <div class="ml-4 title">
+      channels
       <!-- <font-awesome-icon icon = "plus" id = "add" v-on:click = "createNewChannel"/> -->
       <svg
         id="add"
@@ -20,12 +21,7 @@
       </svg>
     </div>
     <div class="ml-2 smth">
-      <div
-        :name="-2"
-        v-on:click="setDefaultChannel($event)"
-        
-        class="d-flex flex-row hrefOption"
-      >
+      <div :name="-2" v-on:click="setDefaultChannel($event)" class="d-flex flex-row hrefOption">
         <a
           href="#"
           :class="{bold:boldText(-2)}"
@@ -51,8 +47,13 @@
           v-on:click="changeChannel(index,$event)"
           :content="channel.name"
         >{{cutName(channel.name)}}</a>
-        <div :name="index" :tabindex="channel.id" v-on:click="showModal(index)" class="channelOption">
-          <font-awesome-icon :name = "channel.id" icon="cog"/>
+        <div
+          :name="index"
+          :tabindex="channel.id"
+          v-on:click="showModal(index)"
+          class="channelOption"
+        >
+          <font-awesome-icon :name="channel.id" icon="cog"/>
         </div>
       </div>
     </div>
@@ -62,7 +63,6 @@
 
 
 <script>
-
 import modalMenu from "./modalMenu";
 import newChannelModal from "./newChannelModal";
 import _ from "lodash";
@@ -74,7 +74,7 @@ export default {
   data() {
     return {
       currentChannel: 0,
-      
+
       channels: [],
       flag: false
     };
@@ -86,13 +86,11 @@ export default {
   },
   mounted() {
     this.$store.dispatch("GET_ALL_CHANNELS");
-    if(!localStorage.getItem('currentChannel'))
-      localStorage.setItem('currentChannel',-2)
+    if (!localStorage.getItem("currentChannel"))
+      localStorage.setItem("currentChannel", -2);
   },
   methods: {
-    moveChannel() {
-      
-    },
+    moveChannel() {},
     cutName(name) {
       if (name.length > 7) {
         return name.slice(0, 7) + "..";
@@ -126,20 +124,21 @@ export default {
     },
     changeChannel(index, event) {
       let tmp = _.find(this.channelList, { id: parseInt(event.target.name) });
-      let i = JSON.stringify(tmp)
-      localStorage.setItem("channel",JSON.stringify(tmp))
+      let i = JSON.stringify(tmp);
+      localStorage.setItem("channel", JSON.stringify(tmp));
       this.$store.dispatch("CHANGE_CHANNEL", tmp);
       this.currentChannel = index;
       localStorage.setItem("currentChannel", index);
+      this.$eventHub.$emit("change-channel", [index, tmp]);
     },
     setDefaultChannel(event) {
-      
       if (parseInt(event.target.name) == -2) {
         this.$store.dispatch("CHANGE_CHANNEL", {});
       }
       this.currentChannel = -2;
-       localStorage.removeItem('channel')
+      localStorage.removeItem("channel");
       localStorage.setItem("currentChannel", -2);
+      this.$eventHub.$emit("change-channel", [-1, null]);
     }
   },
   watch: {
@@ -152,7 +151,7 @@ export default {
             "CHANGE_CHANNEL",
             newVal[localStorage.getItem("currentChannel")]
           );
-        
+
         this.currentChannel = localStorage.getItem("currentChannel");
         this.flag = true;
       }

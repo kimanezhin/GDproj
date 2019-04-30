@@ -274,13 +274,13 @@ export default {
       if (window.outerWidth < 768 || window.innerWidth < 768) {
         // that.firstArray = that.$options.propsData.posts;
         // console.log(that.getPosts(-1)
-        if (that.index == 1) that.index = -3;
-        if (that.index == 0) that.index = -1;
+        // if (that.index == 1) that.index = -3;
+        // if (that.index == 0) that.index = -1;
       } else {
-        if (that.index == -3) that.index = 1;
-        if (that.index == -1) that.index = 0;
+        // if (that.index == -3) that.index = 1;
+        // if (that.index == -1) that.index = 0;
       }
-      that.readMore();
+      // that.readMore();
     });
   },
   watch: {

@@ -50,9 +50,21 @@ export default {
       return this.$store.getters.GET_CHANNELS;
     }
   },
+  created() {
+   this.$eventHub.$on("change-channel", (array) => {
+
+     this.channelName = array[1].name;
+     console.log('a')
+   });
+  },
+  beforeDestroy() {
+    this.$eventHub.$off("change-channel");
+  },
   mounted() {
-	  console.log(JSON.parse(localStorage.getItem('currentChannel')))
-	this.channelName = JSON.parse(localStorage.getItem('channel')).name
+     
+    let channel = JSON.parse(localStorage.getItem("currentChannel"));
+    
+      this.channelName = !channel ? JSON.parse(localStorage.getItem("channel")).name : "Feed";
     let menu = document.getElementsByClassName("menu")[0];
     //    this.showOrHideMenu();
 
