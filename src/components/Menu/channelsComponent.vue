@@ -60,7 +60,9 @@
 </template>
 
 
+
 <script>
+
 import modalMenu from "./modalMenu";
 import newChannelModal from "./newChannelModal";
 import _ from "lodash";
@@ -72,6 +74,7 @@ export default {
   data() {
     return {
       currentChannel: 0,
+      
       channels: [],
       flag: false
     };
@@ -135,6 +138,7 @@ export default {
         this.$store.dispatch("CHANGE_CHANNEL", {});
       }
       this.currentChannel = -2;
+       localStorage.removeItem('channel')
       localStorage.setItem("currentChannel", -2);
     }
   },

@@ -188,7 +188,6 @@ export default {
       });
     },
     channelFilter(p) {
-      
       if (
         !this.currentChannel ||
         !this.currentChannel.people ||
@@ -230,9 +229,7 @@ export default {
     }
   },
   mounted() {
-    console.log('aa')
     this.$store.dispatch("FETCH_DATA").then(() => {
-      
       if (this.forUser) {
         let arr = this.$store.getters.GET_USER_POSTS;
 
@@ -242,11 +239,9 @@ export default {
         let arr = this.forUser
           ? this.$store.getters.GET_USER_POSTS
           : this.$store.getters.GET_POSTS;
-        // if(arr.length == 0)
-        console.log(arr.length);
         this.currentChannel = JSON.parse(localStorage.getItem("channel"));
-
-        if (_.isEqual(this.currentChannel, {})) {
+        
+        if (!this.currentChannel||_.isEqual(this.currentChannel, {})) {
           arr = arr.sort((first, second) => {
             return second.postId - first.postId;
           });
@@ -262,18 +257,17 @@ export default {
 
       let that = this;
       that.readMore();
-     
-        that.$nextTick(() => {
+
+      that.$nextTick(() => {
+        this.checkHashtagCount();
+        this.readMore();
+        if (window.outerWidth < 768 || window.innerWidth < 768) {
+          if (that.index == 1) that.index = -3;
+          if (that.index == 0) that.index = -1;
           this.checkHashtagCount();
-          this.readMore();
-          if (window.outerWidth < 768 || window.innerWidth < 768) {
-            if (that.index == 1) that.index = -3;
-            if (that.index == 0) that.index = -1;
-            this.checkHashtagCount();
-            that.readMore();
-          }
-        });
-      
+          that.readMore();
+        }
+      });
     });
 
     window.addEventListener("resize", function() {
