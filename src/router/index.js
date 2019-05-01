@@ -13,7 +13,6 @@ Vue.use(Router)
 import dataStorage from '../store/modules/dataStorage'
 
 
-
 const ifAuthenticated = (to, from, next) => {
   Axios.post(dataStorage.state.URL + "/posts/last", {
     limit: 1,

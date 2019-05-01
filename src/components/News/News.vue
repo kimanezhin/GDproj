@@ -1,9 +1,5 @@
 <template >
-  <div
-    id="resizable"
-    class="row d-flex"
-    :class="flexBehaviour"
-  >
+  <div id="resizable" class="row d-flex" :class="flexBehaviour">
     <div
       id="imgCol"
       :class="{'margin':!forUser, 'smallMargin':forUser}"
@@ -17,7 +13,7 @@
       />
     </div>
     <div class="col-md-4 ml-5 col-sm-12 text mt-4">
-      <div v-if="!isDataFetched && !isUserDataFetched" id="ld" class="loading">
+      <div v-if="!isDataFetched && !isUserDataFetched && !isNotLast" id="ld" class="loading">
         <div class="loadText">{{ Loading}}</div>
         <!-- <img src="https://loading.io/spinners/coolors/lg.palette-rotating-ring-loader.gif" alt=""> -->
       </div>
@@ -65,6 +61,9 @@ export default {
     isUserDataFetched() {
       return this.$store.state.dataStorage.isUserDataFetched;
     },
+    isNotLast() {
+      return this.$store.state.dataStorage.isNotLast;
+    },
     screenWidth() {
       return window.outerWidth;
     }
@@ -88,7 +87,7 @@ export default {
   methods: {
     enableLoading() {
       var count = 1;
-      setInterval(() => {
+      let i = setInterval(() => {
         if (count % 4 != 0) {
           this.Loading += ".";
         } else {
@@ -126,17 +125,15 @@ export default {
   align-items: center;
 }
 
-@media (max-width: 600px){
-  .margin{
+@media (max-width: 600px) {
+  .margin {
     margin-left: 10px;
   }
 }
 
 @media screen and (max-width: 1200px) {
-.margin{
-  margin-left: 0;
+  .margin {
+    margin-left: 0;
+  }
 }
-}
-
-
 </style>

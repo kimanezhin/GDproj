@@ -233,6 +233,7 @@ export default {
       this.$store.dispatch("SET_SCREEN_HEIGHT", { height: realHeight });
 
       if (localStorage.inputText) this.inputText = localStorage.inputText;
+      
       // this.$smoothReflow({
       //   property: ["height", "width"],
       //   transition: "height .25s ease-in-out, width 5.75s ease-in-out",
@@ -254,19 +255,19 @@ export default {
         };
       }
 
-      var text = document.getElementById("myText");
+      // var text = document.getElementById("myText");
 
-      /* 0-timeout to get the already changed text */
+      // /* 0-timeout to get the already changed text */
 
-      observe(text, "change", this.resize);
-      observe(text, "cut", this.delayedResize);
-      observe(text, "paste", this.delayedResize);
-      observe(text, "drop", this.delayedResize);
-      observe(text, "keydown", this.delayedResize);
+      // observe(text, "change", this.resize);
+      // observe(text, "cut", this.delayedResize);
+      // observe(text, "paste", this.delayedResize);
+      // observe(text, "drop", this.delayedResize);
+      // observe(text, "keydown", this.delayedResize);
 
-      text.focus();
-      text.select();
-      this.resize();
+      // text.focus();
+      // text.select();
+      // this.resize();
       document.activeElement.blur();
     }
   },
@@ -288,10 +289,10 @@ export default {
       localStorage.inputText = newText;
     },
     size(newText) {
-      this.initialSettings();
+      // this.initialSettings();
     },
     userSize(newText) {
-      this.initialSettings();
+      // this.initialSettings();
     }
   }
 };

@@ -84,6 +84,9 @@ export default {
       type: Number
     }
   },
+  beforeDestroy() {
+    this.$eventHub.$off("feed-updated");
+  },
   // ../../../
   methods: {
     getImgUrl(id) {
@@ -96,19 +99,16 @@ export default {
       tmp[2] = tmp[2].slice(0, 2);
       return tmp.reverse().join(".");
     },
-    checkPosts() {},
-    makeMarkDown(preText, name) {
-      preText = preText
-        .split("")
-        .map(x => {
-          if (x == "<") return " &Aacute; ";
-          if (x == ">") return "&gt;";
-          if (x === "&") return "&amp;";
+    updateFeed() {
+      // let arr = this.$store.getters.GET_POSTS;
+      // let i = _.differenceBy(arr,this.mPosts, 'postId')
+      // for(let post of i)
+      // this.mPosts.push(post)
+      // console.log(this.mPosts)
+    },
 
-          return x;
-        })
-        .join("");
-      return marked(preText);
+    makeMarkDown(preText, name) {
+      return marked(_.escape(preText));
     },
     openUser(event) {
       this.$router.push("/user/" + parseInt(event.target.name));
@@ -127,6 +127,7 @@ export default {
           );
           innerArray.forEach((item, i, arr) => {
             // item.classList.add('used')
+
             if (i > 4 && !item.classList.contains("used"))
               item.style.display = "none";
             if (i == 4 && !item.classList.contains("used")) {
@@ -229,6 +230,7 @@ export default {
     }
   },
   mounted() {
+    this.$eventHub.$on("feed-updated", this.updateFeed);
     this.$store.dispatch("FETCH_DATA").then(() => {
       if (this.forUser) {
         let arr = this.$store.getters.GET_USER_POSTS;
@@ -236,12 +238,12 @@ export default {
         this.mPosts = arr;
         this.readMore();
       } else {
-        let arr = this.forUser
-          ? this.$store.getters.GET_USER_POSTS
-          : this.$store.getters.GET_POSTS;
+        let arr = this.$store.getters.GET_POSTS;
+        // arr = _.uniqBy(arr, 'postId') // KOSTYLI!!!
+
         this.currentChannel = JSON.parse(localStorage.getItem("channel"));
-        
-        if (!this.currentChannel||_.isEqual(this.currentChannel, {})) {
+
+        if (!this.currentChannel || _.isEqual(this.currentChannel, {})) {
           arr = arr.sort((first, second) => {
             return second.postId - first.postId;
           });
@@ -262,34 +264,22 @@ export default {
         this.checkHashtagCount();
         this.readMore();
         if (window.outerWidth < 768 || window.innerWidth < 768) {
-          if (that.index == 1) that.index = -3;
-          if (that.index == 0) that.index = -1;
-          this.checkHashtagCount();
-          that.readMore();
+          // if (that.index == 1) that.index = -3;
+          // if (that.index == 0) that.index = -1;
+          // this.checkHashtagCount();
+          // that.readMore();
         }
       });
-    });
-
-    window.addEventListener("resize", function() {
-      if (window.outerWidth < 768 || window.innerWidth < 768) {
-        // that.firstArray = that.$options.propsData.posts;
-        // console.log(that.getPosts(-1)
-        // if (that.index == 1) that.index = -3;
-        // if (that.index == 0) that.index = -1;
-      } else {
-        // if (that.index == -3) that.index = 1;
-        // if (that.index == -1) that.index = 0;
-      }
-      // that.readMore();
     });
   },
   watch: {
     isFetched: function(params) {
       // this.checkHashtagCount();
     },
+
     size: function(params) {
-      this.checkHashtagCount();
-      this.readMore();
+      // this.checkHashtagCount();
+      // this.readMore();
     },
     userSize: function(params) {
       this.checkHashtagCount();
@@ -301,7 +291,6 @@ export default {
     },
     getCurrentChannel: function(newValue, oldValue) {
       this.currentChannel = newValue;
-
       let arr = this.forUser
         ? this.$store.getters.GET_USER_POSTS
         : this.$store.getters.GET_POSTS;

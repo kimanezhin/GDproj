@@ -1,10 +1,10 @@
 <template>
-  <div id="main">
+  <div id="main" @scroll="paginataion($event)">
     <div id="drop">
       <div class="sub-header">
         <!-- <div class="channel-name" @click.prevent="showChannels"> -->
-          <DropDown/>
-         
+        <DropDown/>
+
         <!-- </div> -->
 
         <div class="icon">
@@ -81,14 +81,14 @@ import { mapState, mapGetters } from "vuex";
 import smoothReflow from "vue-smooth-reflow";
 import News from "./News/News";
 import ChannelDropDown from "./ChannelDropDown";
-import DropDown from './News/DropDown'
+import DropDown from "./News/DropDown";
 export default {
   mixins: [smoothReflow],
   components: {
     feedMenu,
     Navbar,
     News,
-    ChannelDropDown, 
+    ChannelDropDown,
     DropDown
   },
   data() {
@@ -100,7 +100,8 @@ export default {
       readyToClose: false,
       myText: "he",
       arr: [],
-      eventFlag:true
+      eventFlag: true,
+      loading: false
     };
   },
   computed: {
@@ -113,9 +114,34 @@ export default {
     }
   },
   methods: {
+    pagination(event) {
+      
+      let wrapper = event.target.scrollingElement,
+        offsetHeight = wrapper.offsetHeight,
+        scrollHeight = wrapper.scrollHeight,
+        scrollTop = wrapper.scrollTop,
+        actualHeight = scrollHeight - offsetHeight;
+      if (actualHeight - scrollTop <= 2 && !this.loading) {
+        this.loading = true;
+        let arr = this.$store.getters.GET_POSTS;
+
+        let index = arr[arr.length - 1].postId;
+        
+        this.$store
+          .dispatch("FETCH_DATA", index)
+          .then(() => {
+            // this.$eventHub.$emit("feed-updated");
+            this.loading = false;
+          })
+          .catch(() => {
+            console.log("some troubles in pagination");
+            this.loading = false;
+          });
+          
+      }
+    },
     logOut() {
       this.$store.dispatch("LOG_OUT").then(() => {
-        console.log("adas");
         this.$router.push("/");
       });
     },
@@ -160,15 +186,10 @@ export default {
     },
 
     showChannels() {
-      
       let list = document.getElementsByClassName("shevron");
-      if (list[0].classList.contains("shevron-down"))
-        {
-          list[0].classList.remove("shevron-down");
-        }
-      else
-        list[0].classList.add("shevron-down");
-      
+      if (list[0].classList.contains("shevron-down")) {
+        list[0].classList.remove("shevron-down");
+      } else list[0].classList.add("shevron-down");
     },
     setCurrentSize() {
       this.isEditorShown = true;
@@ -205,7 +226,19 @@ export default {
       window.setTimeout(this.resize, 0);
     }
   },
+  beforeDestroy() {
+    window.removeEventListener("scroll", this.pagination);
+    let removeEvents = (type, name) => {
+      window.removeEventListener(type, name);
+    };
+    removeEvents("change", this.resize);
+    removeEvents("cut", this.delayedResize );
+    removeEvents("paste", this.delayedResize);
+    removeEvents("drop", this.delayedResize);
+    removeEvents("keydown", this.delayedResize);
+  },
   mounted() {
+    window.addEventListener("scroll", this.pagination);
     //fixed textarea
     var observe;
     if (window.attachEvent) {
@@ -234,7 +267,6 @@ export default {
     this.resize();
     document.activeElement.blur();
   },
-  watch: {}
 };
 </script>
 
@@ -355,7 +387,6 @@ img {
   margin-right: 1%;
   margin-left: auto;
 }
-
 
 .openButton {
   margin-left: auto;

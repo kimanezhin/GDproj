@@ -11,6 +11,7 @@ const state = {
     id: '',
     isDataFetched: false,
     isUserDataFetched: false,
+    isNotLast:true,
     currentChannel: 1,
     m: new Map(),
     messages: ['s'],
@@ -66,14 +67,17 @@ const getters = {
 const actions = {
 
     async FETCH_DATA(context, payload) {
+        context.state.isNotLast = true;
         return new Promise((resolve, reject) => {
-
-            context.state.posts = []
+            if (!payload) {
+                context.state.posts = []
+                payload = null
+            }
             Axios
                 .post(context.state.URL + "/posts/last",
                     {
-                        limit: 50,
-                        exclusiveFrom: null,
+                        limit: 10,
+                        exclusiveFrom: payload,
                         request: []
                     }
                     , {
@@ -83,22 +87,19 @@ const actions = {
                 .then(response => {
                     let tt = new Map(Object.entries(response.data.users));
                     context.commit('SET_MAP', tt)
-                    console.log(response.data)
+                    if(response.data.response.length == 0)
+                        context.state.isNotLast = false;
                     for (var item of response.data.response) {
-                        // context.commit('PUSH_POST', item)
                         makeRequest(context.state, item, context.state.posts)
                     }
-
                 }).then(() => {
-
-                    context.state.isDataFetched = true;
-                }).then(() => {
+                    // context.state.isDataFetched = true;
                     resolve();
                 }).catch(() => {
                     reject();
                 });
         })
-        // let uri = payload ? context.state.URL + "/posts/forUser" : context.state.URL + "/posts/last";
+    
 
     },
 
@@ -222,10 +223,6 @@ const mutations = {
             state.socket.message = message;
         }
         //  state.message = message
-
-
-
-
 
     },
     // mutations for reconnect methods

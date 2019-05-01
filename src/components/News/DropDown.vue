@@ -51,20 +51,20 @@ export default {
     }
   },
   created() {
-   this.$eventHub.$on("change-channel", (array) => {
-
-     this.channelName = array[1].name;
-     console.log('a')
-   });
+    this.$eventHub.$on("change-channel", array => {
+      if (array[0] == -1) this.channelName = "Feed";
+      else this.channelName = array[1].name;
+    });
   },
   beforeDestroy() {
     this.$eventHub.$off("change-channel");
   },
   mounted() {
-     
     let channel = JSON.parse(localStorage.getItem("currentChannel"));
-    
-      this.channelName = !channel ? JSON.parse(localStorage.getItem("channel")).name : "Feed";
+
+    this.channelName = !channel
+      ? JSON.parse(localStorage.getItem("channel")).name
+      : "Feed";
     let menu = document.getElementsByClassName("menu")[0];
     //    this.showOrHideMenu();
 

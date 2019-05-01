@@ -175,7 +175,6 @@ export default {
             this.$store.dispatch("CHANGE_CHANNEL", tmp);
           } else if (a.length > this.hashId + 1) {
             this.$store.dispatch("CHANGE_CHANNEL", a[this.hashId + 1]);
-            
           } else if (this.hashId == a.length - 1) {
           }
         }
@@ -210,7 +209,6 @@ export default {
           })
         };
         this.$store.dispatch("CREATE_CHANNEL", newChan).then(() => {
-          
           if (localStorage.getItem("currentChannel") == 0) {
             this.$store.dispatch("CHANGE_CHANNEL", newChan);
           }
@@ -236,10 +234,8 @@ export default {
     },
     selectHash(event) {
       // if(this.arePeopleSelected)
-        // this.checked[event.target.tabIndex] = !this.checked[event.target.tabIndex]
-        
-        
-     //TODO: apply to the new list
+      // this.checked[event.target.tabIndex] = !this.checked[event.target.tabIndex]
+      //TODO: apply to the new list
     },
     setActive() {
       var first = document.getElementById("tags");
@@ -300,7 +296,7 @@ export default {
               this.peopleChecks.push(true);
             } else this.peopleChecks.push(false);
           });
-          
+
           this.constTags.forEach(element => {
             if (this.myChannels[this.hashId].tags.includes(element)) {
               this.tagChecks.push(true);
@@ -314,6 +310,7 @@ export default {
   props: ["hashId"],
   watch: {
     myPosts(newVal, oldVal) {
+      console.log("a");
       this.avalibleTags = [];
       this.constTags = [];
       if (this.myPosts)
@@ -326,12 +323,12 @@ export default {
               }
             });
           });
-          if(this.hashId>=0)
-          this.constTags.forEach(element => {
-            if (this.myChannels[this.hashId].tags.includes(element)) {
-              this.tagChecks.push(true);
-            } else this.tagChecks.push(false);
-          });
+          if (this.hashId >= 0)
+            this.constTags.forEach(element => {
+              if (this.myChannels[this.hashId].tags.includes(element)) {
+                this.tagChecks.push(true);
+              } else this.tagChecks.push(false);
+            });
         });
     }
   }
