@@ -54,8 +54,8 @@
       </div>
     </div>
     <Navbar id="nv"></Navbar>
-    <!-- <channel-drop-down id="drop" @select-item="onOptionSelect"> -->
-    <!-- </channel-drop-down> -->
+ 
+ 
 
     <div class="exit" @click="logOut">Log out</div>
     <div class="row">
@@ -80,7 +80,7 @@ const vm = new Vue();
 import { mapState, mapGetters } from "vuex";
 import smoothReflow from "vue-smooth-reflow";
 import News from "./News/News";
-import ChannelDropDown from "./ChannelDropDown";
+
 import DropDown from "./News/DropDown";
 export default {
   mixins: [smoothReflow],
@@ -88,7 +88,6 @@ export default {
     feedMenu,
     Navbar,
     News,
-    ChannelDropDown,
     DropDown
   },
   data() {
@@ -124,13 +123,13 @@ export default {
       if (actualHeight - scrollTop <= 2 && !this.loading) {
         this.loading = true;
         let arr = this.$store.getters.GET_POSTS;
-
+        
         let index = arr[arr.length - 1].postId;
         
         this.$store
           .dispatch("FETCH_DATA", index)
           .then(() => {
-            // this.$eventHub.$emit("feed-updated");
+            this.$eventHub.$emit("feed-updated");
             this.loading = false;
           })
           .catch(() => {
@@ -239,6 +238,7 @@ export default {
   },
   mounted() {
     window.addEventListener("scroll", this.pagination);
+    
     //fixed textarea
     var observe;
     if (window.attachEvent) {

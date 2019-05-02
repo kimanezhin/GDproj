@@ -85,7 +85,7 @@ export default {
     }
   },
   beforeDestroy() {
-    this.$eventHub.$off("feed-updated");
+    this.$eventHub.$off("feed-updated", this.updateFeed);
   },
   // ../../../
   methods: {
@@ -100,11 +100,16 @@ export default {
       return tmp.reverse().join(".");
     },
     updateFeed() {
-      // let arr = this.$store.getters.GET_POSTS;
-      // let i = _.differenceBy(arr,this.mPosts, 'postId')
-      // for(let post of i)
-      // this.mPosts.push(post)
-      // console.log(this.mPosts)
+      let arr = this.$store.getters.GET_POSTS;
+      
+      let i = _.differenceBy(arr, this.mPosts, "postId")
+        .filter(p => this.channelFilter(p))
+        .sort((first, second) => {
+          return second.postId - first.postId;
+        });
+      
+      for (let post of i) this.mPosts.push(post);
+      // console.log(this.mPosts);
     },
 
     makeMarkDown(preText, name) {
@@ -178,6 +183,7 @@ export default {
 
             if (!texts[i].classList.contains("eventReady")) {
               texts[i].addEventListener("click", element => {
+                console.log('a')
                 item.classList.remove("toCrop");
                 event.target.classList.remove("constantSize");
               });
@@ -231,6 +237,7 @@ export default {
   },
   mounted() {
     this.$eventHub.$on("feed-updated", this.updateFeed);
+
     this.$store.dispatch("FETCH_DATA").then(() => {
       if (this.forUser) {
         let arr = this.$store.getters.GET_USER_POSTS;
@@ -255,6 +262,21 @@ export default {
             });
         }
         this.mPosts = arr;
+          do
+          { 
+            arr = this.mPosts;
+             let index = arr[arr.length - 1].postId;
+            this.$store
+          .dispatch("FETCH_DATA", index)
+          .then(() => {
+            this.$eventHub.$emit("feed-updated");
+            this.loading = false;
+          })
+          .catch(() => {
+            console.log("some troubles in pagination");
+            this.loading = false;
+          });
+          }while(arr.length < 10 && this.mPosts.length != arr.length)
       }
 
       let that = this;
@@ -299,6 +321,7 @@ export default {
           return second.postId - first.postId;
         });
       } else if (this.index == -1 && !this.forUser) {
+        
         arr = arr
           .filter(p => this.channelFilter(p))
           .sort((first, second) => {
@@ -306,6 +329,7 @@ export default {
           });
       }
       this.mPosts = arr;
+
       this.readMore();
     }
   }
