@@ -22,8 +22,6 @@ const actions = {
         context.state.currentDraft = payload[0];
         payload[1] = payload[1].map(x => x.name.slice(1, x.length))
         context.state.tags = payload[1]
-        //  context.commit("CREATE_POST", context.rootState.dataStorage.URL)
-
         context.commit("CREATE_POST", context.rootState.dataStorage.URL)
     }
 }

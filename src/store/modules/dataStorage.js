@@ -5,16 +5,19 @@ import VueNativeSock from "vue-native-websocket";
 import _ from "lodash";
 import currentUsers from './currentUsers'
 import { rejects } from 'assert';
+import { puts } from 'util';
 const vm = new Vue();
 Vue.use(Vuex)
 const state = {
     id: '',
     isDataFetched: false,
     isUserDataFetched: false,
-    isNotLast:true,
+    isNotLast: true,
     currentChannel: 1,
     m: new Map(),
     messages: ['s'],
+    tagCompletions: null,
+    values: [],
     URL: "https://valera-denis.herokuapp.com",
     posts: [
     ],
@@ -60,6 +63,7 @@ const getters = {
     GET_ID(state) { return parseInt(state.id) },
     GET_URL(state) { return state.URL },
     GET_MAP(state) { return state.m },
+    GET_COMPLETIONS(state) { return state.values }
 
 
 }
@@ -76,6 +80,7 @@ const actions = {
             Axios
                 .post(context.state.URL + "/posts/last",
                     {
+                        direction:'backward',
                         limit: 10,
                         exclusiveFrom: payload,
                         request: []
@@ -87,7 +92,7 @@ const actions = {
                 .then(response => {
                     let tt = new Map(Object.entries(response.data.users));
                     context.commit('SET_MAP', tt)
-                    if(response.data.response.length == 0)
+                    if (response.data.response.length == 0)
                         context.state.isNotLast = false;
                     for (var item of response.data.response) {
                         makeRequest(context.state, item, context.state.posts)
@@ -99,10 +104,38 @@ const actions = {
                     reject();
                 });
         })
-    
-
     },
 
+    async GET_TAG_COMPLETIONS(context) {
+        Axios.get(context.state.URL + '/tags/completions').then((response) => {
+            context.state.tagCompletions = response.data;
+        })
+    },
+    GET_COMPLETION(context, payload) {
+        
+        
+        return new Promise((resolve, reject) => {
+            let tree = payload[0] || context.state.tagCompletions;
+            let word = payload[1]
+            if (word === "") {
+                context.state.values = getValues(tree.subtree)
+                
+                resolve(transformTags(context.state.values));
+            }
+            let character = word[0];
+
+            if (!tree.subtree[character]) {
+                context.state.values = []
+                resolve();
+            }
+            else {
+               context.dispatch('GET_COMPLETION', [tree.subtree[character],_.drop(word.split('')).join('')]).then((response) => {
+                //    console.log(response)
+                   resolve(response);
+               });
+            }
+        })
+    },
     async FETCH_USER_DATA(context, payload) {
 
 
@@ -110,6 +143,7 @@ const actions = {
         await Axios
             .post(context.state.URL + "/posts/forUser",
                 {
+                    direction:'backward',
                     limit: 50,
                     exclusiveFrom: null,
                     request: payload
@@ -131,21 +165,6 @@ const actions = {
 
                 context.state.isUserDataFetched = true;
             });
-
-
-
-        // context.state.userPosts = []
-        // let uri = context.state.URL + '/posts/forUser'
-        // await Axios.post(uri, { 
-        //     limit: 20,
-        //     request: payload,
-        // }, { withCredentials: true }).then((response) => {
-        //     for (var item of response.data) {
-        //         makeUserRequest(item, context)
-        //     }
-        // }).then(() => {
-        //     context.state.isUserDataFetched = true;
-        // })
     },
 
 
@@ -252,6 +271,20 @@ async function makeRequest(state, payload, array) {
     state.columnToAdd = state.columnToAdd == 0 ? 1 : 0;
 }
 
+function getValues(tree) {
+    //    console.log(tree)
+    let out = []
+    for (let i of Object.entries(tree)) {
+        if (i[1]&&i[1].value)
+            out.push(i[1].value)
+
+        if (i[1])
+            out.push(getValues(i[1].subtree))
+        else
+            out.push(getValues(i.subtree))
+    }
+    return _.flattenDeep(out)
+}
 
 async function makeUserRequest(item, context) {
     SET_NAME(context.state, item.authorId).then((name) => {
@@ -265,6 +298,14 @@ async function makeUserRequest(item, context) {
         });
     })
 
+}
+
+function transformTags(array){
+    array = array.map(x => x = {
+        name:x,
+        code:x,
+    })
+    return array;
 }
 
 function SET_NAME(state, payload) {

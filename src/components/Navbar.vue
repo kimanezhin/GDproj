@@ -10,10 +10,10 @@
         <font-awesome-icon icon="newspaper" class="mt-1 mr-2"/>
         <span>Новости</span>
       </router-link>
-      <a href>
+      <router-link to = "/im">
         <font-awesome-icon icon="envelope" class="mt-1 mr-2"/>
         <span>Сообщения</span>
-      </a>
+      </router-link>
       <a href>
         <font-awesome-icon icon="project-diagram" class="mt-1 mr-2"/>
         <span>Проекты</span>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <modal name="md" height = "auto" :scrollable = "true">
+    <modal name="md" height="auto" :scrollable="true">
       <div class="container" style="word-wrap: break-word; ">
         <vue-markdown>{{editorText}}</vue-markdown>
       </div>
@@ -19,6 +19,7 @@
           :multiple="true"
           :taggable="true"
           :max-height="600"
+          :searchable="false"
           :disabled="!isEditorShown"
           @tag="addTag"
         ></multiselect>
@@ -80,12 +81,12 @@ export default {
       imgSource: "",
       value: [],
       options: [
-        { name: "#Vue.js", code: "vu" },
-        { name: "#Javascript", code: "js" },
-        { name: "#OpenSource", code: "os" },
-        { name: "#Open", code: "oss" },
-        { name: "#Op", code: "ods" },
-        { name: "#O", code: "fos" }
+        // { name: "#Vue.js", code: "vu" },
+        // { name: "#Javascript", code: "js" },
+        // { name: "#OpenSource", code: "os" },
+        // { name: "#Open", code: "oss" },
+        // { name: "#Op", code: "ods" },
+        // { name: "#O", code: "fos" }
       ]
     };
   },
@@ -116,17 +117,20 @@ export default {
     },
     showMyModal() {
       this.editorText = document.getElementById("myText").value;
-      this.$modal.show("md",{},{
-        height:5000
-      });
+      this.$modal.show(
+        "md",
+        {},
+        {
+          height: 5000
+        }
+      );
     },
     closeEditor() {
       // this.readyToClose = false;
-      
+
       let myText = document.getElementById("myText");
       // myText.setAttribute('readonly')
       if (this.isEditorShown && myText.readOnly == false) {
-        
         myText.readOnly = true;
       }
 
@@ -233,17 +237,6 @@ export default {
       this.$store.dispatch("SET_SCREEN_HEIGHT", { height: realHeight });
 
       if (localStorage.inputText) this.inputText = localStorage.inputText;
-      
-      // this.$smoothReflow({
-      //   property: ["height", "width"],
-      //   transition: "height .25s ease-in-out, width 5.75s ease-in-out",
-      //   el: ".toOverlay"
-      // });
-      //   document.getElementById("fantomPage").style.width = realWidth
-      // document.getElementById("fantomPage").style.height = realHeight
-      // this.$store.getters.GET_WIDTH + "px";
-
-      //fixed textarea
       var observe;
       if (window.attachEvent) {
         observe = function(element, event, handler) {
@@ -254,27 +247,41 @@ export default {
           element.addEventListener(event, handler, false);
         };
       }
-
-      // var text = document.getElementById("myText");
-
-      // /* 0-timeout to get the already changed text */
-
-      // observe(text, "change", this.resize);
-      // observe(text, "cut", this.delayedResize);
-      // observe(text, "paste", this.delayedResize);
-      // observe(text, "drop", this.delayedResize);
-      // observe(text, "keydown", this.delayedResize);
-
-      // text.focus();
-      // text.select();
-      // this.resize();
       document.activeElement.blur();
+    },
+    updateSearch(param) {
+      console.log(param);
+     this.$store.dispatch("GET_COMPLETION", [null,param]).then(aa => {
+        //this.options =
+        // if (!aa) this.options = [];
+        // else this.options = aa;
+        
+        // let a = [
+        //   { name: "#Vue.js", code: "vu" },
+        //   { name: "#Javascript", code: "js" },
+        //   { name: "#OpenSource", code: "os" },
+        //   { name: "#Open", code: "oss" },
+        //   { name: "#Op", code: "ods" },
+        //   { name: "#O", code: "fos" }
+        // ];
+        // this.options = a;
+        // if(this.options.length == 0)
+        // this.options = a;
+        // else 
+        // this.options = []
+     });
     }
   },
   mounted() {
+    this.$eventHub.$on("update-search", this.updateSearch);
     this.getImgUrl();
+    this.$store.dispatch("GET_TAG_COMPLETIONS");
     document.getElementById("ovr").classList.add("toOverlay");
     this.initialSettings();
+  },
+
+  beforeDestroy() {
+    this.$eventHub.$off("update-search", this.updateSearch);
   },
   computed: {
     size() {

@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Login from '@/components/Login'
 import Feed from '@/components/Feed'
 import Acc from './../components/User/User'
+import im from '../components/Messages/MessageView.vue'
 import VueNativeSock from 'vue-native-websocket'
 import Axios from 'axios';
 Vue.use(VueNativeSock, 'ws://websuck1t.herokuapp.com/posts/all ', {
@@ -15,6 +16,7 @@ import dataStorage from '../store/modules/dataStorage'
 
 const ifAuthenticated = (to, from, next) => {
   Axios.post(dataStorage.state.URL + "/posts/last", {
+    direction:'backward',
     limit: 1,
     exclusiveFrom: null,
     request: []
@@ -28,6 +30,7 @@ const ifAuthenticated = (to, from, next) => {
 
 const ifNotAuthenticated = (to, from, next) => {
   Axios.post(dataStorage.state.URL + "/posts/last", {
+    direction:'backward',
     limit: 1,
     exclusiveFrom: null,
     request: []
@@ -59,6 +62,13 @@ export default new Router({
       component: Acc,
       props: true,
       beforeEnter: ifNotAuthenticated
+    },
+    {
+      path: '/im',
+      name:'messages',
+      component: im,
+      beforeEnter:ifNotAuthenticated
+
     }
   ]
 })
