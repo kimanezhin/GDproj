@@ -57,7 +57,7 @@
  
  
 
-    <div class="exit" @click="logOut">Log out</div>
+   <Logout/>
     <div class="row">
       <div class="col-md-2 mt-5" id="menu">
         <feedMenu></feedMenu>
@@ -80,7 +80,7 @@ const vm = new Vue();
 import { mapState, mapGetters } from "vuex";
 import smoothReflow from "vue-smooth-reflow";
 import News from "./News/News";
-
+import Logout from './Logout'
 import DropDown from "./News/DropDown";
 export default {
   mixins: [smoothReflow],
@@ -88,7 +88,8 @@ export default {
     feedMenu,
     Navbar,
     News,
-    DropDown
+    DropDown,
+    Logout
   },
   data() {
     return {
@@ -138,11 +139,6 @@ export default {
           });
           
       }
-    },
-    logOut() {
-      this.$store.dispatch("LOG_OUT").then(() => {
-        this.$router.push("/");
-      });
     },
     getName(id, num) {
       let name = "";
@@ -273,26 +269,6 @@ export default {
 <style scoped>
 #drop {
   display: none;
-}
-
-.exit {
-  font-weight: 600;
-  /* margin-left: 98%; */
-  /* float: right; */
-  font-size: 30px;
-  top: 65px;
-  position: absolute;
-  right: -0.8em;
-  /* margin: 0; */
-  margin-left: 99%;
-  -webkit-transform: rotate(-90deg); /* разворот текста для разных браузеров */
-  -moz-transform: rotate(-90deg);
-  -ms-transform: rotate(-90deg);
-  -o-transform: rotate(-90deg);
-  transform: rotate(-90deg);
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 
 .exit:hover {

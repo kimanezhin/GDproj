@@ -42,7 +42,11 @@
 export default {
   data() {
     return {
-      channelName: ""
+      channelName: "",
+      _func:'',
+      __func:'',
+      ___func:'',
+
     };
   },
   computed: {
@@ -56,8 +60,12 @@ export default {
       else this.channelName = array[1].name;
     });
   },
+  
   beforeDestroy() {
     this.$eventHub.$off("change-channel");
+      let channelName = document.getElementsByClassName("channel-name");
+    document.removeEventListener('mouseup', this.___func)
+  
   },
   mounted() {
     let channel = JSON.parse(localStorage.getItem("currentChannel"));
@@ -70,18 +78,23 @@ export default {
 
     let list = document.getElementsByClassName("shevron");
     let channelName = document.getElementsByClassName("channel-name");
+    
     let flag = false;
-    channelName[0].addEventListener("mouseover", () => {
+    this._func = () => {
       flag = true;
-    });
-    channelName[0].addEventListener("mouseleave", () => {
-      flag = false;
-    });
+    };
 
-    document.onmouseup = () => {
+    this.__func = () => {
+      flag = false;
+    };
+    channelName[0].addEventListener("mouseover", this._func);
+    channelName[0].addEventListener("mouseleave", this.__func);
+
+    this.___func = () => {
       if (!flag && !list[0].classList.contains("shevron-down")) {
         this.showOrHideMenu();
       }
+      document.onmouseup = this.___func;
     };
   },
   methods: {

@@ -16,7 +16,7 @@ const getters = {
 const actions = {
     AUTH_REQUEST(context, user) {
         return new Promise((resolve, reject) => {
-            console.log('aaaaaa') // The Promise used for router redirect in login
+           
             context.commit('AUTH_REQUEST')
             Axios.post(
                 context.rootState.dataStorage.URL + "/authentication/login",
@@ -27,7 +27,7 @@ const actions = {
                     withCredentials: true
                 }
             ).then(resp => {
-                console.log(resp.data)
+                localStorage.setItem('myId', resp.data)
                 context.commit('AUTH_SUCCESS')
                 resolve(resp)
             })
@@ -41,6 +41,7 @@ const actions = {
     LOG_OUT(context) {
         return new Promise((resolve, reject) => {
             Axios.post(context.rootState.dataStorage.URL + '/authentication/logout', {}, { withCredentials: true }).then(() => {
+                localStorage.removeItem('myId')
                 resolve();
             }).catch(() => {
                 reject()

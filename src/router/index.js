@@ -6,6 +6,7 @@ import Acc from './../components/User/User'
 import im from '../components/Messages/MessageView.vue'
 import VueNativeSock from 'vue-native-websocket'
 import Axios from 'axios';
+import Dialog from './../components/Messages/Dialog.vue'
 Vue.use(VueNativeSock, 'ws://websuck1t.herokuapp.com/posts/all ', {
   connectManually: true,
 })
@@ -69,6 +70,13 @@ export default new Router({
       component: im,
       beforeEnter:ifNotAuthenticated
 
+    },
+    {
+      path: '/dialog/:id',
+      name:'dialog',
+      component: Dialog,
+      props:true,
+      beforeEnter:ifNotAuthenticated
     }
   ]
 })

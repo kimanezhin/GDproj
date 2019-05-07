@@ -1,10 +1,12 @@
 <template>
   <div id="main">
     <Navbar/>
+  <Logout/>
     <div class="row mr-0">
       <div class="col-2">
         <img :src="getImgUrl()" class="rounded avatar">
-        <button id="followButton" @click="addUserToChannel" class="btn btn-outline-primary">Follow</button>
+        <button  @click="addUserToChannel" class="btn followButton btn-outline-primary">Follow</button>
+        <button @click ="sendMessage" class = "btn followButton mt-1 btn-outline-secondary">Отправить сообщение</button>
       </div>
       <div class="col-10">
         <div class="d-flex flex-column">
@@ -111,6 +113,8 @@ import { mapState, mapGetters } from "vuex";
 import store from "../../store/store.js";
 import Axios from "axios";
 import addUserModal from "./../modals/addUserModal";
+import Logout from '../Logout'
+import sendMsg from '../Messages/SendMessageModal'
 export default {
   data() {
     return {
@@ -128,6 +132,18 @@ export default {
     })
   },
   methods: {
+    sendMessage(){
+      this.$modal.show(
+        sendMsg,
+        {
+          id:parseInt(this.id)
+        },
+        {
+          adaptive: true,
+          height: "auto"
+        }
+      );
+    },
     getImgUrl(){
      return  require("../../../img/" + this.id + ".png");
     },
@@ -176,7 +192,8 @@ export default {
   components: {
     Navbar,
     News,
-    addUserModal
+    addUserModal,
+    Logout
   }
 };
 </script>
@@ -201,7 +218,7 @@ export default {
   font-size: 28px;
 }
 
-#followButton {
+.followButton {
   width: 80%;
   margin-left: 10%;
   margin-right: 10%;

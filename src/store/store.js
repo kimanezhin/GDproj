@@ -17,6 +17,7 @@ export default new Vuex.Store({
     systemData,
     auth,
     draft,
-    channelsData
+    channelsData,
+    messageData
    }
 })
