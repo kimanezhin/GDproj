@@ -54,10 +54,8 @@
       </div>
     </div>
     <Navbar id="nv"></Navbar>
- 
- 
 
-   <Logout/>
+    <Logout/>
     <div class="row">
       <div class="col-md-2 mt-5" id="menu">
         <feedMenu></feedMenu>
@@ -80,7 +78,7 @@ const vm = new Vue();
 import { mapState, mapGetters } from "vuex";
 import smoothReflow from "vue-smooth-reflow";
 import News from "./News/News";
-import Logout from './Logout'
+import Logout from "./Logout";
 import DropDown from "./News/DropDown";
 export default {
   mixins: [smoothReflow],
@@ -115,7 +113,6 @@ export default {
   },
   methods: {
     pagination(event) {
-      
       let wrapper = event.target.scrollingElement,
         offsetHeight = wrapper.offsetHeight,
         scrollHeight = wrapper.scrollHeight,
@@ -124,12 +121,29 @@ export default {
       if (actualHeight - scrollTop <= 2 && !this.loading) {
         this.loading = true;
         let arr = this.$store.getters.GET_POSTS;
-        
+
         let index = arr[arr.length - 1].postId;
-        
-        this.$store
-          .dispatch("FETCH_DATA", index)
+        let promise;
+        if (!localStorage.getItem("channel")) {
+          promise = this.$store.dispatch("FETCH_DATA", index);
+        } else {
+          let id = parseInt(JSON.parse(localStorage.getItem("channel")).id);
+          let data = {
+            direction: "backward",
+            limit: 20,
+            exclusiveFrom: index,
+            request: id
+          };
+          let request = {
+            type: true,
+            request: data
+          };
+          console.log(data);
+          promise = this.$store.dispatch("UPDATE_POSTS", request);
+        }
+        promise
           .then(() => {
+            console.log('update!')
             this.$eventHub.$emit("feed-updated");
             this.loading = false;
           })
@@ -137,7 +151,6 @@ export default {
             console.log("some troubles in pagination");
             this.loading = false;
           });
-          
       }
     },
     getName(id, num) {
@@ -227,14 +240,14 @@ export default {
       window.removeEventListener(type, name);
     };
     removeEvents("change", this.resize);
-    removeEvents("cut", this.delayedResize );
+    removeEvents("cut", this.delayedResize);
     removeEvents("paste", this.delayedResize);
     removeEvents("drop", this.delayedResize);
     removeEvents("keydown", this.delayedResize);
   },
   mounted() {
     window.addEventListener("scroll", this.pagination);
-    
+
     //fixed textarea
     var observe;
     if (window.attachEvent) {
@@ -262,7 +275,7 @@ export default {
     }
     this.resize();
     document.activeElement.blur();
-  },
+  }
 };
 </script>
 

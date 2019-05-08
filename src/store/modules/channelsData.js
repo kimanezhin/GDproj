@@ -29,6 +29,13 @@ const actions = {
         return new Promise((resolve, reject) => {
             // context.state.currentChannel = {}
             // Object.assign(context.state.currentChannel, payload)
+
+
+            /*
+                Here is 
+                payload[0] - body of request
+                payload[1] - id of last post, can be null
+            */
             let request = {
                 direction: "backward",
                 limit: 20,
@@ -36,7 +43,7 @@ const actions = {
                 request: payload.id
             }
 
-            
+
             if (_.isEqual({}, payload)) {
                 console.log('a')
                 context.rootState.dataStorage.posts = []
@@ -45,33 +52,47 @@ const actions = {
                 }).catch(() => { reject(err) })
             }
             else {
-              
-                context.rootState.dataStorage.posts = []
-                // context.rootState.dataStorage.posts
-              
-                Axios.post(context.rootState.dataStorage.URL + '/channels/get', request, { withCredentials: true }).then((response) => {
-                    let tt = new Map(Object.entries(response.data.users));
-                    context.commit('SET_MAP', tt)
-                    console.log('a')
-                    if (response.data.response.length == 0)
-                        context.rootState.dataStorage.isNotLast = false;
-                        
-                    for (var item of response.data.response) {
-                       context.commit('UPDATER', item)
-                    }
-              
+
+                context.dispatch("UPDATE_POSTS", {
+                    type: false,
+                    request: request
                 })
-                    .then(() => { resolve() })
-                    .catch((err) => {
-                        console.error(err)
-                        reject(err)
-                    })
+                .then(() => { resolve() })
+                .catch(() => reject())
             }
         })
 
 
 
     },
+
+    UPDATE_POSTS(context, payload) {
+        return new Promise((resolve, reject) => {
+            if (!payload.type)
+                context.rootState.dataStorage.posts = []
+            // context.rootState.dataStorage.posts
+            let request = payload.request
+            Axios.post(context.rootState.dataStorage.URL + '/channels/get', request, { withCredentials: true }).then((response) => {
+                let tt = new Map(Object.entries(response.data.users));
+                context.commit('SET_MAP', tt)
+                console.log('a')
+                if (response.data.response.length == 0)
+                    context.rootState.dataStorage.isNotLast = false;
+
+                for (var item of response.data.response) {
+                    context.commit('UPDATER', item)
+                }
+                console.log(response.data)
+
+            })
+                .then(() => { resolve() })
+                .catch((err) => {
+                    console.error(err)
+                    reject(err)
+                })
+        })
+    },
+
     async UPDATE_CHANNEL(context, payload) {
         await Axios.post(context.rootState.dataStorage.URL + '/channels/update', payload, { withCredentials: true }).then(() => {
             context.dispatch('GET_ALL_CHANNELS')

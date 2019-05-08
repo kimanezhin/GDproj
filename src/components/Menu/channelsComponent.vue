@@ -21,7 +21,7 @@
       </svg>
     </div>
     <div class="ml-2 smth">
-      <div :name="-2" v-on:click="setDefaultChannel($event)" class="d-flex flex-row hrefOption">
+      <div :name="-2" class="d-flex flex-row hrefOption">
         <a
           href="#"
           :class="{bold:boldText(-2)}"
@@ -127,6 +127,7 @@ export default {
       let i = JSON.stringify(tmp);
       localStorage.setItem("channel", JSON.stringify(tmp));
       this.$store.dispatch("CHANGE_CHANNEL", tmp).then(() => {
+        
         this.currentChannel = index;
         localStorage.setItem("currentChannel", index);
         this.$eventHub.$emit("change-channel", [index, tmp]);
@@ -136,6 +137,7 @@ export default {
       if (parseInt(event.target.name) == -2) {
         this.$store.dispatch("CHANGE_CHANNEL", {});
       }
+      console.log("here")
       this.currentChannel = -2;
       localStorage.removeItem("channel");
       localStorage.setItem("currentChannel", -2);

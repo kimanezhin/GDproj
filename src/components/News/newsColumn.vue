@@ -102,14 +102,16 @@ export default {
     },
     updateFeed(flag) {
       let arr = this.$store.getters.GET_POSTS;
-  
-      let i = _.differenceBy(arr, this.mPosts, "postId")
-        .sort((first, second) => {
-          return second.postId - first.postId;
-        });
-     
-      for (let post of i) 
-      this.mPosts.push(post);
+      // let i = _.differenceBy(arr, this.mPosts, "postId")
+      //   .sort((first, second) => {
+      //     return second.postId - first.postId;
+      //   });
+     console.log(arr)
+      // for (let post of arr) 
+        // {
+        //   console.log(post)
+        //   this.mPosts.push(arr);
+        // }
       // console.log(this.mPosts);
     },
 
@@ -196,7 +198,7 @@ export default {
       });
     },
     changePosts(){
-      // this.mPosts = this.$store.getters.GET_POSTS
+      this.mPosts = this.$store.getters.GET_POSTS
     },
     channelFilter(p) {
       return true;
