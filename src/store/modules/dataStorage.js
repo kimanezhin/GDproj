@@ -6,6 +6,7 @@ import _ from "lodash";
 import currentUsers from './currentUsers'
 import { rejects } from 'assert';
 import { puts } from 'util';
+export {makeRequest}
 const vm = new Vue();
 Vue.use(Vuex)
 const state = {
@@ -112,9 +113,7 @@ const actions = {
         })
     },
     GET_COMPLETION(context, payload) {
-        
-        
-        return new Promise((resolve, reject) => {
+           return new Promise((resolve, reject) => {
             let tree = payload[0] || context.state.tagCompletions;
             let word = payload[1]
             if (word === "") {
@@ -176,6 +175,9 @@ const actions = {
 
 }
 const mutations = {
+    async UPDATER(state,payload){
+        makeRequest(state, payload, state.posts)
+    },
     SET_TOKEN(state, payload) { state.token = payload },
     SET_MAP(state, payload) {
 
@@ -269,6 +271,7 @@ async function makeRequest(state, payload, array) {
         tags: payload.tags
     })
     state.columnToAdd = state.columnToAdd == 0 ? 1 : 0;
+    // console.log(state.posts)
 }
 
 function getValues(tree) {

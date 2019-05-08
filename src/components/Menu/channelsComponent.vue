@@ -126,10 +126,11 @@ export default {
       let tmp = _.find(this.channelList, { id: parseInt(event.target.name) });
       let i = JSON.stringify(tmp);
       localStorage.setItem("channel", JSON.stringify(tmp));
-      this.$store.dispatch("CHANGE_CHANNEL", tmp);
-      this.currentChannel = index;
-      localStorage.setItem("currentChannel", index);
-      this.$eventHub.$emit("change-channel", [index, tmp]);
+      this.$store.dispatch("CHANGE_CHANNEL", tmp).then(() => {
+        this.currentChannel = index;
+        localStorage.setItem("currentChannel", index);
+        this.$eventHub.$emit("change-channel", [index, tmp]);
+      });
     },
     setDefaultChannel(event) {
       if (parseInt(event.target.name) == -2) {
@@ -144,14 +145,14 @@ export default {
   watch: {
     channelList: function(newVal, oldVal) {
       if (newVal[0] && !this.flag) {
-        if (localStorage.getItem("currentChannel") == -2)
-          this.$store.dispatch("CHANGE_CHANNEL", {});
-        else
-          this.$store.dispatch(
-            "CHANGE_CHANNEL",
-            newVal[localStorage.getItem("currentChannel")]
-          );
-
+        if (localStorage.getItem("currentChannel") == -2) {
+          // this.$store.dispatch("CHANGE_CHANNEL", {});
+        } else {
+          // this.$store.dispatch(
+          //   "CHANGE_CHANNEL",
+          //   newVal[localStorage.getItem("currentChannel")]
+          // );
+        }
         this.currentChannel = localStorage.getItem("currentChannel");
         this.flag = true;
       }

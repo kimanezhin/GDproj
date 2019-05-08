@@ -68,9 +68,9 @@ export default {
   
   },
   mounted() {
-    let channel = JSON.parse(localStorage.getItem("currentChannel"));
-
-    this.channelName = !channel
+    let channel = JSON.parse(localStorage.getItem("channel"));
+  console.log(channel)
+    this.channelName = channel
       ? JSON.parse(localStorage.getItem("channel")).name
       : "Feed";
     let menu = document.getElementsByClassName("menu")[0];

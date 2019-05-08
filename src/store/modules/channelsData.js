@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import Axios from 'axios'
 import _ from "lodash";
+import { makeRequest } from './dataStorage'
 
 Vue.use(Vuex)
 const state = {
@@ -25,10 +26,51 @@ const actions = {
         })
     },
     CHANGE_CHANNEL(context, payload) {
-        context.state.currentChannel = {}
-        Object.assign(context.state.currentChannel, payload)
+        return new Promise((resolve, reject) => {
+            // context.state.currentChannel = {}
+            // Object.assign(context.state.currentChannel, payload)
+            let request = {
+                direction: "backward",
+                limit: 20,
+                exclusiveFrom: null,
+                request: payload.id
+            }
 
-        
+            
+            if (_.isEqual({}, payload)) {
+                console.log('a')
+                context.rootState.dataStorage.posts = []
+                context.dispatch('FETCH_DATA').then(() => {
+                    resolve();
+                }).catch(() => { reject(err) })
+            }
+            else {
+              
+                context.rootState.dataStorage.posts = []
+                // context.rootState.dataStorage.posts
+              
+                Axios.post(context.rootState.dataStorage.URL + '/channels/get', request, { withCredentials: true }).then((response) => {
+                    let tt = new Map(Object.entries(response.data.users));
+                    context.commit('SET_MAP', tt)
+                    console.log('a')
+                    if (response.data.response.length == 0)
+                        context.rootState.dataStorage.isNotLast = false;
+                        
+                    for (var item of response.data.response) {
+                       context.commit('UPDATER', item)
+                    }
+              
+                })
+                    .then(() => { resolve() })
+                    .catch((err) => {
+                        console.error(err)
+                        reject(err)
+                    })
+            }
+        })
+
+
+
     },
     async UPDATE_CHANNEL(context, payload) {
         await Axios.post(context.rootState.dataStorage.URL + '/channels/update', payload, { withCredentials: true }).then(() => {
@@ -39,7 +81,7 @@ const actions = {
         Axios.post(context.rootState.dataStorage.URL + '/channels/create', payload, { withCredentials: true }).then((channelId) => {
             context.dispatch('GET_ALL_CHANNELS')
             // if (localStorage.getItem('currentChannel') == 0) {
-                // context.dispatch("CHANGE_CHANNEL", context.state.channels[0])
+            // context.dispatch("CHANGE_CHANNEL", context.state.channels[0])
             // }
         })
     },
@@ -50,7 +92,7 @@ const actions = {
             channels.data.forEach(elem => {
                 context.state.channels.push(elem)
             })
-            
+
         },
         )
     }

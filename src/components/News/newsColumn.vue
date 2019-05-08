@@ -86,6 +86,7 @@ export default {
   },
   beforeDestroy() {
     this.$eventHub.$off("feed-updated", this.updateFeed);
+     this.$eventHub.$off('change-channel', this.changePosts)
   },
   // ../../../
   methods: {
@@ -99,16 +100,16 @@ export default {
       tmp[2] = tmp[2].slice(0, 2);
       return tmp.reverse().join(".");
     },
-    updateFeed() {
+    updateFeed(flag) {
       let arr = this.$store.getters.GET_POSTS;
-      
+  
       let i = _.differenceBy(arr, this.mPosts, "postId")
-        .filter(p => this.channelFilter(p))
         .sort((first, second) => {
           return second.postId - first.postId;
         });
-      
-      for (let post of i) this.mPosts.push(post);
+     
+      for (let post of i) 
+      this.mPosts.push(post);
       // console.log(this.mPosts);
     },
 
@@ -194,7 +195,11 @@ export default {
         });
       });
     },
+    changePosts(){
+      // this.mPosts = this.$store.getters.GET_POSTS
+    },
     channelFilter(p) {
+      return true;
       if (
         !this.currentChannel ||
         !this.currentChannel.people ||
@@ -237,7 +242,8 @@ export default {
   },
   mounted() {
     this.$eventHub.$on("feed-updated", this.updateFeed);
-
+    this.$eventHub.$on('change-channel', this.changePosts)
+    if(!localStorage.getItem('channel'))
     this.$store.dispatch("FETCH_DATA").then(() => {
       if (this.forUser) {
         let arr = this.$store.getters.GET_USER_POSTS;
@@ -249,50 +255,24 @@ export default {
         // arr = _.uniqBy(arr, 'postId') // KOSTYLI!!!
 
         this.currentChannel = JSON.parse(localStorage.getItem("channel"));
-
-        if (!this.currentChannel || _.isEqual(this.currentChannel, {})) {
-          arr = arr.sort((first, second) => {
-            return second.postId - first.postId;
-          });
-        } else if (this.index == -1 && !this.forUser) {
-          arr = arr
-            .filter(p => this.channelFilter(p))
-            .sort((first, second) => {
-              return second.postId - first.postId;
-            });
-        }
+          // arr = arr
+          //   .sort((first, second) => {
+          //     return second.postId - first.postId;
+          //   });
         this.mPosts = arr;
-          do
-          { 
-            arr = this.mPosts;
-             let index = arr[arr.length - 1].postId;
-            this.$store
-          .dispatch("FETCH_DATA", index)
-          .then(() => {
-            this.$eventHub.$emit("feed-updated");
-            this.loading = false;
-          })
-          .catch(() => {
-            console.log("some troubles in pagination");
-            this.loading = false;
-          });
-          }while(arr.length < 10 && this.mPosts.length != arr.length)
       }
-
       let that = this;
-      that.readMore();
-
       that.$nextTick(() => {
         this.checkHashtagCount();
         this.readMore();
-        if (window.outerWidth < 768 || window.innerWidth < 768) {
-          // if (that.index == 1) that.index = -3;
-          // if (that.index == 0) that.index = -1;
-          // this.checkHashtagCount();
-          // that.readMore();
-        }
       });
     });
+    else{
+      let ch = JSON.parse(localStorage.getItem('channel'))
+      this.$store.dispatch("CHANGE_CHANNEL",ch ).then(() =>{
+         this.mPosts = this.$store.getters.GET_POSTS;
+      })
+    }
   },
   watch: {
     isFetched: function(params) {
@@ -312,25 +292,25 @@ export default {
       that.readMore();
     },
     getCurrentChannel: function(newValue, oldValue) {
-      this.currentChannel = newValue;
-      let arr = this.forUser
-        ? this.$store.getters.GET_USER_POSTS
-        : this.$store.getters.GET_POSTS;
-      if (_.isEqual(newValue, {})) {
-        arr = arr.sort((first, second) => {
-          return second.postId - first.postId;
-        });
-      } else if (this.index == -1 && !this.forUser) {
+      // this.currentChannel = newValue;
+      // let arr = this.forUser
+      //   ? this.$store.getters.GET_USER_POSTS
+      //   : this.$store.getters.GET_POSTS;
+      // if (_.isEqual(newValue, {})) {
+      //   arr = arr.sort((first, second) => {
+      //     return second.postId - first.postId;
+      //   });
+      // } else if (this.index == -1 && !this.forUser) {
         
-        arr = arr
-          .filter(p => this.channelFilter(p))
-          .sort((first, second) => {
-            return second.postId - first.postId;
-          });
-      }
-      this.mPosts = arr;
+      //   arr = arr
+      //     .filter(p => this.channelFilter(p))
+      //     .sort((first, second) => {
+      //       return second.postId - first.postId;
+      //     });
+      // }
+      // this.mPosts = arr;
 
-      this.readMore();
+      // this.readMore();
     }
   }
 };
