@@ -1,12 +1,13 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Login from '@/components/Login'
+import Login from '../components/AccountEnter/Login'
 import Feed from '@/components/Feed'
 import Acc from './../components/User/User'
 import im from '../components/Messages/MessageView.vue'
 import VueNativeSock from 'vue-native-websocket'
 import Axios from 'axios';
 import Dialog from './../components/Messages/Dialog.vue'
+import Registration from '../components/AccountEnter/Registration.vue'
 Vue.use(VueNativeSock, 'ws://websuck1t.herokuapp.com/posts/all ', {
   connectManually: true,
 })
@@ -77,6 +78,12 @@ export default new Router({
       component: Dialog,
       props:true,
       beforeEnter:ifNotAuthenticated
+    },
+    {
+      path: '/registration',
+      name:'Registration',
+      component: Registration,
+      beforeEnter: ifAuthenticated
     }
   ]
 })

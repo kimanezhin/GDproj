@@ -1,11 +1,12 @@
 <template>
   <div class = "d-flex flex-row">
     <slide>
-        
+          <transition name="slide">
       <router-link to = "/user/5051"> 
         <font-awesome-icon icon="user" class="mt-1 mr-2"/>
         <span>Моя страница</span>
       </router-link>
+          </transition>
       <router-link to="/feed">
         <font-awesome-icon icon="newspaper" class="mt-1 mr-2"/>
         <span>Новости</span>
@@ -88,7 +89,7 @@ nav > span {
   color: white;
   font-weight: 700;
   margin-left: 10px;
-  font-family: Raleway, Arial, sans-serif;
+
   font-size: 20px;
 }
 nav > a {

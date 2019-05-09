@@ -350,7 +350,7 @@ img:hover {
   text-align: right;
 
   font-size: 12px;
-  font-family: monospace;
+  
 
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#00ffffff',GradientType=0 );
   background: -webkit-gradient(

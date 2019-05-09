@@ -1,10 +1,8 @@
 <template>
   <div>
-    <Navbar/>
-    <Logout/>
-    <div class="dialogView">
-      <div class="row">
-        <div class="row header">
+    <!-- <div class="dialogView"> -->
+    <div class="row">
+      <!-- <div class="row header">
           <div class="back ml-2" @click="returnBack">
             <div class="chevron">
               <svg
@@ -42,24 +40,24 @@
           <div class="options mr-3">
             <font-awesome-icon class="mb-1 mr-1" icon="ellipsis-h"/>
           </div>
-        </div>
-        <hr width="100%">
-        <div class="row dialog">
-          <div class="messages">
-            <Message
-              class="sm"
-              v-for="msg in messages"
-              :Text="msg.body.markdown"
-              :key="msg.id"
-              :Time="transformTime(msg.time)"
-              :isItMe="checkAuthor(msg.author)"
-              :Author="getName(msg.author)"
-              :AuthorId="parseInt(msg.author)"
-            />
-            <!-- <Message class="sm" :Text="s" :Time="s" :isItMe="false"/> -->
-          </div>
-        </div>
-        <div class="input-group">
+      </div>-->
+      <!-- <hr width="100%"> -->
+      <!-- <div class="row dialog"> -->
+      <div class="messages">
+        <Message
+          class="sm"
+          v-for="msg in messages"
+          :Text="msg.body.markdown"
+          :key="msg.id"
+          :Time="transformTime(msg.time)"
+          :isItMe="checkAuthor(msg.author)"
+          :Author="getName(msg.author)"
+          :AuthorId="parseInt(msg.author)"
+        />
+        <!-- <Message class="sm" :Text="s" :Time="s" :isItMe="false"/> -->
+      </div>
+      <!-- </div> -->
+      <!-- <div class="input-group">
           <input
             type="text"
             class="form-control"
@@ -71,9 +69,9 @@
           <div class="input-group-append">
             <button class="btn btn-outline-secondary" type="button" @click="sendMessage">Send</button>
           </div>
-        </div>
-      </div>
+      </div>-->
     </div>
+    <!-- </div> -->
   </div>
 </template>
 <script>
@@ -81,6 +79,7 @@ import Navbar from "../Navbar";
 import Logout from "../Logout";
 import Message from "./Message";
 import moder from "./DialogModeration";
+
 export default {
   data() {
     return {
@@ -150,6 +149,30 @@ export default {
     returnBack() {
       this.$router.push("/im");
     },
+    changeDialog() {
+      if (this.currentMap.size == 0) {
+        let m = JSON.parse(localStorage.getItem("myMap"));
+
+        this.$store.commit("SET_MESSAGE_MAP", m);
+      }
+      let di = JSON.parse(localStorage.getItem("currentDialog"));
+      let id = parseInt(di.data.user || di.data.group.id);
+      
+      let request = {
+        id: id,
+        type: di.type
+      };
+      
+      this.$store
+        .dispatch("GET_DIALOG", request)
+        .then(dialog => {
+          this.messages = dialog;
+        })
+        .then(() => {
+          let i = document.getElementsByClassName("rightBody")[0];
+          i.scrollTop = i.scrollHeight - i.offsetHeight;
+        });
+    },
     getName(id) {
       if (!id) return null;
       let m = this.$store.getters.GET_MESSAGE_MAP.get(id);
@@ -159,28 +182,16 @@ export default {
         });
       }
       return m.firstName + " " + m.lastName;
+    },
+    updateMessages(msg){
+      this.changeDialog();
     }
   },
   props: ["id"],
   created() {
-    if (this.currentMap.size == 0) {
-      let m = JSON.parse(localStorage.getItem("myMap"));
-
-      this.$store.commit("SET_MESSAGE_MAP", m);
-    }
-    let request = {
-      id: this.id,
-      type: this.currentDialog.type
-    };
-    this.$store
-      .dispatch("GET_DIALOG", request)
-      .then(dialog => {
-        this.messages = dialog;
-      })
-      .then(() => {
-        let i = document.getElementsByClassName("messages")[0];
-        i.scrollTop = i.scrollHeight - i.offsetHeight;
-      });
+    this.changeDialog();
+    this.$eventHub.$on('dialogChanged', this.changeDialog)
+   
   },
   computed: {
     currentDialog() {
@@ -223,7 +234,7 @@ export default {
   flex-direction: column;
   width: 100%;
   max-height: inherit;
-  overflow-y: scroll;
+  /* overflow-y: scroll; */
   overflow-x: hidden;
 }
 .dialog {

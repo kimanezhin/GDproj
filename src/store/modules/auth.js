@@ -14,9 +14,20 @@ const getters = {
 }
 
 const actions = {
+
+    REGISTER_USER(context, payload) {
+        return new Promise((resolve, reject) => {
+            Axios.post(context.rootState.dataStorage.URL + '', payload, { withCredentials: true })
+            .then(() => {
+                resolve();
+            })
+            .catch(() => { reject(); })
+        })
+    },
+
     AUTH_REQUEST(context, user) {
         return new Promise((resolve, reject) => {
-           
+
             context.commit('AUTH_REQUEST')
             Axios.post(
                 context.rootState.dataStorage.URL + "/authentication/login",

@@ -215,7 +215,7 @@ export default {
 .userName {
   font-weight: 500;
 
-  font-size: 28px;
+  font-size: 14px;
 }
 
 .followButton {
@@ -337,7 +337,6 @@ export default {
 }
 .tabs .content section h2,
 .tabs ul li label {
-  font-family: "Montserrat";
   font-weight: bold;
   font-size: 18px;
   color: #428bff;

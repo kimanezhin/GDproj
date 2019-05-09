@@ -14,7 +14,7 @@
       <div class="d-flex justify-content-around">
         <div @click="toRight" class="cl el justify-content-center d-flex flex-row">
           <div class="people">Все участники:</div>
-          <div class="num ml-1">{{users.length}}</div>
+          <div class="num ml-1">{{usersCount}}</div>
         </div>
         <div @click="toLeft" class="cl el justify-content-center d-flex flex-row">
           <div class="people">Администраторы:</div>
@@ -24,7 +24,7 @@
       </div>
     </div>
     <hr width="100%" size="4">
-    <div v-if = "isAdmin" class="input-group p-1">
+    <div v-if="isAdmin" class="input-group p-1">
       <input
         type="text"
         class="form-control"
@@ -76,8 +76,16 @@
       </div>
     </div>
     <div class="footer p-2">
-      <button v-if="isAdmin" class="btn btn-outline-primary mr-2 btn-block" @click="updateChannel">Сохранить</button>
-      <button v-if = "isNotCreation" class="btn btn-outline-danger mr-2 btn-block" @click="leaveChannel">Покинуть канал</button>
+      <button
+        v-if="isAdmin"
+        class="btn btn-outline-primary mr-2 btn-block"
+        @click="updateChannel"
+      >Сохранить</button>
+      <button
+        v-if="isNotCreation"
+        class="btn btn-outline-danger mr-2 btn-block"
+        @click="leaveChannel"
+      >Покинуть канал</button>
     </div>
   </div>
 </template>
@@ -90,26 +98,19 @@ export default {
       currentDialog: {},
       users: [],
       notFilteredUsers: [],
-      myMap: ""
+      myMap: "",
+      adminsCount: 0,
+      usersCount: 0
     };
   },
   computed: {
     isAdmin() {
       let id = parseInt(localStorage.getItem("myId"));
       console.log(this.myMap);
-      if(!this.myMap ||this.myMap.size ==0 || !this.myMap.get(id))
-      return !this.isNotCreation;
+      if (!this.myMap || this.myMap.size == 0 || !this.myMap.get(id))
+        return !this.isNotCreation;
       return this.myMap.get(id).isAdmin;
     },
-    adminsCount() {
-      let n = this.users.reduce((sum, curr, index) => {
-        if (curr[1].isAdmin) sum += 1;
-        return sum;
-        console.log(curr);
-      }, 0);
-
-      return n;
-    }
   },
   props: {
     Title: {
@@ -129,15 +130,12 @@ export default {
         type: "groupChat",
         data: {
           group: {
-            users: {
-              
-            },
+            users: {},
             name: "Untitled"
           }
         }
       };
     }
-
 
     this.users = Object.entries(this.currentDialog.data.group.users) || [];
     if (this.myMap == "") {
@@ -148,9 +146,18 @@ export default {
         ])
       );
     }
+
+    this.countAdmins();
+    this.usersCount = this.users.length;
     this.notFilteredUsers = this.users;
   },
   methods: {
+    isNotMe(num) {
+      let id = parseInt(localStorage.getItem("myId"));
+      num = parseInt(num);
+      console.log(num,id);
+      return num != id;
+    },
     addUser() {
       let id = document.getElementById("userId");
       let val = id.value;
@@ -161,15 +168,18 @@ export default {
             isAdmin: false
           }
         ]);
-        _.set(this.currentDialog,'data.group.users.'+val+'.isAdmin', false)
-        console.log(this.currentDialog)
-
+        _.set(
+          this.currentDialog,
+          "data.group.users." + val + ".isAdmin",
+          false
+        );
+        console.log(this.currentDialog);
       }
       id.value = "";
+      this.usersCount += 1;
     },
     toRight() {
       this.users = this.notFilteredUsers;
-
       this.arePeopleSelected = !this.arePeopleSelected;
       document
         .getElementsByClassName("slider")[0]
@@ -183,19 +193,32 @@ export default {
       document
         .getElementsByClassName("slider")[0]
         .classList.remove("slider-translate");
-      document.getElementsByClassName("cl")[0].style.color = "black";
+      
       // document.getElementsByClassName("cl")[1].style.color = "#428bff";
+    },
+    countAdmins() {
+      let n = this.users.reduce((sum, curr, index) => {
+        if (curr[1].isAdmin) sum += 1;
+        return sum;
+      }, 0);
+
+      this.adminsCount = n;
     },
     changeAdmin(event) {
       // console.log(event)
-      _.update(this.currentDialog, "data.group.users." + event + ".isAdmin", n => {
-        return !n;
-      });
-      console.log(this.currentDialog);
+      _.update(
+        this.currentDialog,
+        "data.group.users." + event + ".isAdmin",
+        n => {
+          return !n;
+        }
+      );
+      this.countAdmins();
     },
     deletePerson(event) {
       _.unset(this.currentDialog, "data.group.users." + event);
-      console.log(this.currentDialog);
+      this.usersCount -= 1;
+      this.countAdmins();
     },
     leaveChannel() {
       this.$store
@@ -212,22 +235,23 @@ export default {
     updateChannel() {
       console.log(this.currentDialog.data.group);
       let tmp = {
-        operation: this.isNotCreation ? 'update' : 'create',
-        data:this.currentDialog.data.group
-      }
-      this.$store
-        .dispatch("UPDATE_DIALOG", tmp)
-        .then(() => {
-          localStorage.setItem(
-            "currentDialog",
-            JSON.stringify(this.currentDialog)
-          );
-          this.$emit("close");
-        });
+        operation: this.isNotCreation ? "update" : "create",
+        data: this.currentDialog.data.group
+      };
+      this.$store.dispatch("UPDATE_DIALOG", tmp).then(() => {
+        localStorage.setItem(
+          "currentDialog",
+          JSON.stringify(this.currentDialog)
+        );
+        this.$eventHub.$emit('dialogUpdated');
+        this.$emit("close");
+      });
     },
     showMenu(event) {
+      
       let popUp = document.getElementsByClassName("popUp")[event];
       //  setTimeout(() => {
+        console.log(event)
       popUp.style.opacity = "1";
       // }, 1);
     },

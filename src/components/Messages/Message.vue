@@ -7,7 +7,7 @@
       <p v-html="makeMarked(Text)" class="message-content"></p>
       <div
         :class="{ 
-            'message-timestamp-right' :isItMe, 'message-timestamp-left':!isItMe}"
+            'message-timestamp-left' :isItMe, 'message-timestamp-right':!isItMe}"
       >{{Time}}</div>
     </div>
   </div>
@@ -87,12 +87,19 @@ position: relative;
   margin-left: 20px;
   margin-bottom: 10px;
   padding: 10px;
-  background-color: #a8ddfd;
-  width: 30%;
+ background-image: radial-gradient( circle farthest-corner at 10% 20%,  rgba(0,114,255,1) 0%, rgba(0,132,255,1) 90% );
+ color: white;
+ 
+ 
+ 
+ /* background-color: #609cfc; */
+ min-width: 20%;
+  max-width: 50%;
+  
   min-height: 50px;
   text-align: left;
   font: 400 0.9em "Open Sans", sans-serif;
-  border: 1px solid #97c6e3;
+  border: 1px solid #428bff;
   border-radius: 10px;
 }
 
@@ -111,12 +118,12 @@ position: relative;
 .message-orange {
   position: relative;
   margin-bottom: 10px;
-  margin-left: calc(70% - 15px);
+  margin-left: calc(50% - 15px);
   /* margin-left: 70%; */
   padding: 10px;
   background-color: #ecedef;
-  min-width: 15%;
-  max-width: 30%;
+  width: 50%;
+  min-width: 10%;
   min-height: 50px;
   text-align: left;
   font: 400 0.9em "Open Sans", sans-serif;
@@ -127,25 +134,32 @@ position: relative;
 .message-content {
   padding: 0px;
   margin: 0;
+  word-break: break-all;
   -moz-hyphens: auto;
   -webkit-hyphens: auto;
   -ms-hyphens: auto;
 }
 
+.message-timestamp-left, .message-timestamp-right{
+  color: white;
+}
+
 .message-timestamp-right {
   position: absolute;
   font-size: 0.85em;
-  font-weight: 300;
+  font-weight: 500;
   bottom: 5px;
   right: 5px;
+  
 }
 
 .message-timestamp-left {
   position: absolute;
   font-size: 0.85em;
-  font-weight: 300;
+  font-weight: 500;
   bottom: 5px;
   left: 5px;
+  color: #7F7F7F;
 }
 
 .message-blue:after {
@@ -153,7 +167,8 @@ position: relative;
   position: absolute;
   width: 0;
   height: 0;
-  border-top: 15px solid #a8ddfd;
+  border-top: 15px solid  radial-gradient( circle farthest-corner at 10% 20%,  rgba(0,114,255,1) 0%, rgba(0,132,255,1) 90% );
+ ;
   border-left: 15px solid transparent;
   border-right: 15px solid transparent;
   top: 0;
@@ -165,7 +180,8 @@ position: relative;
   position: absolute;
   width: 0;
   height: 0;
-  border-top: 17px solid #97c6e3;
+  border-top: 17px solid  radial-gradient( circle farthest-corner at 10% 20%,  rgba(0,114,255,1) 0%, rgba(0,132,255,1) 90% );
+
   border-left: 16px solid transparent;
   border-right: 16px solid transparent;
   top: -1px;
@@ -177,7 +193,7 @@ position: relative;
   position: absolute;
   width: 0;
   height: 0;
-  border-bottom: 15px solid #ecedef;
+  /* border-bottom: 15px solid #ecedef; */
   border-left: 15px solid transparent;
   border-right: 15px solid transparent;
   bottom: 0;
@@ -189,7 +205,7 @@ position: relative;
   position: absolute;
   width: 0;
   height: 0;
-  border-bottom: 17px solid #ecedef;
+  /* border-bottom: 17px solid #ecedef; */
   border-left: 16px solid transparent;
   border-right: 16px solid transparent;
   bottom: -1px;

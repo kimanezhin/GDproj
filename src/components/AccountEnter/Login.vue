@@ -80,8 +80,9 @@ export default {
      
 
       this.$store.dispatch("AUTH_REQUEST",this.$store.getters.GET_ID).then((response)=>{
-          
-         this.$router.push('/feed')
+          // if(response.data.isRegistred)
+            this.$router.push('/feed')
+            // else
       }).catch(() =>{console.log("Unable to login")})
 
     }

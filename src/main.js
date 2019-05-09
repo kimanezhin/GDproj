@@ -15,9 +15,9 @@ import vSelectMenu from 'v-selectmenu'
 Vue.use(VModal, { dynamic: true, injectModalsContainer: true })
 Vue.use(vSelectMenu, { language: 'en' });
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faPencilAlt, faTimes, faChevronDown,faCheck, faEllipsisH,faPlus, faUserSecret, faEnvelope, faUser, faNewspaper, faProjectDiagram, faTasks, faCog, faPaperPlane, faImage, faCommentAlt, faCommentDollar } from '@fortawesome/free-solid-svg-icons'
+import { faPencilAlt, faEdit, faTimes, faChevronDown,faCheck, faEllipsisH,faPlus, faUserSecret, faEnvelope, faUser, faNewspaper, faProjectDiagram, faTasks, faCog, faPaperPlane, faImage, faCommentAlt, faCommentDollar, faPenSquare } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-library.add(faPencilAlt, faTimes, faChevronDown, faCheck, faEllipsisH,faPlus, faUserSecret, faEnvelope, faUser, faNewspaper, faProjectDiagram, faTasks, faCog, faPaperPlane, faImage)
+library.add(faPencilAlt, faTimes,faEdit, faPenSquare, faChevronDown, faCheck, faEllipsisH,faPlus, faUserSecret, faEnvelope, faUser, faNewspaper, faProjectDiagram, faTasks, faCog, faPaperPlane, faImage)
 import PrettyCheckbox from 'pretty-checkbox-vue';
 
 Vue.use(PrettyCheckbox);
