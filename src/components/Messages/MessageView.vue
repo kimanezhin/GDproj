@@ -1,10 +1,10 @@
 <template>
-  <div class="wrapper">
+  <div class="wrapper" @resize="onResizeEventHandler">
     <div class="cnt">
       <NavBar/>
       <Logout/>
       <div class="content-wrapper row">
-        <div class="leftSide col-4">
+        <div class="leftSide" :class="{'col-4':screenWidth > 1000, 'col-12':screenWidth < 1000}">
           <div class="leftHeader d-flex flex-row justify-content-between">
             <div class="subHeader font-weight-bold">Messages</div>
             <div class="newMessage">
@@ -38,7 +38,7 @@
           </div>
         </div>
         <!-- <div class="rightSide col-8"> -->
-        <co/>
+        <co v-if="isOpened && !onResizeEventHandler()"/>
         <!-- </div> -->
       </div>
     </div>
@@ -63,7 +63,8 @@ export default {
   data() {
     return {
       messages: [],
-      isOpened: false
+      isOpened: false,
+      screenWidth: 1200
     };
   },
   methods: {
@@ -108,27 +109,32 @@ export default {
           height: "auto"
         },
         {
-          "before-close": (event) => {
-            
-          },
-          "edited":() =>{
-            console.log('a')
+          "before-close": event => {},
+          edited: () => {
+            console.log("a");
           }
         }
       );
+    },
+    onResizeEventHandler() {
+      // innerwidth - 88
+      this.screenWidth = window.innerWidth + 91;
+      return this.screenWidth < 1000;
+      // console.log('a')
     },
     getImgUrl(id) {
       return require("../../../img/" + id + ".png");
     },
     openDialog(event) {
-      console.log(localStorage.getItem("currentDialog"));
+      console.log(window);
       let num = event.data.user || event.data.group.id;
       let tmp = event;
       //   if (tmp.data.user) tmp.data.user = this.getName(tmp.data.user);
       localStorage.setItem("currentDialog", JSON.stringify(tmp));
       this.$eventHub.$emit("dialogChanged");
       this.isOpened = true;
-      // this.$router.push("/dialog/" + num);
+      if(this.screenWidth < 1000)
+      this.$router.push("/dialog/" + num);
     },
     getName(id) {
       if (!id) return;
@@ -147,16 +153,19 @@ export default {
       let timeString = clock[0] + ":" + clock[1] + ", ";
       return tmp[2] + "." + tmp[1];
     },
-    updateDialog(){
-      
-    }
+    updateDialog() {}
   },
 
   mounted() {
     this.$store.dispatch("GET_ALL_MESSAGES", null).then(() => {
       this.messages = this.$store.getters.GET_MESSAGES;
     });
-    this.$eventHub.$on(dialogUpdated,this.updateDialog);
+    if (localStorage.getItem("currentDialog")) this.isOpened = true;
+
+    window.addEventListener("resize", this.onResizeEventHandler);
+  },
+  beforeDestroy(){
+    window.removeEventListener('resize', this.onResizeEventHandler)
   }
 };
 </script>
@@ -263,7 +272,7 @@ html {
   overflow-y: scroll;
 }
 
-.leftBody{
+.leftBody {
   height: 87%;
   overflow-y: scroll;
 }
@@ -362,6 +371,12 @@ html {
 .dialog {
   border: 1px solid #c8c8c8;
   width: 100%;
+}
+
+@media screen and(max-width:1000px) {
+  .leftSide {
+    max-width: 100% !important;
+  }
 }
 
 .dialog:hover {

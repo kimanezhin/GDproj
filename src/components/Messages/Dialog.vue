@@ -170,6 +170,7 @@ export default {
         })
         .then(() => {
           let i = document.getElementsByClassName("rightBody")[0];
+          if(i)
           i.scrollTop = i.scrollHeight - i.offsetHeight;
         });
     },
@@ -211,6 +212,12 @@ export default {
 * {
   margin: 0;
 }
+
+
+@media screen and(max-width: 1000px) {
+  
+}
+
 
 .participants {
   text-align: center;

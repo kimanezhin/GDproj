@@ -6,7 +6,7 @@ import Acc from './../components/User/User'
 import im from '../components/Messages/MessageView.vue'
 import VueNativeSock from 'vue-native-websocket'
 import Axios from 'axios';
-import Dialog from './../components/Messages/Dialog.vue'
+import Dialog from './../components/Messages/DialogWrapper.vue'
 import Registration from '../components/AccountEnter/Registration.vue'
 Vue.use(VueNativeSock, 'ws://websuck1t.herokuapp.com/posts/all ', {
   connectManually: true,

@@ -1,5 +1,5 @@
 <template>
-  <div class="rightSide col-8">
+  <div class="rightSide" :class="{'col-8':screenWidth>1000, 'col-12':screenWidth <1000}">
     <div class="rightHeader">
       <div class="chatName text-center d-flex flex-column">
         <div class="chatNameInner">{{chatName}}</div>
@@ -35,7 +35,8 @@ export default {
   data() {
     return {
       chatName: "",
-      isOpened: true
+      isOpened: true,
+      screenWidth: 1200
     };
   },
   methods: {
@@ -53,8 +54,8 @@ export default {
       this.chatName =
         this.getName(di.data.user) || (di.data.group && di.data.group.name);
     },
-    moderateGroup(){
-        let di = JSON.parse(localStorage.getItem("currentDialog"));
+    moderateGroup() {
+      let di = JSON.parse(localStorage.getItem("currentDialog"));
       this.$modal.show(
         moder,
         {
@@ -78,6 +79,9 @@ export default {
         });
       }
       return m.firstName + " " + m.lastName;
+    },
+    onResizeEventHandler() {
+      this.screenWidth = window.innerWidth + 91;
     },
     sendMessage() {
       let msg;
@@ -110,6 +114,12 @@ export default {
   mounted() {
     this.setName();
     this.$eventHub.$on("dialogChanged", this.setName);
+    window.addEventListener("resize", this.onResizeEventHandler);
+    this.onResizeEventHandler();
+  },
+  beforeDestroy() {
+    this.$eventHub.$off("dialogChanged", this.setName);
+    window.removeEventListener("resize", this.onResizeEventHandler);
   }
 };
 </script>

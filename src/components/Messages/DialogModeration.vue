@@ -1,5 +1,8 @@
 <template>
   <div class="d-flex flex-column">
+    <div class="exitCross">
+      <font-awesome-icon @click="simpleClose" icon = "times"/>
+    </div>
     <div class="header">Информация</div>
 
     <div class="title d-flex flex-row">
@@ -126,18 +129,22 @@ export default {
     if (this.isNotCreation)
       this.currentDialog = JSON.parse(localStorage.getItem("currentDialog"));
     else {
+      
       this.currentDialog = {
         type: "groupChat",
         data: {
           group: {
-            users: {},
+            users: {
+              
+            },
             name: "Untitled"
           }
         }
       };
     }
-
-    this.users = Object.entries(this.currentDialog.data.group.users) || [];
+    let me = parseInt(localStorage.getItem('myId'))
+    this.users = Object.entries(this.currentDialog.data.group.users) || [[me,{isAdmin:true}]];
+    console.log(this.users)
     if (this.myMap == "") {
       this.myMap = new Map(
         Object.entries(this.currentDialog.data.group.users).map(x => [
@@ -147,11 +154,16 @@ export default {
       );
     }
 
+
+
     this.countAdmins();
     this.usersCount = this.users.length;
     this.notFilteredUsers = this.users;
   },
   methods: {
+    simpleClose(){
+this.$emit('close')
+    },
     isNotMe(num) {
       let id = parseInt(localStorage.getItem("myId"));
       num = parseInt(num);
@@ -243,7 +255,7 @@ export default {
           "currentDialog",
           JSON.stringify(this.currentDialog)
         );
-        this.$eventHub.$emit('dialogUpdated');
+        
         this.$emit("close");
       });
     },
@@ -304,6 +316,17 @@ export default {
 <style scoped>
 .num {
   color: #939393;
+}
+
+
+.exitCross{
+  position: absolute;
+  right: 0;
+  margin-right: 10px;
+  margin-top: 10px;
+  top: 10;
+  color: white;
+  font-size: 15px;
 }
 
 .textCenter {
