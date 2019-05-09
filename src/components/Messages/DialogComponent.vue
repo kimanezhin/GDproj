@@ -1,5 +1,5 @@
 <template>
-  <div class="rightSide" :class="{'col-8':screenWidth>1000, 'col-12':screenWidth <1000}">
+  <div class="rightSide" :class="{'col-8':onResizeEventHandler()>1000, 'col-12':onResizeEventHandler() <1000}">
     <div class="rightHeader">
       <div class="chatName text-center d-flex flex-column">
         <div class="chatNameInner">{{chatName}}</div>
@@ -82,6 +82,8 @@ export default {
     },
     onResizeEventHandler() {
       this.screenWidth = window.innerWidth + 91;
+      console.log(this.screenWidth)
+      return this.screenWidth;
     },
     sendMessage() {
       let msg;
@@ -115,6 +117,7 @@ export default {
     this.setName();
     this.$eventHub.$on("dialogChanged", this.setName);
     window.addEventListener("resize", this.onResizeEventHandler);
+    
     this.onResizeEventHandler();
   },
   beforeDestroy() {

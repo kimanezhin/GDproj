@@ -1,10 +1,10 @@
 <template>
   <div class="wrapper" @resize="onResizeEventHandler">
     <div class="cnt">
-      <NavBar/>
+      <NavBar style = "position:absolute"/>
       <Logout/>
       <div class="content-wrapper row">
-        <div class="leftSide" :class="{'col-4':screenWidth > 1000, 'col-12':screenWidth < 1000}">
+        <div class="leftSide" :class="{'col-4':onResizeEventHandler() > 1000, 'col-12':onResizeEventHandler() < 1000}">
           <div class="leftHeader d-flex flex-row justify-content-between">
             <div class="subHeader font-weight-bold">Messages</div>
             <div class="newMessage">
