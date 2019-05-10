@@ -1,6 +1,30 @@
 <template>
   <div class="rightSide" :class="{'col-8':onResizeEventHandler()>1000, 'col-12':onResizeEventHandler() <1000}">
-    <div class="rightHeader">
+    <div class="rightHeader abs">
+
+          <div class="back ml-2 position-absolute">
+            <div class="chevron">
+              <svg
+                version="1.1"
+                xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+                x="0px"
+                y="0px"
+                viewBox="0 0 1000 1000"
+                enable-background="new 0 0 1000 1000"
+                xml:space="preserve"
+              >
+                <metadata>Svg Vector Icons : http://www.onlinewebfonts.com/icon</metadata>
+                <g>
+                  <path
+                    d="M981.9,283c5.2-5.2,8.1-12.1,8.1-19.4c0-7.3-2.8-14.2-8-19.3c-10.7-10.7-28-10.7-38.7-0.1L498.9,686.4L56.8,244.2c-10.7-10.7-28.1-10.7-38.7,0c-5.2,5.2-8,12.1-8,19.4c0,7.3,2.8,14.2,8,19.4l480,479.9l0.9,0.9L981.9,283z"
+                  ></path>
+                </g>
+              </svg>
+            </div>
+            <div class="backText">Назад</div>
+          </div>
+
       <div class="chatName text-center d-flex flex-column">
         <div class="chatNameInner">{{chatName}}</div>
         <div v-if="isGroup()" class="participants" @click="moderateGroup">{{counter()}} participants</div>
@@ -138,5 +162,26 @@ export default {
 .participants:hover {
   cursor: pointer;
   text-decoration: underline;
+}
+
+.back {
+  display: flex;
+  flex-direction: row;
+  color: #7e7e7e;
+  fill: #7e7e7e;
+  opacity: 0.7;
+  margin-top: 5px;;
+}
+
+.back:hover {
+  cursor: pointer;
+  opacity: 1;
+}
+
+.chevron {
+  width: 20px;
+  height: 20px;
+  transform: rotate(90deg);
+  transform-origin: 50% 70%;
 }
 </style>

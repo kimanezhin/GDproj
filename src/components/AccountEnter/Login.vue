@@ -12,7 +12,7 @@
           autofocus
           v-model="id"
         >
-        
+
         <input
           class="button btn btn-lg btn-primary btn-block"
           v-on:click="signIn"
@@ -44,17 +44,16 @@ export default {
     };
   },
   methods: {
-    signIn() {
+    signIn(event) {
       this.$store.dispatch("SET_ID", this.id);
-       this.showNotification();
+      this.showNotification(event.target.value);
     },
-    showNotification() {
+    showNotification(email) {
       var pattern = /^\w+@{1}(edu.)?(hse.ru){1}$/;
       var email = $(document.getElementById("inputEmail")).val();
 
       // if (pattern.test(email))
-      if(false)
-      {
+      if (false) {
         event.preventDefault();
 
         //   $('.button').removeClass('is-active');
@@ -76,15 +75,26 @@ export default {
       }
 
       //TODO: Here should be /authenticate
-      console.log(this.$store.getters.GET_ID);
-     
+      console.log(email);
 
-      this.$store.dispatch("AUTH_REQUEST",this.$store.getters.GET_ID).then((response)=>{
-          // if(response.data.isRegistred)
-            this.$router.push('/feed')
-            // else
-      }).catch(() =>{console.log("Unable to login")})
+      this.$store
+        .dispatch("AUTH_REQUEST", email)
+        .then(
+          response => {
+            // if(response.data.isRegistred)
 
+            if (response == "registered") {
+              this.$router.push("/code");
+            } else if (response === "canRegister")
+              this.$router.push("/registration");
+            else if (response === "invalid") {
+            } else console.log("a");
+          }
+          // else
+        )
+        .catch(() => {
+          console.log("Unable to login");
+        });
     }
   }
 };

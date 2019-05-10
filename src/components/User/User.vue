@@ -1,16 +1,19 @@
 <template>
   <div id="main">
     <Navbar/>
-  <Logout/>
+    <Logout/>
     <div class="row mr-0">
       <div class="col-2">
         <img :src="getImgUrl()" class="rounded avatar">
-        <button  @click="addUserToChannel" class="btn followButton btn-outline-primary">Follow</button>
-        <button @click ="sendMessage" class = "btn followButton mt-1 btn-outline-secondary">Отправить сообщение</button>
+        <button @click="addUserToChannel" class="btn followButton btn-outline-primary">Follow</button>
+        <button
+          @click="sendMessage"
+          class="btn followButton mt-1 btn-outline-secondary"
+        >Отправить сообщение</button>
       </div>
       <div class="col-10">
         <div class="d-flex flex-column">
-          <div class="userName">{{lastName}} {{firstName}} {{middleName}}</div>
+          <div class="user">{{lastName}} {{firstName}} {{middleName}}</div>
           <div class="line"></div>
           <div class>
             <div class="tabs mt-3">
@@ -61,31 +64,19 @@
                 <section>
                   <div class="row">
                     <div class="col-3 categoriesAbout">Факультет:</div>
-                    <div class="col-7 textAbout">Факультет компьютерных наук</div>
+                    <div class="col-7 textAbout">{{faculty}}</div>
                   </div>
                   <div class="row">
                     <div class="col-3 categoriesAbout">Город:</div>
-                    <div class="col-7 textAbout">Москва</div>
+                    <div class="col-7 textAbout">{{city}}</div>
                   </div>
                   <div class="row text">
                     <div class="col-3 categoriesAbout">Должность:</div>
                     <div class="col-7 textAbout">Доцент</div>
                   </div>
                   <div class="row text">
-                    <div class="col-3 categoriesAbout">Город:</div>
-                    <div class="col-7 textAbout">Москва</div>
-                  </div>
-                  <div class="row text">
-                    <div class="col-3 categoriesAbout">Researcher ID:</div>
-                    <div class="col-7 textAbout">K-5545-2015</div>
-                  </div>
-                  <div class="row text">
-                    <div class="col-3 categoriesAbout">Телефон:</div>
-                    <div class="col-7 textAbout">8-912-345-67-89</div>
-                  </div>
-                  <div class="row text">
                     <div class="col-3 categoriesAbout">Почта:</div>
-                    <div class="col-7 textAbout">vchernyshov@hse.ru</div>
+                    <div class="col-7 textAbout">{{email}}</div>
                   </div>
                 </section>
                 <section>Тут что нибудь появится</section>
@@ -113,15 +104,18 @@ import { mapState, mapGetters } from "vuex";
 import store from "../../store/store.js";
 import Axios from "axios";
 import addUserModal from "./../modals/addUserModal";
-import Logout from '../Logout'
-import sendMsg from '../Messages/SendMessageModal'
+import Logout from "../Logout";
+import sendMsg from "../Messages/SendMessageModal";
 export default {
   data() {
     return {
       currentBlock: 1,
       firstName: "",
       lastName: "",
-      middleName: ""
+      middleName: "",
+      email: "",
+      city: "",
+      faculty: ""
     };
   },
   props: ["id"],
@@ -131,12 +125,55 @@ export default {
       token: "GET_TOKEN"
     })
   },
+  mounted() {
+    let id = parseInt(localStorage.getItem("myId"));
+
+    if (!id) {
+      Axios.post(
+        this.$store.getters.GET_URL + "/authentication/me",
+        {},
+        { withCredentials: true }
+      ).then(response => {
+        id = response.data;
+      });
+    }
+    let m = this.$store.getters.GET_MAP.get(id);
+    console.log(m);
+    if (!m) {
+      this.$store
+        .dispatch("GET_USERS", [id])
+        .then(response => {
+          m = response[0];
+        })
+        .then(response => {
+          this.faculty = m.faculty.name;
+          this.email = m.email;
+          this.city = m.faculty.campusName;
+          console.log(response);
+          this.firstName = m.firstName;
+          this.lastName = m.lastName;
+          this.middleName = m.middleName;
+        });
+    } else {
+      this.faculty = m.faculty.name;
+      this.email = m.email;
+      this.city = m.faculty.campusName;
+      this.firstName = m.firstName;
+      this.lastName = m.lastName;
+      this.middleName = m.middleName;
+    }
+
+    this.$store.dispatch("FETCH_USER_DATA", parseInt(id)).then(() => {
+      let name = this.$store.getters.GET_MAP.get(parseInt(id));
+      console.log(name);
+    });
+  },
   methods: {
-    sendMessage(){
+    sendMessage() {
       this.$modal.show(
         sendMsg,
         {
-          id:parseInt(this.id)
+          id: parseInt(this.id)
         },
         {
           adaptive: true,
@@ -144,8 +181,8 @@ export default {
         }
       );
     },
-    getImgUrl(){
-     return  require("../../../img/" + this.id + ".png");
+    getImgUrl() {
+      return require("../../../img/" + this.id + ".png");
     },
     addUserToChannel() {
       this.$modal.show(
@@ -172,15 +209,6 @@ export default {
     isBlockActive(i) {
       return i == this.currentBlock;
     }
-  },
-  created() {
-    this.$store.dispatch("FETCH_USER_DATA", parseInt(this.id)).then(() => {
-      let name = this.$store.getters.GET_MAP.get(parseInt(this.id));
-      console.log(name);
-      this.firstName = name.firstName;
-      this.lastName = name.lastName;
-      this.middleName = name.middleName;
-    });
   },
 
   watch: {
@@ -212,10 +240,10 @@ export default {
   top:12%;
   left: 1.5%; */
 }
-.userName {
+.user {
   font-weight: 500;
 
-  font-size: 14px;
+  font-size: 20px;
 }
 
 .followButton {
@@ -652,7 +680,7 @@ export default {
 }
 
 @media (max-width: 600px) {
-  .userName {
+  .user {
     font-size: 20px;
     margin-left: 4%;
   }

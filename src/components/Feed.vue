@@ -143,7 +143,7 @@ export default {
         }
         promise
           .then(() => {
-            console.log('update!')
+            console.log("update!");
             this.$eventHub.$emit("feed-updated");
             this.loading = false;
           })
@@ -244,6 +244,9 @@ export default {
     removeEvents("paste", this.delayedResize);
     removeEvents("drop", this.delayedResize);
     removeEvents("keydown", this.delayedResize);
+  },
+  beforeCreate() {
+    this.$store.dispatch("SET_MY_ID");
   },
   mounted() {
     window.addEventListener("scroll", this.pagination);

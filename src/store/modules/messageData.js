@@ -108,6 +108,7 @@ const mutations = {
     },
 
     ADD_TO_MAP(state, payload) {
+        
         state.users.set(payload[0], payload[1]);
         console.log(state.users)
     }

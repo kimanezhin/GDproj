@@ -17,33 +17,57 @@ const actions = {
 
     REGISTER_USER(context, payload) {
         return new Promise((resolve, reject) => {
-            Axios.post(context.rootState.dataStorage.URL + '', payload, { withCredentials: true })
-            .then(() => {
-                resolve();
-            })
-            .catch(() => { reject(); })
+            Axios.post(context.rootState.dataStorage.URL + '/authentication/register', payload, { withCredentials: true })
+                .then(() => {
+                    resolve('Code send');
+                })
+                .catch(() => { reject(); })
         })
     },
+    GET_FACULTY(context, payload) {
+        return new Promise((resolve, reject) => {
+            Axios.post(context.rootState.dataStorage.URL + '/faculty/search', JSON.stringify(payload), { withCredentials: true }).then((response) => {
+                let arr = response.data.map(x => {
+                    return {
+                        name: x.name,
+                        code: x.url
+                    }
+                });
+                resolve(arr)
+            }).catch((err) => {reject(err)})
+        })
+    },
+    VERIFY_CODE(context, payload){
+        Axios.post(context.rootState.dataStorage.URL+'/authentication/verify', payload,{withCredentials:true})
+        .then(()=>{
+            resolve();
+        })
+        .catch(() =>{
+            reject();
+        })
 
+    },
     AUTH_REQUEST(context, user) {
         return new Promise((resolve, reject) => {
 
-            context.commit('AUTH_REQUEST')
+            // context.commit('AUTH_REQUEST')
             Axios.post(
                 context.rootState.dataStorage.URL + "/authentication/login",
                 {
-                    authenticationId: user
+                    authenticationEmail: user
                 },
                 {
                     withCredentials: true
                 }
             ).then(resp => {
-                localStorage.setItem('myId', resp.data)
-                context.commit('AUTH_SUCCESS')
+                resolve(resp.data.userStatus)
+                // localStorage.setItem('myId', resp.data)
+                // context.commit('AUTH_SUCCESS')
                 resolve(resp)
             })
                 .catch(err => {
-                    commit('AUTH_ERROR', err)
+                    // commit('AUTH_ERROR', err)
+                    console.error(err)
                     //   localStorage.removeItem('user-token') // if the request fails, remove any possible user token if possible
                     reject(err)
                 })

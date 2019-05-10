@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import Axios from 'axios';
 Vue.use(Vuex)
 
 const state = {
@@ -22,6 +23,15 @@ const actions = {
     },
     SET_SCREEN_HEIGHT(context, payload){
         context.commit('SET_SCREEN_HEIGHT',payload.height);
+    },
+    SET_MY_ID(context, payload){
+        return new Promise((resolve, reject) => {
+            Axios.post(context.rootState.dataStorage.URL+'/authentication/me',{},{withCredentials:true}).then((response) =>{
+                localStorage.setItem('myId',response.data)
+                resolve();
+            })
+        })
+       
     }
 }
 
@@ -33,7 +43,8 @@ const mutations = {
     SET_SCREEN_HEIGHT(state, payload){
         state.currentScreenHeight = payload;
 
-    }       
+    },
+           
 }
 
 export default {

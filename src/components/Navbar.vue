@@ -2,7 +2,7 @@
   <div class = "d-flex flex-row">
     <slide>
           <transition name="slide">
-      <router-link to = "/user/5051"> 
+      <router-link :to = "myId"> 
         <font-awesome-icon icon="user" class="mt-1 mr-2"/>
         <span>Моя страница</span>
       </router-link>
@@ -29,12 +29,24 @@
 
 <script>
 import { Slide } from "vue-burger-menu";
+import Axios from 'axios';
 export default {
   components: {
     Slide
   },
-  computed: {}
-};
+  data(){
+    return{
+      myId:''
+    }
+  },
+  mounted(){
+    if(!localStorage.getItem('myId'))
+      this.$store.dispatch('SET_MY_ID').then(() => {
+    this.myId = '/user/'+localStorage.getItem('myId')    
+      })
+    this.myId = '/user/'+localStorage.getItem('myId')    
+  }
+}
 </script>
 
 <style>

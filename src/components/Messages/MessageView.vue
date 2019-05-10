@@ -1,10 +1,13 @@
 <template>
   <div class="wrapper" @resize="onResizeEventHandler">
     <div class="cnt">
-      <NavBar style = "position:absolute"/>
+      <NavBar style="position:absolute"/>
       <Logout/>
       <div class="content-wrapper row">
-        <div class="leftSide" :class="{'col-4':onResizeEventHandler() > 1000, 'col-12':onResizeEventHandler() < 1000}">
+        <div
+          class="leftSide"
+          :class="{'col-4':onResizeEventHandler() > 1000, 'col-12':onResizeEventHandler() < 1000}"
+        >
           <div class="leftHeader d-flex flex-row justify-content-between">
             <div class="subHeader font-weight-bold">Messages</div>
             <div class="newMessage">
@@ -31,14 +34,16 @@
                     <div class="name">{{getName(dialog.data.user)||dialog.data.group.name}}</div>
                     <div class="date ml-auto">{{transformTime(dialog.data.lastMessage.time)}}</div>
                   </div>
-                  <div class="lastMessage">You: {{(dialog.data.lastMessage.body.markdown)}}</div>
+                  <div
+                    class="lastMessage"
+                  >{{(dialog.data.lastMessage&&getLastMessageAuthor(dialog.data.lastMessage.author)) ||"" }}: {{((dialog.data.lastMessage&&dialog.data.lastMessage.body.markdown))||''}}</div>
                 </div>
               </div>
             </transition-group>
           </div>
         </div>
         <!-- <div class="rightSide col-8"> -->
-        <co v-if="isOpened && !onResizeEventHandler()"/>
+        <co v-if="isOpened && onResizeEventHandler() > 1000"/>
         <!-- </div> -->
       </div>
     </div>
@@ -68,6 +73,21 @@ export default {
     };
   },
   methods: {
+    getLastMessageAuthor(id) {
+      if (!id) return null;
+      id = parseInt(id);
+      let m = this.$store.getters.GET_MESSAGE_MAP.get(id);
+      if (!m) {
+        this.$store.dispatch("GET_USERS", [id]).then(response => {
+          this.$store.commit("ADD_TO_MAP", [id, response.data]);
+        });
+      }
+      let me = parseInt(localStorage.getItem('myId'))
+      if(id == me)
+        return "You"
+      return m.firstName ;
+    },
+
     addChat() {
       let mes = {
         type: "groupChat",
@@ -119,7 +139,7 @@ export default {
     onResizeEventHandler() {
       // innerwidth - 88
       this.screenWidth = window.innerWidth + 91;
-      return this.screenWidth < 1000;
+      return this.screenWidth;
       // console.log('a')
     },
     getImgUrl(id) {
@@ -133,8 +153,7 @@ export default {
       localStorage.setItem("currentDialog", JSON.stringify(tmp));
       this.$eventHub.$emit("dialogChanged");
       this.isOpened = true;
-      if(this.screenWidth < 1000)
-      this.$router.push("/dialog/" + num);
+      if (this.screenWidth < 1000) this.$router.push("/dialog/" + num);
     },
     getName(id) {
       if (!id) return;
@@ -164,8 +183,8 @@ export default {
 
     window.addEventListener("resize", this.onResizeEventHandler);
   },
-  beforeDestroy(){
-    window.removeEventListener('resize', this.onResizeEventHandler)
+  beforeDestroy() {
+    window.removeEventListener("resize", this.onResizeEventHandler);
   }
 };
 </script>

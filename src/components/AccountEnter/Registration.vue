@@ -6,43 +6,58 @@
         <div class="form-row">
           <div class="form-group col-md-4">
             <label for="inputEmail4">Имя</label>
-            <input type="email" class="form-control" id="firstName" placeholder="Имя">
+            <input required type="text" class="form-control" id="firstName" placeholder="Имя">
           </div>
           <div class="form-group col-md-4">
             <label for="inputPassword4">Фамилия</label>
-            <input type="password" class="form-control" id="secondName" placeholder="Фамилия">
+            <input required type="text" class="form-control" id="lastName" placeholder="Фамилия">
           </div>
           <div class="form-group col-md-4">
             <label for="inputPassword4">Отчество</label>
-            <input type="password" class="form-control" id="middleName" placeholder="Отчество">
+            <input required type="text" class="form-control" id="middleName" placeholder="Отчество">
           </div>
         </div>
-        <div class="form-group">
-          <label for="inputAddress">Факультет</label>
-          <input type="text" class="form-control" id="faculty" placeholder="Факультет">
+  <div>
+          <label class="typo__label" for="ajax">Факультет</label>
+          <multiselect
+            v-model="selectedCountries"
+            id="ajax"
+            label="name"
+            track-by="code"
+            placeholder="Type to search"
+            open-direction="bottom"
+            :options="countries"
+            :multiple="true"
+            :searchable="false"
+            :loading="isLoading"
+            :max-height="600"
+            @search-change="asyncFind"
+          >
+            <template slot="tag" slot-scope="{ option, remove }">
+              <span class="custom__tag">
+                <span>{{ option.name }}</span>
+                <span class="custom__remove" @click="remove(option)">❌</span>
+              </span>
+            </template>
+            <template slot="clear" slot-scope="props">
+              <div
+                class="multiselect__clear"
+                v-if="selectedCountries.length"
+                @mousedown.prevent.stop="clearAll(props.search)"
+              ></div>
+            </template>
+            <span slot="noResult">Oops! No elements found. Consider changing the search query.</span>
+          </multiselect>
+        
         </div>
         <div class="form-group">
           <label for="inputAddress2">Почта</label>
-          <input type="text" class="form-control" id="mail" placeholder="Почта">
+          <input required type="text" class="form-control" id="email" placeholder="Почта">
         </div>
-        <!-- <div class="form-row">
-    <div class="form-group col-md-4">
-      <label for="inputState">State</label>
-      <select id="inputState" class="form-control">
-        <option selected>Choose...</option>
-        <option>...</option>
-      </select>
-    </div>
-        </div>-->
-        <!-- <div class="form-group">
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" id="gridCheck">
-      <label class="form-check-label" for="gridCheck">
-        Check me out
-      </label>
-    </div>
-        </div>-->
-        <button @click="register" type="submit" class="btn btn-primary btn-block">Sign in</button>
+
+ 
+      
+        <button @click="register" type="submit" class="btn mt-2 btn-primary btn-block">Sign in</button>
       </form>
     </div>
   </div>
@@ -50,22 +65,70 @@
 
 <script>
 import Axios from "axios";
+import multiselect from "vue-multiselect";
 export default {
+  components: {
+    multiselect
+  },
   name: "Login",
   data() {
     return {
       id: "",
-      reg: false
+
+      reg: false,
+      selectedCountries: [],
+      countries: [
+      ],
+      isLoading: false,
+      timeToRequest: 500,
+      currentTimeout: -1
     };
   },
-  methods: {
-    register() {
-        let user = {
 
-        }
-        this.$store.dispatch("REGISTER_USER", user).then(() =>{
-            this.$router.push("/enterCode")
-        })
+  methods: {
+    setTimer() {},
+    limitText(count) {
+      return `and ${count} other countries`;
+    },
+
+    asyncFind(query) {
+      this.timeToRequest = 500;
+      this.isLoading = true;
+      if (this.currentTimeout != -1) clearTimeout(this.currentTimeout);
+      let i = setTimeout(() => {
+        this.$store.dispatch("GET_FACULTY", query).then(response => {
+          console.log(response);
+          this.countries = response;
+          this.isLoading = false;
+        });
+      }, this.timeToRequest);
+      this.currentTimeout = i;
+
+      // ajaxFindCountry(query).then(response => {
+      // this.countries = response;
+      // this.isLoading = false;
+      // });
+    },
+    clearAll() {
+      this.selectedCountries = [];
+    },
+    register() {
+      let firstName = document.getElementById('firstName').value
+      let lastName = document.getElementById('lastName').value
+      let middleName = document.getElementById('middleName').value
+      let email = document.getElementById('email').value
+      let faculty = this.selectedCountries[0].code
+      let user = {
+        firstName:firstName,
+        middleName:middleName,
+        lastName:lastName,
+        email:email,
+        faculty:faculty
+      };
+      this.$store.dispatch("REGISTER_USER", user).then((response) => {
+        this.$router.push("/code");
+        console.log(response)
+      });
     },
     signIn() {
       this.$store.dispatch("SET_ID", this.id);
@@ -76,6 +139,12 @@ export default {
       var email = $(document.getElementById("inputEmail")).val();
 
       // if (pattern.test(email))
+    }
+  },
+  watch:{
+    selectedCountries(neww, old){
+      if(neww.length > 1)
+      this.selectedCountries = this.selectedCountries.pop();
     }
   }
 };
@@ -236,3 +305,5 @@ p {
     center / cover no-repeat;
 }
 </style>
+
+<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>

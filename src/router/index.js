@@ -8,6 +8,7 @@ import VueNativeSock from 'vue-native-websocket'
 import Axios from 'axios';
 import Dialog from './../components/Messages/DialogWrapper.vue'
 import Registration from '../components/AccountEnter/Registration.vue'
+import CodeEnter from '../components/AccountEnter/CodeEnter.vue'
 Vue.use(VueNativeSock, 'ws://websuck1t.herokuapp.com/posts/all ', {
   connectManually: true,
 })
@@ -18,7 +19,7 @@ import dataStorage from '../store/modules/dataStorage'
 
 const ifAuthenticated = (to, from, next) => {
   Axios.post(dataStorage.state.URL + "/posts/last", {
-    direction:'backward',
+    direction: 'backward',
     limit: 1,
     exclusiveFrom: null,
     request: []
@@ -32,7 +33,7 @@ const ifAuthenticated = (to, from, next) => {
 
 const ifNotAuthenticated = (to, from, next) => {
   Axios.post(dataStorage.state.URL + "/posts/last", {
-    direction:'backward',
+    direction: 'backward',
     limit: 1,
     exclusiveFrom: null,
     request: []
@@ -67,23 +68,29 @@ export default new Router({
     },
     {
       path: '/im',
-      name:'messages',
+      name: 'messages',
       component: im,
-      beforeEnter:ifNotAuthenticated
+      beforeEnter: ifNotAuthenticated
 
     },
     {
       path: '/dialog/:id',
-      name:'dialog',
+      name: 'dialog',
       component: Dialog,
-      props:true,
-      beforeEnter:ifNotAuthenticated
+      props: true,
+      beforeEnter: ifNotAuthenticated
     },
     {
       path: '/registration',
-      name:'Registration',
+      name: 'Registration',
       component: Registration,
       beforeEnter: ifAuthenticated
+    },
+    {
+      path: '/code',
+      name: "CodeEnter",
+      component: CodeEnter,
+      
     }
   ]
 })

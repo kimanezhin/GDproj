@@ -152,7 +152,7 @@ export default {
     changeDialog() {
       if (this.currentMap.size == 0) {
         let m = JSON.parse(localStorage.getItem("myMap"));
-
+      console.log(m)
         this.$store.commit("SET_MESSAGE_MAP", m);
       }
       let di = JSON.parse(localStorage.getItem("currentDialog"));
@@ -181,6 +181,7 @@ export default {
         this.$store.dispatch("GET_USERS", [id]).then(response => {
           this.$store.commit("ADD_TO_MAP", [id, response.data]);
         });
+        m = this.$store.getters.GET_MESSAGE_MAP.get(id);
       }
       return m.firstName + " " + m.lastName;
     },

@@ -1,7 +1,7 @@
 <template>
   <div class="d-flex flex-column">
     <div class="exitCross">
-      <font-awesome-icon @click="simpleClose" icon = "times"/>
+      <font-awesome-icon @click="simpleClose" icon="times"/>
     </div>
     <div class="header">Информация</div>
 
@@ -113,7 +113,7 @@ export default {
       if (!this.myMap || this.myMap.size == 0 || !this.myMap.get(id))
         return !this.isNotCreation;
       return this.myMap.get(id).isAdmin;
-    },
+    }
   },
   props: {
     Title: {
@@ -129,22 +129,21 @@ export default {
     if (this.isNotCreation)
       this.currentDialog = JSON.parse(localStorage.getItem("currentDialog"));
     else {
-      
       this.currentDialog = {
         type: "groupChat",
         data: {
           group: {
-            users: {
-              
-            },
+            users: {},
             name: "Untitled"
           }
         }
       };
     }
-    let me = parseInt(localStorage.getItem('myId'))
-    this.users = Object.entries(this.currentDialog.data.group.users) || [[me,{isAdmin:true}]];
-    console.log(this.users)
+    let me = parseInt(localStorage.getItem("myId"));
+    this.users = Object.entries(this.currentDialog.data.group.users) || [
+      [me, { isAdmin: true }]
+    ];
+    console.log(this.users);
     if (this.myMap == "") {
       this.myMap = new Map(
         Object.entries(this.currentDialog.data.group.users).map(x => [
@@ -154,20 +153,18 @@ export default {
       );
     }
 
-
-
     this.countAdmins();
     this.usersCount = this.users.length;
     this.notFilteredUsers = this.users;
   },
   methods: {
-    simpleClose(){
-this.$emit('close')
+    simpleClose() {
+      this.$emit("close");
     },
     isNotMe(num) {
       let id = parseInt(localStorage.getItem("myId"));
       num = parseInt(num);
-      console.log(num,id);
+      console.log(num, id);
       return num != id;
     },
     addUser() {
@@ -205,7 +202,7 @@ this.$emit('close')
       document
         .getElementsByClassName("slider")[0]
         .classList.remove("slider-translate");
-      
+
       // document.getElementsByClassName("cl")[1].style.color = "#428bff";
     },
     countAdmins() {
@@ -255,15 +252,14 @@ this.$emit('close')
           "currentDialog",
           JSON.stringify(this.currentDialog)
         );
-        
+
         this.$emit("close");
       });
     },
     showMenu(event) {
-      
       let popUp = document.getElementsByClassName("popUp")[event];
       //  setTimeout(() => {
-        console.log(event)
+      console.log(event);
       popUp.style.opacity = "1";
       // }, 1);
     },
@@ -275,9 +271,11 @@ this.$emit('close')
       if (!id) return null;
       id = parseInt(id);
       let m = this.$store.getters.GET_MESSAGE_MAP.get(id);
+      
       if (!m) {
         this.$store.dispatch("GET_USERS", [id]).then(response => {
-          this.$store.commit("ADD_TO_MAP", [id, response.data]);
+          console.log(response)
+          this.$store.commit("ADD_TO_MAP", [id, response]);
         });
       }
       return m.firstName + " " + m.lastName;
@@ -318,8 +316,7 @@ this.$emit('close')
   color: #939393;
 }
 
-
-.exitCross{
+.exitCross {
   position: absolute;
   right: 0;
   margin-right: 10px;
