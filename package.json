@@ -5,7 +5,7 @@
   "author": "kimanezhin",
   "private": true,
   "scripts": {
-  	"start": "npm run dev",
+    "start": "npm run dev",
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
     "build": "node build/build.js"
   },
@@ -19,6 +19,7 @@
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "bootstrap": "^4.3.1",
     "bootstrap-vue": "^2.0.0-rc.19",
+    "express": "^4.16.4",
     "install": "^0.12.2",
     "marked": "^0.6.2",
     "node-sass": "^4.12.0",
