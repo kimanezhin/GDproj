@@ -5,7 +5,7 @@
   "author": "kimanezhin",
   "private": true,
   "scripts": {
-    "heroku-prebuild": "npm install webpack-dev-server –save-dev",
+    "heroku-prebuild": "npm install --dev",
     "start": "npm run dev",
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
     "build": "node build/build.js"
