@@ -24,7 +24,7 @@
               >
                 <div class="messageCardImg col-3 d-flex align-content-center align-items-center">
                   <img
-                    :src="getImgUrl(dialog.data.user||5051)"
+                    :src="getImgUrl(dialog.data.user||30)"
                     v-bind:alt="dialog.data.user||dialog.data.group.id"
                     :name="dialog.data.user||dialog.data.group.id"
                   >
@@ -69,7 +69,8 @@ export default {
     return {
       messages: [],
       isOpened: false,
-      screenWidth: 1200
+      screenWidth: 1200,
+      imgPath: ""
     };
   },
   methods: {
@@ -82,10 +83,9 @@ export default {
           this.$store.commit("ADD_TO_MAP", [id, response.data]);
         });
       }
-      let me = parseInt(localStorage.getItem('myId'))
-      if(id == me)
-        return "You"
-      return m.firstName ;
+      let me = parseInt(localStorage.getItem("myId"));
+      if (id == me) return "You";
+      return m.firstName;
     },
 
     addChat() {
@@ -97,7 +97,7 @@ export default {
               // "9": { isAdmin: true },
               // "42": { isAdmin: true },
               // "69": { isAdmin: false },
-              // "5051": { isAdmin: false }
+              // "30": { isAdmin: false }
             },
             name: "Untitled",
             id: -1
@@ -143,7 +143,16 @@ export default {
       // console.log('a')
     },
     getImgUrl(id) {
-      return require("../../../img/" + id + ".png");
+      if (!id) return null;
+      console.log(this.$store.getters.GET_MESSAGE_MAP)
+      let m = this.$store.getters.GET_MESSAGE_MAP.get(id);
+      if (!m) {
+        this.$store.dispatch("GET_USERS", [id]).then(response => {
+          this.$store.commit("ADD_TO_MAP", [id, response.data]);
+        });
+        m = this.$store.getters.GET_MESSAGE_MAP.get(id);
+      }
+      return require("../../../img/" + m.faculty.campusCode + ".png");
     },
     openDialog(event) {
       console.log(window);
@@ -289,6 +298,7 @@ html {
 .rightBody {
   height: 80%;
   overflow-y: scroll;
+  overflow-x: hidden;
 }
 
 .leftBody {
@@ -325,8 +335,8 @@ html {
   height: 80vh;
   display: flex;
   width: 80%;
-  margin-left: auto;
-  margin-right: auto;
+  margin-left: auto !important;
+  margin-right: auto !important;
   margin-top: 50px;
   border-radius: 5px;
 }

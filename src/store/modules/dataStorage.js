@@ -6,11 +6,12 @@ import _ from "lodash";
 import currentUsers from './currentUsers'
 import { rejects } from 'assert';
 import { puts } from 'util';
-export {makeRequest}
+export { makeRequest }
 const vm = new Vue();
 Vue.use(Vuex)
 const state = {
     id: '',
+    userImgId: '',
     isDataFetched: false,
     isUserDataFetched: false,
     isNotLast: true,
@@ -64,7 +65,42 @@ const getters = {
     GET_ID(state) { return parseInt(state.id) },
     GET_URL(state) { return state.URL },
     GET_MAP(state) { return state.m },
-    GET_COMPLETIONS(state) { return state.values }
+    GET_COMPLETIONS(state) { return state.values },
+    GET_IMG_ID(state) { return state.userImgId },
+
+    GET_IMG(state) {
+        return (id) => {
+
+            let prom = new Promise((resolve, reject) => {
+                if (id == 22723) {
+                    state.userImgId = require("../../../img/" + id + ".png");
+                    resolve();
+                }
+                else
+                    if (!state.m || !state.m.get(id)) {
+                        console.log(id)
+                        Axios.post(state.URL + '/users', [id], { withCredentials: true }).then((response) => {
+                            state.m.set(id, response.data[0])
+                            console.log(state.m, response.data[0])
+                            let user = state.m.get(id);
+                            console.log(user)
+                            let userID = user.faculty.campusCode
+                            console.log(userID)
+                            state.userImgId = require("../../../img/" + userID + ".png");
+                            resolve();
+                        })
+                    }
+                    else {
+                        let user = state.m.get(id).faculty.campusCode
+                        state.userImgId = require("../../../img/" + user + ".png");
+                        resolve();
+                    }
+            })
+            console.log(state.userImgId)
+
+
+        }
+    }
 
 
 }
@@ -81,7 +117,7 @@ const actions = {
             Axios
                 .post(context.state.URL + "/posts/last",
                     {
-                        direction:'backward',
+                        direction: 'backward',
                         limit: 10,
                         exclusiveFrom: payload,
                         request: []
@@ -113,12 +149,12 @@ const actions = {
         })
     },
     GET_COMPLETION(context, payload) {
-           return new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
             let tree = payload[0] || context.state.tagCompletions;
             let word = payload[1]
             if (word === "") {
                 context.state.values = getValues(tree.subtree)
-                
+
                 resolve(transformTags(context.state.values));
             }
             let character = word[0];
@@ -128,10 +164,10 @@ const actions = {
                 resolve();
             }
             else {
-               context.dispatch('GET_COMPLETION', [tree.subtree[character],_.drop(word.split('')).join('')]).then((response) => {
-                //    console.log(response)
-                   resolve(response);
-               });
+                context.dispatch('GET_COMPLETION', [tree.subtree[character], _.drop(word.split('')).join('')]).then((response) => {
+                    //    console.log(response)
+                    resolve(response);
+                });
             }
         })
     },
@@ -142,7 +178,7 @@ const actions = {
         await Axios
             .post(context.state.URL + "/posts/forUser",
                 {
-                    direction:'backward',
+                    direction: 'backward',
                     limit: 50,
                     exclusiveFrom: null,
                     request: payload
@@ -175,7 +211,7 @@ const actions = {
 
 }
 const mutations = {
-    async UPDATER(state,payload){
+    async UPDATER(state, payload) {
         makeRequest(state, payload, state.posts)
     },
     SET_TOKEN(state, payload) { state.token = payload },
@@ -258,8 +294,8 @@ const mutations = {
 }
 async function makeRequest(state, payload, array) {
     // console.log(payload)
-    const id = payload.authorId;
-    const localMap = state.m.get(id)
+    let id = payload.authorId;
+    let localMap = state.m.get(id)
     array.push({
         name: localMap.firstName + " " + localMap.lastName,
         postId: payload.id,
@@ -278,7 +314,7 @@ function getValues(tree) {
     //    console.log(tree)
     let out = []
     for (let i of Object.entries(tree)) {
-        if (i[1]&&i[1].value)
+        if (i[1] && i[1].value)
             out.push(i[1].value)
 
         if (i[1])
@@ -303,10 +339,10 @@ async function makeUserRequest(item, context) {
 
 }
 
-function transformTags(array){
+function transformTags(array) {
     array = array.map(x => x = {
-        name:x,
-        code:x,
+        name: x,
+        code: x,
     })
     return array;
 }

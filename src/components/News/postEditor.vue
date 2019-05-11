@@ -87,7 +87,8 @@ export default {
         // { name: "#Open", code: "oss" },
         // { name: "#Op", code: "ods" },
         // { name: "#O", code: "fos" }
-      ]
+      ],
+      imgPath:""
     };
   },
   methods: {
@@ -97,7 +98,12 @@ export default {
         {},
         { withCredentials: true }
       ).then(resp => {
-        this.imgSource = require("../../../img/" + resp.data + ".png");
+        let id = resp.data
+       if (!id) return null;
+     
+      let m = this.$store.getters.GET_MAP.get(id);
+      console.log(m)
+      this.imgSource =  require("../../../img/" + m.faculty.campusCode + ".png");
       });
     },
     addTag(newTag) {

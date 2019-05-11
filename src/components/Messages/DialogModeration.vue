@@ -103,7 +103,8 @@ export default {
       notFilteredUsers: [],
       myMap: "",
       adminsCount: 0,
-      usersCount: 0
+      usersCount: 0,
+      imgPath:""
     };
   },
   computed: {
@@ -143,7 +144,6 @@ export default {
     this.users = Object.entries(this.currentDialog.data.group.users) || [
       [me, { isAdmin: true }]
     ];
-    console.log(this.users);
     if (this.myMap == "") {
       this.myMap = new Map(
         Object.entries(this.currentDialog.data.group.users).map(x => [
@@ -281,7 +281,16 @@ export default {
       return m.firstName + " " + m.lastName;
     },
     getImgUrl(id) {
-      return require("../../../img/" + id + ".png");
+      if (!id) return null;
+      console.log(this.$store.getters.GET_MESSAGE_MAP)
+      let m = this.$store.getters.GET_MESSAGE_MAP.get(id);
+      if (!m) {
+        this.$store.dispatch("GET_USERS", [id]).then(response => {
+          this.$store.commit("ADD_TO_MAP", [id, response.data]);
+        });
+        m = this.$store.getters.GET_MESSAGE_MAP.get(id);
+      }
+      return require("../../../img/" + m.faculty.campusCode + ".png");
     },
     saveTitle() {
       let ch = document.getElementById("saveIcon");

@@ -115,7 +115,9 @@ export default {
       middleName: "",
       email: "",
       city: "",
-      faculty: ""
+      faculty: "",
+      cityCode : "",
+      imgPath:""
     };
   },
   props: ["id"],
@@ -153,6 +155,7 @@ export default {
           this.firstName = m.firstName;
           this.lastName = m.lastName;
           this.middleName = m.middleName;
+          this.cityCode = m.campusCode
         });
     } else {
       this.faculty = m.faculty.name;
@@ -161,12 +164,14 @@ export default {
       this.firstName = m.firstName;
       this.lastName = m.lastName;
       this.middleName = m.middleName;
+      this.cityCode = m.campusCode
     }
 
     this.$store.dispatch("FETCH_USER_DATA", parseInt(id)).then(() => {
       let name = this.$store.getters.GET_MAP.get(parseInt(id));
       console.log(name);
     });
+    // document.getElementById('main').style.height = window.innerHeight+"px"
   },
   methods: {
     sendMessage() {
@@ -182,7 +187,11 @@ export default {
       );
     },
     getImgUrl() {
-      return require("../../../img/" + this.id + ".png");
+      let id = this.id
+       if (!id) return null;
+       console.log(this.$store.getters.GET_MAP)
+      let m = this.$store.getters.GET_MAP.get(parseInt(id));
+      return require("../../../img/" + m.faculty.campusCode + ".png");
     },
     addUserToChannel() {
       this.$modal.show(
@@ -335,6 +344,9 @@ export default {
   box-shadow: none;
 }
 
+#main{
+  height: 100vh;
+}
 .categoriesAbout {
   font-weight: 600;
 }

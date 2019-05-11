@@ -148,11 +148,6 @@ html {
   cursor: pointer;
 }
 
-.rightBody {
-  height: 80%;
-  overflow-y: scroll;
-}
-
 .leftBody {
   height: 87%;
   overflow-y: scroll;

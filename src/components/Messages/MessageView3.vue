@@ -28,7 +28,7 @@
           v-on:click="openDialog(dialog)"
         >
           <img
-            :src="getImgUrl(dialog.data.user||5051)"
+            :src="getImgUrl(dialog.data.user||30)"
             v-bind:alt="dialog.data.user||dialog.data.group.id"
             class="rounded ml-1 mt-1 mr-1 dialogImg"
             :name="dialog.data.user||dialog.data.group.id"
@@ -41,9 +41,9 @@
             <div class="row dm">
               <img
                 :src="getImgUrl(dialog.data.lastMessage.author)"
-                v-bind:alt="5051"
+                v-bind:alt="30"
                 class="shortcut mr-1 mt-1"
-                :name="5051"
+                :name="30"
               >
               <div class="toBreak">{{(dialog.data.lastMessage.body.markdown)}}</div>
             </div>
@@ -67,7 +67,8 @@ export default {
   },
   data() {
     return {
-      messages: []
+      messages: [],
+      imgPath:""
     };
   },
   methods: {
@@ -86,7 +87,7 @@ export default {
       );
     },
     getImgUrl(id) {
-      return require("../../../img/" + id + ".png");
+      this.$store.getters.GET_IMG(id)
     },
     openDialog(event) {
       let num = event.data.user || event.data.group.id;

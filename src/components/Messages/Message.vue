@@ -37,7 +37,7 @@ export default {
     },
     AuthorId:{
       type:Number,
-      default:5051
+      default:30
     }
   },
   data() {

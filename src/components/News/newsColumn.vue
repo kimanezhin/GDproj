@@ -63,7 +63,8 @@ export default {
     return {
       index: -1,
       currentChannel: {},
-      mPosts: []
+      mPosts: [],
+      imgPath:""
     };
   },
   components: {
@@ -91,7 +92,10 @@ export default {
   // ../../../
   methods: {
     getImgUrl(id) {
-      return require("../../../img/" + id + ".png");
+       if (!id) return null;
+      console.log(this.$store.getters.GET_MAP)
+      let m = this.$store.getters.GET_MAP.get(id);
+      return require("../../../img/" + m.faculty.campusCode + ".png");
     },
     transformTime(time) {
       //1861-08-13T00:00:08Z - not transformed

@@ -14,7 +14,8 @@ const getters = {
     },
     GET_HEIGHT(state){
         return state.currentScreenHeight
-    }
+    },
+
 }
 
 const actions = {
@@ -32,6 +33,9 @@ const actions = {
             })
         })
        
+    },
+    GET_IMG(context, payload){
+        return require("../../../img/" + payload + ".png");
     }
 }
 

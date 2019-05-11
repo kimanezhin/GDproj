@@ -250,7 +250,6 @@ export default {
   },
   mounted() {
     window.addEventListener("scroll", this.pagination);
-
     //fixed textarea
     var observe;
     if (window.attachEvent) {
@@ -281,6 +280,11 @@ export default {
   }
 };
 </script>
+<style>
+html{
+  background-color: #fff;
+}
+</style>
 
 <style scoped>
 #drop {
@@ -387,6 +391,10 @@ img {
 
 .channel-name:hover {
   cursor: pointer;
+}
+
+#main{
+  height: 100vh;
 }
 
 #sendIco {
