@@ -46,7 +46,7 @@
                 @mousedown.prevent.stop="clearAll(props.search)"
               ></div>
             </template>
-            <span slot="noResult">Oops! No elements found. Consider changing the search query.</span>
+            <span slot="noResult">Oops! No elements found.</span>
           </multiselect>
         
         </div>
