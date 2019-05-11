@@ -63,17 +63,24 @@
               <div class="content">
                 <section>
                   <div class="row">
-                    <div class="col-3 categoriesAbout">Факультет:</div>
-                    <div class="col-7 textAbout">{{faculty}}</div>
-                  </div>
-                  <div class="row">
                     <div class="col-3 categoriesAbout">Город:</div>
                     <div class="col-7 textAbout">{{city}}</div>
                   </div>
-                  <div class="row text">
-                    <div class="col-3 categoriesAbout">Должность:</div>
-                    <div class="col-7 textAbout">Доцент</div>
+
+                  <div v-if="facultyAdress" class="row">
+                    <div class="col-3 categoriesAbout">Факультет:</div>
+                    <div class="col-7 textAbout">{{faculty}}</div>
                   </div>
+
+                  <div class="row">
+                    <div class="col-3 categoriesAbout">Кафедра:</div>
+                    <div class="col-7 textAbout"><a :href="'http://'+facultyUrl">{{facultyName}}</a></div>
+                  </div>
+                  <div class="row">
+                    <div class="col-3 categoriesAbout">Адрес:</div>
+                    <div class="col-7 textAbout">{{facultyAdress}}</div>
+                  </div>
+
                   <div class="row text">
                     <div class="col-3 categoriesAbout">Почта:</div>
                     <div class="col-7 textAbout">{{email}}</div>
@@ -118,7 +125,10 @@ export default {
       city: "",
       faculty: "",
       cityCode: "",
-      imgPath: ""
+      imgPath: "",
+      facultyAdress:'',
+      facultyName:'',
+      facultyUrl:''
     };
   },
   props: ["id"],
@@ -163,16 +173,19 @@ export default {
   },
   methods: {
     isMe() {
-      return parseInt(localStorage.getItem('myId')) == parseInt(this.id)
+      return parseInt(localStorage.getItem("myId")) == parseInt(this.id);
     },
     setFields(m) {
-      this.faculty = m.faculty.name;
+      this.faculty = m.faculty.path;
       this.email = m.email;
       this.city = m.faculty.campusName;
       this.firstName = m.firstName;
       this.lastName = m.lastName;
       this.middleName = m.middleName;
-      this.cityCode = m.campusCode;
+      this.cityCode = m.faculty.campusCode;
+      this.facultyAdress = m.faculty.address;
+      this.facultyName = m.faculty.name;
+      this.facultyUrl = m.faculty.url;
     },
     sendMessage() {
       this.$modal.show(
