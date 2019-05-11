@@ -5,15 +5,16 @@
         <h1 class="h3 mb-3 font-weight-normal">Введите код</h1>
         <div id="container" class="form-row d-flex flex-row justify-content-between">
           <input
-            v-for="(val,index) in code"
-            :name="index"
-            @input="validate"
-            @keyup.delete="deleteAndGoLeft"
-            @keyup.left="goLeft"
-            @keydown.right="goRight"
-            :key="index"
-            type="text"
-            class="form-control number col-2"
+          v-for="(val,index) in code"
+          :name="index"
+          v-model="code[index]"
+          @input="validate"
+          @keyup.delete="deleteAndGoLeft"
+          @keyup.left="goLeft"
+          @keydown.right="goRight"
+          :key="index"
+          type="text"
+          class="form-control number col-2"
           >
         </div>
       </form>
@@ -40,21 +41,25 @@ export default {
       isLoading: false,
       timeToRequest: 500,
       currentTimeout: -1,
-      currentInterval:-1
+      currentInterval: -1
     };
   },
 
   mounted() {
     let cur = document.getElementsByName(0)[0];
     setInterval(() => {
-      Axios.post(this.$store.getters.GET_URL+'/authentication/me',{},{withCredentials:true}).then(()=>{
-        this.$router.push('/feed')
-      })
-    }, 5000)
+      Axios.post(
+        this.$store.getters.GET_URL + "/authentication/me",
+        {},
+        { withCredentials: true }
+      ).then(() => {
+        this.$router.push("/feed");
+      });
+    }, 5000);
     cur.focus();
   },
-  beforeDestroy(){
-    clearInterval(currentInterval)
+  beforeDestroy() {
+    clearInterval(currentInterval);
   },
   methods: {
     deleteAndGoLeft(event) {
@@ -89,22 +94,23 @@ export default {
     },
     validate(event) {
       let currNum = parseInt(event.target.name);
-      
+
       event.target.value = event.target.value.replace(/\s/g, "");
-      if(!Number.isInteger(parseInt(event.target.value)))
-        {
-          
-          this.code[currNum] = "";
-          event.target.value = ""
-          return;
-        }
+      if (!Number.isInteger(parseInt(event.target.value))) {
+        this.code[currNum] = "";
+        event.target.value = "";
+        
+        return;
+      }
       if (event.target.value.length == 6) {
+        
         let value = event.target.value;
         value = value.split("").map(x => parseInt(x));
         if (value.every(Number.isInteger)) {
           for (let i = 0; i < 6; ++i) {
             this.code[i] = value[i];
           }
+          
           this.sendCode();
           return;
         }
@@ -123,15 +129,15 @@ export default {
       if (codeNum.length != 6) return;
 
       let code = parseInt(codeNum);
-      return;
+
       this.$store
         .dispatch("VERIFY_CODE", code)
-        .then(() => {
-          console.log("good");
-          this.$router.push("/feed");
+        .then((response) => {
+          console.log(response);
+          // this.$router.push("/feed");
         })
-        .catch(() => {
-          console.log("aa");
+        .catch((err) => {
+          console.log(err)
         });
     },
     limitText(count) {

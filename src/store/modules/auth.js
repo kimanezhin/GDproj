@@ -38,13 +38,15 @@ const actions = {
         })
     },
     VERIFY_CODE(context, payload){
+       return new Promise((resolve, reject) =>{
         Axios.post(context.rootState.dataStorage.URL+'/authentication/verify', payload,{withCredentials:true})
-        .then(()=>{
-            resolve();
+        .then((response)=>{
+            resolve(response);
         })
-        .catch(() =>{
-            reject();
+        .catch((err) =>{
+            reject(err);
         })
+       })
 
     },
     AUTH_REQUEST(context, user) {

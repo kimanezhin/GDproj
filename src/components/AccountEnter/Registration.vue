@@ -28,6 +28,7 @@
             open-direction="bottom"
             :options="countries"
             :multiple="true"
+            :isSpaceAllowed="true"
             :internal-search="true"
             :searchable="false"
             :loading="isLoading"
@@ -154,7 +155,7 @@ export default {
 
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style>
 #wrapper {
   height: 100vh;
   display: -ms-flexbox;
@@ -292,6 +293,15 @@ p {
 
 .bar-top[data-notification-status="success"] {
   background-color: #66bb6a;
+}
+.custom__tag {
+  display: inline-block;
+  padding: 3px 12px;
+  background: #d2d7ff;
+  margin-right: 8px;
+  margin-bottom: 8px;
+  border-radius: 10px;
+  cursor: pointer;
 }
 .bar-top[data-notification-status="success"]:before {
   content: "";
