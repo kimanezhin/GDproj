@@ -17,7 +17,7 @@
             <input required type="text" class="form-control" id="middleName" placeholder="Отчество">
           </div>
         </div>
-  <div>
+        <div>
           <label class="typo__label" for="ajax">Факультет</label>
           <multiselect
             v-model="selectedCountries"
@@ -28,6 +28,7 @@
             open-direction="bottom"
             :options="countries"
             :multiple="true"
+            :internal-search="true"
             :searchable="false"
             :loading="isLoading"
             :max-height="600"
@@ -48,15 +49,12 @@
             </template>
             <span slot="noResult">Oops! No elements found.</span>
           </multiselect>
-        
         </div>
         <div class="form-group">
           <label for="inputAddress2">Почта</label>
           <input required type="text" class="form-control" id="email" placeholder="Почта">
         </div>
 
- 
-      
         <button @click="register" type="submit" class="btn mt-2 btn-primary btn-block">Sign in</button>
       </form>
     </div>
@@ -77,8 +75,7 @@ export default {
 
       reg: false,
       selectedCountries: [],
-      countries: [
-      ],
+      countries: [],
       isLoading: false,
       timeToRequest: 500,
       currentTimeout: -1
@@ -112,21 +109,21 @@ export default {
       this.selectedCountries = [];
     },
     register() {
-      let firstName = document.getElementById('firstName').value
-      let lastName = document.getElementById('lastName').value
-      let middleName = document.getElementById('middleName').value
-      let email = document.getElementById('email').value
-      let faculty = this.selectedCountries[0].code
+      let firstName = document.getElementById("firstName").value;
+      let lastName = document.getElementById("lastName").value;
+      let middleName = document.getElementById("middleName").value;
+      let email = document.getElementById("email").value;
+      let faculty = this.selectedCountries[0].code;
       let user = {
-        firstName:firstName,
-        middleName:middleName,
-        lastName:lastName,
-        email:email,
-        faculty:faculty
+        firstName: firstName,
+        middleName: middleName,
+        lastName: lastName,
+        email: email,
+        faculty: faculty
       };
-      this.$store.dispatch("REGISTER_USER", user).then((response) => {
+      this.$store.dispatch("REGISTER_USER", user).then(response => {
         this.$router.push("/code");
-        console.log(response)
+        console.log(response);
       });
     },
     signIn() {
@@ -140,12 +137,12 @@ export default {
       // if (pattern.test(email))
     }
   },
-  watch:{
-    selectedCountries(neww, old){
-      if(neww.length > 1)
-      this.selectedCountries = this.selectedCountries.pop();
+  watch: {
+    selectedCountries(neww, old) {
+      if (neww.length > 1)
+        this.selectedCountries = this.selectedCountries.pop();
     },
-    countries(neww, old){
+    countries(neww, old) {
       console.log(neww);
     }
   }
