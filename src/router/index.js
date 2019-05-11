@@ -24,9 +24,11 @@ const ifAuthenticated = (to, from, next) => {
     exclusiveFrom: null,
     request: []
   }, { withCredentials: true }).then(() => {
+
     next('/feed')
     return
   }).catch(() => {
+
     next()
   })
 }

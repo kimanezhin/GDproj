@@ -3,46 +3,15 @@
     <div id="wrapper">
       <form class="form-signin">
         <h1 class="h3 mb-3 font-weight-normal">Введите код</h1>
-        <div class="form-row d-flex flex-row justify-content-between">
+        <div id="container" class="form-row d-flex flex-row justify-content-between">
           <input
-            v-model="code[0]"
-            name="0"
+            v-for="(val,index) in code"
+            :name="index"
             @input="validate"
-            type="text"
-            class="form-control number col-2"
-          >
-          <input
-            v-model="code[1]"
-            @input="validate"
-            name="1"
-            type="text"
-            class="form-control number col-2"
-          >
-          <input
-            v-model="code[2]"
-            @input="validate"
-            name="2"
-            type="text"
-            class="form-control number col-2"
-          >
-          <input
-            v-model="code[3]"
-            @input="validate"
-            name="3"
-            type="text"
-            class="form-control number col-2"
-          >
-          <input
-            v-model="code[4]"
-            @input="validate"
-            name="4"
-            type="text"
-            class="form-control number col-2"
-          >
-          <input
-            v-model="code[5]"
-            @input="validate"
-            name="5"
+            @keyup.delete="deleteAndGoLeft"
+            @keyup.left="goLeft"
+            @keydown.right="goRight"
+            :key="index"
             type="text"
             class="form-control number col-2"
           >
@@ -70,56 +39,103 @@ export default {
       code: ["", "", "", "", "", ""],
       isLoading: false,
       timeToRequest: 500,
-      currentTimeout: -1
+      currentTimeout: -1,
+      currentInterval:-1
     };
   },
 
   mounted() {
     let cur = document.getElementsByName(0)[0];
-
+    setInterval(() => {
+      Axios.post(this.$store.getters.GET_URL+'/authentication/me',{},{withCredentials:true}).then(()=>{
+        this.$router.push('/feed')
+      })
+    }, 5000)
     cur.focus();
   },
+  beforeDestroy(){
+    clearInterval(currentInterval)
+  },
   methods: {
-    validate(event) {
-      let x = parseInt(event.data);
-      if (x != 0 && !x) {
-        this.code[parseInt(event.target.name)] = "";
-        return;
-      }
-      this.code[parseInt(event.target.name)] = x;
-      let cur = document.getElementsByName(event.target.name)[0];
+    deleteAndGoLeft(event) {
+      // if(event.target.value.length == 0)
+      // return;
 
-      cur.blur();
-      let nextNum = parseInt(event.target.name) + 1;
+      let currNum = parseInt(event.target.name);
+      this.code[currNum] = "";
+
+      this.goLeft();
+    },
+    goLeft() {
+      let currNum = parseInt(event.target.name);
+      let cur = document.getElementsByName(currNum)[0];
+
+      // cur.blur();
+      let nextNum = currNum - 1;
 
       let next = document.getElementsByName(nextNum)[0];
-
-      if (event.data == "") return;
-      if (next) {
-        next.focus();
-      } else {
-        let code = parseInt(this.code.join(""));
-        console.log(code);
-        this.$store
-          .dispatch("VERIFY_CODE", code)
-          .then(() => {
-            console.log("good");
-            this.$router.push("/feed");
-          })
-          .catch(() => {
-            console.log("aa");
-          });
-      }
+      if (next) next.focus();
     },
-    setTimer() {},
+    goRight() {
+      let currNum = parseInt(event.target.name);
+      let cur = document.getElementsByName(currNum)[0];
+
+      // cur.blur();
+      let nextNum = currNum + 1;
+
+      let next = document.getElementsByName(nextNum)[0];
+      if (next) next.focus();
+      else this.sendCode();
+    },
+    validate(event) {
+      let currNum = parseInt(event.target.name);
+      
+      event.target.value = event.target.value.replace(/\s/g, "");
+      if(!Number.isInteger(parseInt(event.target.value)))
+        {
+          
+          this.code[currNum] = "";
+          event.target.value = ""
+          return;
+        }
+      if (event.target.value.length == 6) {
+        let value = event.target.value;
+        value = value.split("").map(x => parseInt(x));
+        if (value.every(Number.isInteger)) {
+          for (let i = 0; i < 6; ++i) {
+            this.code[i] = value[i];
+          }
+          this.sendCode();
+          return;
+        }
+      }
+      if (event.target.value.length > 1) event.target.value = event.data;
+      let x = parseInt(event.data);
+      if (x != 0 && !x) {
+        this.code[currNum] = "";
+        return;
+      }
+      this.code[currNum] = x;
+      this.goRight();
+    },
+    sendCode() {
+      let codeNum = this.code.join("");
+      if (codeNum.length != 6) return;
+
+      let code = parseInt(codeNum);
+      return;
+      this.$store
+        .dispatch("VERIFY_CODE", code)
+        .then(() => {
+          console.log("good");
+          this.$router.push("/feed");
+        })
+        .catch(() => {
+          console.log("aa");
+        });
+    },
     limitText(count) {
       return `and ${count} other countries`;
-    }
-  },
-  watch: {
-    selectedCountries(neww, old) {
-      if (neww.length > 1)
-        this.selectedCountries = this.selectedCountries.pop();
     }
   }
 };
@@ -131,9 +147,13 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+#container > input {
+  font-weight: 600 !important;
+  font-size: 30px;
+  max-width: 70px;
+}
 .number {
   text-align: center;
-  font-weight: 500;
 }
 #wrapper {
   height: 100vh;
@@ -157,7 +177,7 @@ p {
 
 .form-signin {
   width: 100%;
-  max-width: 400px;
+  max-width: 50%;
   padding: 15px;
   margin: auto;
 }
@@ -178,6 +198,45 @@ p {
   margin-bottom: -1px;
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0;
+}
+
+@media screen and (max-width: 1000px) {
+  /* #container > input { */
+  /* max-width: 45px; */
+  /* } */
+
+  .form-signin {
+    width: 100%;
+    max-width: 70%;
+  }
+}
+@media screen and (max-width: 780px) {
+  .form-signin {
+    width: 100%;
+    max-width: 80%;
+  }
+}
+
+@media screen and (max-width: 700px) {
+  #container > input {
+    max-width: 35px;
+    font-size: 20px;
+  }
+  .form-signin {
+    width: 100%;
+    max-width: 70%;
+  }
+}
+
+@media screen and (max-width: 340px) {
+  #container > input {
+    max-width: 35px;
+    font-size: 20px;
+  }
+  .form-signin {
+    width: 100%;
+    max-width: 90%;
+  }
 }
 
 @import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro");

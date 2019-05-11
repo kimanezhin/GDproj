@@ -63,7 +63,7 @@ const actions = {
                 resolve(resp.data.userStatus)
                 // localStorage.setItem('myId', resp.data)
                 // context.commit('AUTH_SUCCESS')
-                resolve(resp)
+                
             })
                 .catch(err => {
                     // commit('AUTH_ERROR', err)

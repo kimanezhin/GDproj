@@ -80,9 +80,9 @@ export default {
       this.$store
         .dispatch("AUTH_REQUEST", email)
         .then(
-          response => {
+          (response) => {
             // if(response.data.isRegistred)
-
+            console.log(response)
             if (response == "registered") {
               this.$router.push("/code");
             } else if (response === "canRegister")
@@ -92,8 +92,9 @@ export default {
           }
           // else
         )
-        .catch(() => {
-          console.log("Unable to login");
+        .catch((err) => {
+          
+          console.log(err,"Unable to login");
         });
     }
   }
