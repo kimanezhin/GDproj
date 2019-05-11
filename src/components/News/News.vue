@@ -74,15 +74,17 @@ export default {
   },
   mounted() {
     this.enableLoading();
+     let i = parseInt(localStorage.getItem('myId'))
+        this.isThisUser = i == this.forUser;
     if (!this.forUser) this.isThisUser = true;
-    else
-      Axios.post(
-        this.$store.getters.GET_URL + "/authentication/me",
-        {},
-        { withCredentials: true }
-      ).then(resp => {
-        this.isThisUser = resp.data == this.forUser;
-      });
+    // else
+      // Axios.post(
+      //   this.$store.getters.GET_URL + "/authentication/me",
+      //   {},
+      //   { withCredentials: true }
+      // ).then(resp => {
+       
+      // });
   },
   methods: {
     enableLoading() {
@@ -111,7 +113,7 @@ export default {
 }
 
 .smallMargin {
-  margin-left: 100px;
+  /* margin-left: 100px; */
 }
 .loadText {
   font-size: 36px;

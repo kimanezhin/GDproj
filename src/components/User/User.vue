@@ -87,7 +87,7 @@
           <news
             flexBehaviour
             v-bind:forUser="parseInt(id)"
-            class="mr-auto"
+            class=""
             id="myNews"
             v-bind:posts="arr"
           />
@@ -116,8 +116,8 @@ export default {
       email: "",
       city: "",
       faculty: "",
-      cityCode : "",
-      imgPath:""
+      cityCode: "",
+      imgPath: ""
     };
   },
   props: ["id"],
@@ -128,7 +128,7 @@ export default {
     })
   },
   mounted() {
-    let id = parseInt(localStorage.getItem("myId"));
+    let id = parseInt(this.id);
 
     if (!id) {
       Axios.post(
@@ -148,23 +148,10 @@ export default {
           m = response[0];
         })
         .then(response => {
-          this.faculty = m.faculty.name;
-          this.email = m.email;
-          this.city = m.faculty.campusName;
-          console.log(response);
-          this.firstName = m.firstName;
-          this.lastName = m.lastName;
-          this.middleName = m.middleName;
-          this.cityCode = m.campusCode
+          this.setFields(m);
         });
     } else {
-      this.faculty = m.faculty.name;
-      this.email = m.email;
-      this.city = m.faculty.campusName;
-      this.firstName = m.firstName;
-      this.lastName = m.lastName;
-      this.middleName = m.middleName;
-      this.cityCode = m.campusCode
+      this.setFields(m);
     }
 
     this.$store.dispatch("FETCH_USER_DATA", parseInt(id)).then(() => {
@@ -174,6 +161,15 @@ export default {
     // document.getElementById('main').style.height = window.innerHeight+"px"
   },
   methods: {
+    setFields(m) {
+      this.faculty = m.faculty.name;
+      this.email = m.email;
+      this.city = m.faculty.campusName;
+      this.firstName = m.firstName;
+      this.lastName = m.lastName;
+      this.middleName = m.middleName;
+      this.cityCode = m.campusCode;
+    },
     sendMessage() {
       this.$modal.show(
         sendMsg,
@@ -187,9 +183,9 @@ export default {
       );
     },
     getImgUrl() {
-      let id = this.id
-       if (!id) return null;
-       console.log(this.$store.getters.GET_MAP)
+      let id = this.id;
+      if (!id) return null;
+      console.log(this.$store.getters.GET_MAP);
       let m = this.$store.getters.GET_MAP.get(parseInt(id));
       return require("../../../img/" + m.faculty.campusCode + ".png");
     },
@@ -344,7 +340,7 @@ export default {
   box-shadow: none;
 }
 
-#main{
+#main {
   height: 100vh;
 }
 .categoriesAbout {
