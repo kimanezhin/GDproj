@@ -97,7 +97,6 @@ export default {
       if (this.currentTimeout != -1) clearTimeout(this.currentTimeout);
       let i = setTimeout(() => {
         this.$store.dispatch("GET_FACULTY", query).then(response => {
-          console.log(response);
           this.countries = response;
           this.isLoading = false;
         });
@@ -145,6 +144,9 @@ export default {
     selectedCountries(neww, old){
       if(neww.length > 1)
       this.selectedCountries = this.selectedCountries.pop();
+    },
+    countries(neww, old){
+      console.log(neww);
     }
   }
 };
