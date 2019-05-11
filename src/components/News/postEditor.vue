@@ -314,6 +314,7 @@ export default {
 <style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
 
 <style scoped>
+
 svg:hover {
   fill: #428bff;
   cursor: pointer;

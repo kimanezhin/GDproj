@@ -3,11 +3,14 @@
     <div
       id="imgCol"
       :class="{'margin':!forUser, 'smallMargin':forUser}"
-      class="col-md-12 col-sm-12 mt-4"
+      class="col-md-12 col-sm-12"
     >
-      <post-editor v-if="isThisUser"/>
+      <post-editor 
+      class = "mt-4"
+      v-if="isThisUser"/>
       <news-column
-        style="margin-top:75px;"
+        :class="{'marginTop': isMargin}"
+        
         v-bind:forUser="parseInt(forUser)"
         v-bind:columnNum="0"
       />
@@ -41,11 +44,11 @@ export default {
       default: function() {
         return [];
       },
-      isMargin: {
+    },
+    isMargin: {
         type: Boolean,
         default: true
-      }
-    },
+      },
     flexBehaviour: {
       type: String,
       default: "justify-content-around"
@@ -74,17 +77,17 @@ export default {
   },
   mounted() {
     this.enableLoading();
-     let i = parseInt(localStorage.getItem('myId'))
-        this.isThisUser = i == this.forUser;
+    let i = parseInt(localStorage.getItem("myId"));
+    this.isThisUser = i == this.forUser;
     if (!this.forUser) this.isThisUser = true;
     // else
-      // Axios.post(
-      //   this.$store.getters.GET_URL + "/authentication/me",
-      //   {},
-      //   { withCredentials: true }
-      // ).then(resp => {
-       
-      // });
+    // Axios.post(
+    //   this.$store.getters.GET_URL + "/authentication/me",
+    //   {},
+    //   { withCredentials: true }
+    // ).then(resp => {
+
+    // });
   },
   methods: {
     enableLoading() {
@@ -106,6 +109,10 @@ export default {
 <style scoped>
 #imgCol {
   min-width: 51px;
+}
+
+.marginTop{
+  margin-top: 75px;
 }
 
 .margin {

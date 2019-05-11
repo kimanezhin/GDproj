@@ -87,9 +87,10 @@
           <news
             flexBehaviour
             v-bind:forUser="parseInt(id)"
-            class=""
+            class
             id="myNews"
             v-bind:posts="arr"
+            :isMargin="false ||isMe()"
           />
         </div>
       </div>
@@ -161,6 +162,9 @@ export default {
     // document.getElementById('main').style.height = window.innerHeight+"px"
   },
   methods: {
+    isMe() {
+      return parseInt(localStorage.getItem('myId')) == parseInt(this.id)
+    },
     setFields(m) {
       this.faculty = m.faculty.name;
       this.email = m.email;
@@ -235,7 +239,7 @@ export default {
 
 <style>
 #myNews {
-  margin-top: 5%;
+  /* margin-top: 5%; */
 }
 .line {
   height: 2px;
@@ -683,7 +687,7 @@ export default {
 
 @media (max-width: 830px) {
   #myNews {
-    margin-top: 10%;
+    /* margin-top: 10%; */
   }
 }
 
