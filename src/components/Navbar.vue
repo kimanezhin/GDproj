@@ -1,6 +1,6 @@
 <template>
   <div class = "d-flex flex-row">
-    <slide>
+    <slide noOverlay>
           <transition name="slide">
       <router-link :to = "myId"> 
         <font-awesome-icon icon="user" class="mt-1 mr-2"/>
@@ -70,7 +70,9 @@ export default {
   /* background-color: #373a47; */
   background-color: #373a47;
 }
-
+.bm-overlay {
+      background: #fff !important;
+    }
 
 
 .line-style {
@@ -82,7 +84,7 @@ export default {
 
 @media screen and (max-width: 1200px) {
  .bm-burger-bars{
-   background-color: white;
+   background-color: white !important;
  } 
 }
 </style>
