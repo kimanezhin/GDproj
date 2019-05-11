@@ -155,8 +155,8 @@ export default {
 <style scoped>
 #container > input {
   font-weight: 600 !important;
-  font-size: 30px;
-  max-width: 70px;
+  font-size: 22px;
+  max-width: 50px;
 }
 .number {
   text-align: center;
@@ -183,7 +183,7 @@ p {
 
 .form-signin {
   width: 100%;
-  max-width: 50%;
+  max-width: 400px;
   padding: 15px;
   margin: auto;
 }
@@ -212,25 +212,25 @@ p {
   /* } */
 
   .form-signin {
-    width: 100%;
-    max-width: 70%;
+    /* width: 100%; */
+    /* max-width: 70%; */
   }
 }
 @media screen and (max-width: 780px) {
   .form-signin {
-    width: 100%;
-    max-width: 80%;
+    /* width: 100%; */
+    /* max-width: 80%; */
   }
 }
 
 @media screen and (max-width: 700px) {
   #container > input {
-    max-width: 35px;
-    font-size: 20px;
+    /* max-width: 35px; */
+    /* font-size: 20px; */
   }
   .form-signin {
-    width: 100%;
-    max-width: 70%;
+    /* width: 100%; */
+    /* max-width: 70%; */
   }
 }
 

@@ -16,6 +16,7 @@
           label="name"
           track-by="code"
           :options="options"
+          :internalSearch="false"
           :multiple="true"
           :taggable="true"
           :max-height="600"
