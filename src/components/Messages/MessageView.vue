@@ -241,6 +241,7 @@ html {
 .lastMessage {
   white-space: nowrap;
   overflow: hidden;
+  text-align: initial !important;
 }
 .messageCard {
   height: 50px;

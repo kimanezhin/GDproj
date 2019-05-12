@@ -154,7 +154,8 @@ export default {
       isLoading: false,
       countries: [],
       selectedCountries: [],
-      isPersonal: true
+      isPersonal: true,
+      
     };
   },
   computed: {
@@ -323,7 +324,7 @@ export default {
 
     updateChannel() {
       _.set(this.currentDialog, "data.group.users." + localStorage.getItem('myId') + ".isAdmin", true);
-      if (this.isPersonal) {
+      if (this.isPersonal && this.adminsCount == 0) {
         this.$store
           .dispatch("GET_USERCHAT", this.selectedCountries[0].code)
           .then(response => {

@@ -4,7 +4,7 @@
           {{Author}}
       </div>
     <div :class="{'message-orange':isItMe, 'message-blue':!isItMe}">
-      <p v-html="makeMarked(Text)" class="message-content"></p>
+      <div v-html="makeMarked(Text)" class="message-content"></div>
       <div
         :class="{ 
             'message-timestamp-left' :isItMe, 'message-timestamp-right':!isItMe}"
