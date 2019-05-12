@@ -138,7 +138,7 @@ export default {
       if (parseInt(event.target.name) == -2) {
         this.$store.dispatch("CHANGE_CHANNEL", {});
       }
-      console.log("here");
+      
       this.currentChannel = -2;
       localStorage.removeItem("channel");
       localStorage.setItem("currentChannel", -2);

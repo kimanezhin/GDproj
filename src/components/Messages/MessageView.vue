@@ -81,7 +81,7 @@ export default {
     getLastMessageAuthor(id) {
       if (!id) return null;
       id = parseInt(id);
-      console.log(id, this.$store.getters.GET_MESSAGE_MAP);
+      
       let m = this.$store.getters.GET_MESSAGE_MAP.get(id);
       if (!m) {
         this.$store.dispatch("GET_USERS", [id]).then(response => {
@@ -136,7 +136,7 @@ export default {
         {
           "before-close": event => {},
           edited: () => {
-            console.log("a");
+            
           }
         }
       );
@@ -148,9 +148,9 @@ export default {
       // console.log('a')
     },
     getImgUrl(id) {
-      console.log(id);
+      
       if (!id) return null;
-      console.log(this.$store.getters.GET_MESSAGE_MAP);
+      
       let m = this.$store.getters.GET_MESSAGE_MAP.get(id);
       if (!m) {
         this.$store.dispatch("GET_USERS", [id]).then(response => {
@@ -162,7 +162,7 @@ export default {
       return require("../../../img/" + m.faculty.campusCode + ".png");
     },
     openDialog(event) {
-      console.log(window);
+      
       let num = event.data.user || event.data.group.id;
       let tmp = event;
       //   if (tmp.data.user) tmp.data.user = this.getName(tmp.data.user);
@@ -183,7 +183,7 @@ export default {
       //13.08.61 - transformed
       let tmp = time.split("-");
       let clock = time.split("T")[1].split(":");
-      // console.log(clock)
+      
       tmp[2] = tmp[2].slice(0, 2);
       let timeString = clock[0] + ":" + clock[1] + ", ";
       return tmp[2] + "." + tmp[1];

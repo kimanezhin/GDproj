@@ -138,7 +138,7 @@ export default {
             type: true,
             request: data
           };
-          console.log(data);
+          
           promise = this.$store.dispatch("UPDATE_POSTS", request);
         }
         promise

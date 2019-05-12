@@ -69,7 +69,7 @@ export default {
   },
   mounted() {
     let channel = JSON.parse(localStorage.getItem("channel"));
-  console.log(channel)
+  
     this.channelName = channel
       ? JSON.parse(localStorage.getItem("channel")).name
       : "Feed";
@@ -173,10 +173,10 @@ export default {
       }
     },
     openSettings() {
-      console.log("a");
+     
     },
     changeChannel() {
-      console.log("b");
+     
     }
   }
 };

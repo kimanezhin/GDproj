@@ -107,7 +107,7 @@ export default {
     },
 
     showNotification() {
-      console.log("a");
+      
       $(".notify")
         .removeClass()
         .addClass("bottom-right" + " " + "error")

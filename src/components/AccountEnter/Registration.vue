@@ -128,7 +128,7 @@ export default {
       if (this.currentTimeout != -1) clearTimeout(this.currentTimeout);
       let i = setTimeout(() => {
         this.$store.dispatch("GET_FACULTY", query).then(response => {
-          console.log(response);
+          
           this.countries = response;
           this.isLoading = false;
         });
@@ -156,7 +156,7 @@ export default {
         setTimeout(() => {
           this.$router.push("/code");
         }, 4000)
-        console.log(response);
+        
       });
     },
     signIn() {

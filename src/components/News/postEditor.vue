@@ -103,10 +103,10 @@ export default {
         if (!id) return null;
 
         let m = this.$store.getters.GET_MAP.get(id);
-        console.log(m);
+       
         if (!m) {
           this.$store.dispatch("GET_USERS", [id]).then(response => {
-            console.log(response);
+       
             m = response[0];
             this.imgSource = require("../../../img/" +
               m.faculty.campusCode +

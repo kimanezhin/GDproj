@@ -82,7 +82,7 @@ const actions = {
                 for (var item of response.data.response) {
                     context.commit('UPDATER', item)
                 }
-                console.log(response.data)
+                
 
             })
                 .then(() => { resolve() })

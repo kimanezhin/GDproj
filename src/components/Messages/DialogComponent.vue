@@ -79,7 +79,7 @@ export default {
     },
     moderateGroup() {
       let di = JSON.parse(localStorage.getItem("currentDialog"));
-      console.log(di)
+      
       this.$modal.show(
         moder,
         {
@@ -113,7 +113,7 @@ export default {
       let msg;
       let text = document.getElementById("msgInput").value;
       let di = JSON.parse(localStorage.getItem("currentDialog"));
-      console.log(di);
+      
       if (di.type == "groupChat") {
         msg = {
           group: di.data.group.id,

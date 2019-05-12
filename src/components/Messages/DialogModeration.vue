@@ -160,7 +160,7 @@ export default {
   computed: {
     isAdmin() {
       let id = parseInt(localStorage.getItem("myId"));
-      console.log(this.myMap);
+      
       if (!this.myMap || this.myMap.size == 0 || !this.myMap.get(id))
         return !this.isNotCreation;
       return this.myMap.get(id).isAdmin;
@@ -210,7 +210,7 @@ export default {
   },
   methods: {
     disableOnAdmin(id){
-      console.log(id)
+      
       return parseInt(id) != parseInt(localStorage.getItem('myId'))
       
     },
@@ -225,7 +225,7 @@ export default {
     isNotMe(num) {
       let id = parseInt(localStorage.getItem("myId"));
       num = parseInt(num);
-      console.log(num, id);
+      
       return num != id;
     },
     addUser(val) {
@@ -355,7 +355,7 @@ export default {
     showMenu(event) {
       let popUp = document.getElementsByClassName("popUp")[event];
       //  setTimeout(() => {
-      console.log(event);
+      
       popUp.style.opacity = "1";
       // }, 1);
     },
@@ -415,13 +415,13 @@ export default {
   },
   watch: {
     selectedCountries(neww, old) {
-      console.log(this.isPersonal, neww, old);
+      
       if (neww.length > old.length) this.addUser(neww[neww.length - 1].code);
       else {
       }
-      console.log(this.users);
+      
       if (!this.isPersonal) {
-        console.log(this.users);
+      
         return;
       }
       if (neww.length > 1) this.selectedCountries = [neww.pop()];

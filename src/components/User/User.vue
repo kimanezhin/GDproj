@@ -151,7 +151,7 @@ export default {
       });
     }
     let m = this.$store.getters.GET_MAP.get(id);
-    console.log(m);
+    
     if (!m) {
       this.$store
         .dispatch("GET_USERS", [id])
@@ -167,7 +167,7 @@ export default {
 
     this.$store.dispatch("FETCH_USER_DATA", parseInt(id)).then(() => {
       let name = this.$store.getters.GET_MAP.get(parseInt(id));
-      console.log(name);
+      
     });
     // document.getElementById('main').style.height = window.innerHeight+"px"
   },
@@ -200,7 +200,7 @@ export default {
       );
     },
     getImgUrl() {
-      console.log(this.cityCode)
+      
       return require("../../../img/" +this.cityCode + ".png");
     },
     addUserToChannel() {
@@ -232,7 +232,6 @@ export default {
 
   watch: {
     id: function(newId) {
-      console.log(newId);
       location.reload();
     }
   },

@@ -93,7 +93,7 @@ export default {
   methods: {
     getImgUrl(id) {
        if (!id) return null;
-      console.log(this.$store.getters.GET_MAP)
+    
       let m = this.$store.getters.GET_MAP.get(id);
       return require("../../../img/" + m.faculty.campusCode + ".png");
     },
@@ -110,7 +110,7 @@ export default {
       //   .sort((first, second) => {
       //     return second.postId - first.postId;
       //   });
-     console.log(arr)
+     
       // for (let post of arr) 
         // {
         //   console.log(post)
@@ -190,7 +190,7 @@ export default {
 
             if (!texts[i].classList.contains("eventReady")) {
               texts[i].addEventListener("click", element => {
-                console.log('a')
+              
                 item.classList.remove("toCrop");
                 event.target.classList.remove("constantSize");
               });

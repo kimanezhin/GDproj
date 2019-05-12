@@ -37,7 +37,7 @@ export default {
   methods: {
 
     checkAuthor(id) {
-      // console.log(this.$store.getters.GET_ID, id)
+      
       return localStorage.getItem("myId") == id;
     },
     transformTime(time) {
@@ -48,7 +48,7 @@ export default {
     changeDialog() {
       if (this.currentMap.size == 0) {
         let m = JSON.parse(localStorage.getItem("myMap"));
-        console.log(m);
+        
         this.$store.commit("SET_MESSAGE_MAP", m);
       }
       let di = JSON.parse(localStorage.getItem("currentDialog"));

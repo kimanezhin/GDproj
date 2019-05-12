@@ -75,14 +75,14 @@ export default {
       }
 
       //TODO: Here should be /authenticate
-      console.log(email);
+  
 
       this.$store
         .dispatch("AUTH_REQUEST", email)
         .then(
           (response) => {
             // if(response.data.isRegistred)
-            console.log(response)
+            
             if (response == "registered") {
               this.$router.push("/code");
             } else if (response === "canRegister")
@@ -91,7 +91,7 @@ export default {
                 this.$router.push("/registration");
               }
             else if (response === "invalid") {
-            } else console.log("a");
+            
           }
           // else
         )

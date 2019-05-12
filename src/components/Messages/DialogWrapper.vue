@@ -44,7 +44,7 @@ onResizeEventHandler(){
       this.messages = this.$store.getters.GET_MESSAGES;
     });
     if (localStorage.getItem("currentDialog")) this.isOpened = true;
-console.log('a')
+
     window.addEventListener("resize", this.onResizeEventHandler);
     this.onResizeEventHandler();
   }
