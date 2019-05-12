@@ -86,7 +86,10 @@ export default {
             if (response == "registered") {
               this.$router.push("/code");
             } else if (response === "canRegister")
-              this.$router.push("/registration");
+              {
+                localStorage.setItem('currentMail', email);
+                this.$router.push("/registration");
+              }
             else if (response === "invalid") {
             } else console.log("a");
           }

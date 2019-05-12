@@ -76,6 +76,8 @@ export default {
     postEditor
   },
   mounted() {
+    
+
     this.enableLoading();
     let i = parseInt(localStorage.getItem("myId"));
     this.isThisUser = i == this.forUser;

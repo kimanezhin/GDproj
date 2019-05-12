@@ -7,7 +7,8 @@ Vue.use(Vuex)
 const state = {
     users: new Map(),
     messages: [],
-    currentDialog: []
+    currentDialog: [],
+
 }
 
 const getters = {
@@ -18,6 +19,33 @@ const getters = {
 
 const actions = {
 
+    FIND_USERS(context, payload) {
+        let id = parseInt(localStorage.getItem('myId'))
+        return new Promise((resolve, reject) => {
+            Axios.post(context.rootState.dataStorage.URL + '/users/search', JSON.stringify(payload), { withCredentials: true })
+                .then((response) => {
+                    let users = response.data;
+
+                    users = users.map(x => {
+                        if (id == parseInt(x.id)) {
+                            return {
+                                name: x.firstName + " " + x.lastName,
+                                code: x.id,
+                                $isDisabled: true
+                            }
+                        }
+                        return {
+                            name: x.firstName + " " + x.lastName,
+                            code: x.id
+                        }
+                    })
+                    resolve(users)
+                })
+                .catch((err) => {
+                    reject(err);
+                })
+        })
+    },
     GET_USERS(context, payload) {
         return new Promise((resolve, reject) => {
             Axios.post(context.rootState.dataStorage.URL + '/users/', payload, { withCredentials: true }).then((response) => {
@@ -50,6 +78,24 @@ const actions = {
 
     },
 
+    GET_USERCHAT(context, payload) {
+        return new Promise((resolve, reject) => {
+            let msg = {
+                direction: "backward",
+                limit: 20,
+                exclusiveFrom: null,
+                request: payload
+            }
+            Axios.post(context.rootState.dataStorage.URL + '/messages/get/userChat').then(()=>{
+                resolve(response.data);
+            })
+            .catch(() =>{
+                reject();
+            })
+        })
+    },
+
+
     SEND_MSG(context, payload) {
         return new Promise((resolve, reject) => {
             Axios.post(context.rootState.dataStorage.URL + '/messages/send', payload, { withCredentials: true }).then(() => {
@@ -60,7 +106,7 @@ const actions = {
 
     UPDATE_DIALOG(context, payload) {
         return new Promise((resolve, reject) => {
-            Axios.post(context.rootState.dataStorage.URL + '/chats/'+payload.operation+'GroupChat', payload.data, { withCredentials: true }).then(() => {
+            Axios.post(context.rootState.dataStorage.URL + '/chats/' + payload.operation + 'GroupChat', payload.data, { withCredentials: true }).then(() => {
                 resolve();
             }).catch((err) => { console.error(err) })
         })
@@ -108,9 +154,8 @@ const mutations = {
     },
 
     ADD_TO_MAP(state, payload) {
-        
+
         state.users.set(payload[0], payload[1]);
-        console.log(state.users)
     }
 
 }

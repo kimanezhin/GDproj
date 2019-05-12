@@ -66,7 +66,6 @@ export default {
   methods: {
     isGroup() {
       let di = JSON.parse(localStorage.getItem("currentDialog"));
-      console.log(di.type === "groupChat");
       return di.type === "groupChat";
     },
     counter() {
@@ -80,6 +79,7 @@ export default {
     },
     moderateGroup() {
       let di = JSON.parse(localStorage.getItem("currentDialog"));
+      console.log(di)
       this.$modal.show(
         moder,
         {
@@ -106,7 +106,7 @@ export default {
     },
     onResizeEventHandler() {
       this.screenWidth = window.innerWidth + 91;
-      console.log(this.screenWidth)
+      
       return this.screenWidth;
     },
     sendMessage() {
@@ -151,7 +151,22 @@ export default {
 };
 </script>
 
+<style>
+
+.custom__tag {
+  display: inline-block;
+  padding: 3px 12px;
+  background: #d2d7ff;
+  margin-right: 8px;
+  margin-bottom: 8px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+</style>
+
+
 <style scoped>
+
 .participants {
   text-align: center;
   font-weight: 550;

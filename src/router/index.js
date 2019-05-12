@@ -72,6 +72,7 @@ export default new Router({
       path: '/im',
       name: 'messages',
       component: im,
+      props:true,
       beforeEnter: ifNotAuthenticated
 
     },

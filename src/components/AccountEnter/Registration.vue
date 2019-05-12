@@ -51,12 +51,13 @@
             <span slot="noResult">Oops! No elements found.</span>
           </multiselect>
         </div>
-        <div class="form-group">
-          <label for="inputAddress2">Почта</label>
-          <input required type="text" class="form-control" id="email" placeholder="Почта">
-        </div>
 
         <button @click="register" type="submit" class="btn mt-2 btn-primary btn-block">Sign in</button>
+        <div
+          class="notify bar-top"
+          id="checkMail"
+          data-notification-status="success"
+        >{{message}}</div>
       </form>
     </div>
   </div>
@@ -79,11 +80,43 @@ export default {
       countries: [],
       isLoading: false,
       timeToRequest: 500,
-      currentTimeout: -1
+      currentTimeout: -1,
+      email: "",
+      message:""
     };
   },
+  mounted() {},
 
   methods: {
+    showNotification(event, notification) {
+      event.preventDefault();
+
+
+      let status, type;
+
+      if (notification === "error") {
+        status = "error";
+        type = "bottom-right";
+        this.message="Произошла ошибка! Возможно, ваш email " + localStorage.getItem('currentMail') + " уже зарегистрирован. Попробуйте еще раз"
+      } else {
+        status = "notify";
+        type = "top-left";
+        this.message = "На вашу почту "+ localStorage.getItem('currentMail') +" было отправлено письмо с кодом подтверждения. "
+      }
+
+      $(".notify")
+        .removeClass()
+        .addClass(type + " " + status)
+        .addClass("do-show");
+
+      event.preventDefault();
+      setTimeout(function() {
+        $(document.getElementById("checkMail"))
+          .removeClass()
+          .addClass("notify")
+          .addClass("bar-top");
+      }, 5000);
+    },
     setTimer() {},
     limitText(count) {
       return `and ${count} other countries`;
@@ -95,25 +128,21 @@ export default {
       if (this.currentTimeout != -1) clearTimeout(this.currentTimeout);
       let i = setTimeout(() => {
         this.$store.dispatch("GET_FACULTY", query).then(response => {
+          console.log(response);
           this.countries = response;
           this.isLoading = false;
         });
       }, this.timeToRequest);
       this.currentTimeout = i;
-
-      // ajaxFindCountry(query).then(response => {
-      // this.countries = response;
-      // this.isLoading = false;
-      // });
     },
     clearAll() {
       this.selectedCountries = [];
     },
-    register() {
+    register(event) {
       let firstName = document.getElementById("firstName").value;
       let lastName = document.getElementById("lastName").value;
       let middleName = document.getElementById("middleName").value;
-      let email = document.getElementById("email").value;
+      let email = localStorage.getItem("currentMail");
       let faculty = this.selectedCountries[0].code;
       let user = {
         firstName: firstName,
@@ -123,35 +152,29 @@ export default {
         faculty: faculty
       };
       this.$store.dispatch("REGISTER_USER", user).then(response => {
-        this.$router.push("/code");
+        this.showNotification(event)
+        setTimeout(() => {
+          this.$router.push("/code");
+        }, 4000)
         console.log(response);
       });
     },
     signIn() {
       this.$store.dispatch("SET_ID", this.id);
       this.showNotification();
-    },
-    showNotification() {
-      var pattern = /^\w+@{1}(edu.)?(hse.ru){1}$/;
-      var email = $(document.getElementById("inputEmail")).val();
-
-      // if (pattern.test(email))
     }
   },
   watch: {
     selectedCountries(neww, old) {
       if (neww.length > 1)
         this.selectedCountries = this.selectedCountries.pop();
-    },
-    countries(neww, old) {
-      console.log(neww);
     }
   }
 };
 </script>
 
 
-
+<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
 
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -169,6 +192,46 @@ export default {
 
 .title {
   font-size: 16px;
+}
+
+.bottom-right {
+  position: fixed;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  color: #fff;
+  line-height: 1.3;
+  box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.35);
+  max-width: 350px;
+  margin: 20px;
+  bottom: 0;
+  right: 0;
+  transform: translateX(420px);
+  background-color: #ef5350;
+}
+@keyframes slide-in-right {
+  to {
+    transform: translateX(0);
+  }
+}
+.bottom-right.do-show {
+  animation: slide-in-right 1s ease-in-out forwards,
+    slide-in-right 1s ease-in-out reverse forwards 4s;
+}
+
+.bottom-right[data-notification-status="error"] {
+  background-color: #ef5350;
+}
+.bottom-right[data-notification-status="error"]:before {
+  content: "";
+  display: block;
+  width: 30px;
+  height: 30px;
+  min-width: 30px;
+  margin-right: 20px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M12 3.984c4.407 0 8.016 3.609 8.016 8.016 0 4.406-3.608 8.016-8.016 8.016S3.984 16.407 3.984 12 7.593 3.984 12 3.984m0-2C6.478 1.984 1.984 6.477 1.984 12c0 5.521 4.493 10.016 10.016 10.016S22.016 17.522 22.016 12c0-5.523-4.495-10.016-10.016-10.016zm0 2c4.407 0 8.016 3.609 8.016' fill='%23C61512'/%3E%3Cpath d='M13.406,12l2.578,2.578l-1.406,1.406L12,13.406l-2.578,2.578l-1.406-1.406L10.594,12L8.016,9.421l1.406-1.405L12,10.593 l2.578-2.577l1.406,1.405L13.406,12z' fill='%23C61512'/%3E%3C/svg%3E")
+    center / cover no-repeat;
 }
 
 h1,
@@ -255,7 +318,7 @@ p {
 }
 .top-left.do-show {
   animation: slide-in-left 1s ease-in-out forwards,
-    slide-in-left 1s ease-in-out reverse forwards 5s;
+    slide-in-left 1s ease-in-out reverse forwards 4s;
 }
 
 .top-left[data-notification-status="success"] {
@@ -288,7 +351,7 @@ p {
   transform: translateY(-100%);
 }
 .bar-top.do-show {
-  animation: slide-show 1s forwards, slide-show 1s reverse forwards 3s;
+  animation: slide-show 1s forwards, slide-show 1s reverse forwards 1s;
 }
 
 .bar-top[data-notification-status="success"] {
@@ -315,4 +378,3 @@ p {
 }
 </style>
 
-<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>

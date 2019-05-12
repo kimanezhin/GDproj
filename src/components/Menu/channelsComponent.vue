@@ -86,8 +86,10 @@ export default {
   },
   mounted() {
     this.$store.dispatch("GET_ALL_CHANNELS");
-    if (!localStorage.getItem("currentChannel"))
+    if (!localStorage.getItem("currentChannel")) {
       localStorage.setItem("currentChannel", -2);
+    }
+    this.currentChannel = parseInt(localStorage.getItem("currentChannel"));
   },
   methods: {
     moveChannel() {},
@@ -127,7 +129,6 @@ export default {
       let i = JSON.stringify(tmp);
       localStorage.setItem("channel", JSON.stringify(tmp));
       this.$store.dispatch("CHANGE_CHANNEL", tmp).then(() => {
-        
         this.currentChannel = index;
         localStorage.setItem("currentChannel", index);
         this.$eventHub.$emit("change-channel", [index, tmp]);
@@ -137,7 +138,7 @@ export default {
       if (parseInt(event.target.name) == -2) {
         this.$store.dispatch("CHANGE_CHANNEL", {});
       }
-      console.log("here")
+      console.log("here");
       this.currentChannel = -2;
       localStorage.removeItem("channel");
       localStorage.setItem("currentChannel", -2);

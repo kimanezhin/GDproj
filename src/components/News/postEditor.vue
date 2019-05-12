@@ -89,7 +89,7 @@ export default {
         // { name: "#Op", code: "ods" },
         // { name: "#O", code: "fos" }
       ],
-      imgPath:""
+      imgPath: ""
     };
   },
   methods: {
@@ -99,12 +99,23 @@ export default {
         {},
         { withCredentials: true }
       ).then(resp => {
-        let id = resp.data
-       if (!id) return null;
-     
-      let m = this.$store.getters.GET_MAP.get(id);
-      console.log(m)
-      this.imgSource =  require("../../../img/" + m.faculty.campusCode + ".png");
+        let id = resp.data;
+        if (!id) return null;
+
+        let m = this.$store.getters.GET_MAP.get(id);
+        console.log(m);
+        if (!m) {
+          this.$store.dispatch("GET_USERS", [id]).then(response => {
+            console.log(response);
+            m = response[0];
+            this.imgSource = require("../../../img/" +
+              m.faculty.campusCode +
+              ".png");
+          });
+        } 
+          this.imgSource = require("../../../img/" +
+            m.faculty.campusCode +
+            ".png");
       });
     },
     addTag(newTag) {
@@ -258,11 +269,10 @@ export default {
     },
     updateSearch(param) {
       console.log(param);
-     this.$store.dispatch("GET_COMPLETION", [null,param]).then(aa => {
+      this.$store.dispatch("GET_COMPLETION", [null, param]).then(aa => {
         //this.options =
         // if (!aa) this.options = [];
         // else this.options = aa;
-        
         // let a = [
         //   { name: "#Vue.js", code: "vu" },
         //   { name: "#Javascript", code: "js" },
@@ -274,9 +284,9 @@ export default {
         // this.options = a;
         // if(this.options.length == 0)
         // this.options = a;
-        // else 
+        // else
         // this.options = []
-     });
+      });
     }
   },
   mounted() {
@@ -315,7 +325,6 @@ export default {
 <style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
 
 <style scoped>
-
 svg:hover {
   fill: #428bff;
   cursor: pointer;

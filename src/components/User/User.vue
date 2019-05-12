@@ -200,11 +200,8 @@ export default {
       );
     },
     getImgUrl() {
-      let id = this.id;
-      if (!id) return null;
-      console.log(this.$store.getters.GET_MAP);
-      let m = this.$store.getters.GET_MAP.get(parseInt(id));
-      return require("../../../img/" + m.faculty.campusCode + ".png");
+      console.log(this.cityCode)
+      return require("../../../img/" +this.cityCode + ".png");
     },
     addUserToChannel() {
       this.$modal.show(
@@ -485,6 +482,17 @@ export default {
 .content {
   margin-left: 30px;
 }
+
+@media screen and (max-width: 1100px) {
+    .tabs {
+    margin-bottom: 50px;
+  }
+  .categoriesAbout {
+    margin-right: 10%;
+  }
+  
+}
+
 .tabs .content section {
   display: none;
   -webkit-animation-name: content;

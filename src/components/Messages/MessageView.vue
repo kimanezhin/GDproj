@@ -32,11 +32,15 @@
                 <div class="messageCardBody col-9 d-flex flex-column">
                   <div class="userName mt-1 d-flex flex-row">
                     <div class="name">{{getName(dialog.data.user)||dialog.data.group.name}}</div>
-                    <div class="date ml-auto">{{transformTime(dialog.data.lastMessage.time)}}</div>
+                    <div v-if="dialog.data.lastMessage" class="date ml-auto">{{transformTime(dialog.data.lastMessage.time)}}</div>
                   </div>
                   <div
+                    v-if="dialog.data.lastMessage"
                     class="lastMessage"
-                  >{{(dialog.data.lastMessage&&getLastMessageAuthor(dialog.data.lastMessage.author)) ||"" }}: {{((dialog.data.lastMessage&&dialog.data.lastMessage.body.markdown))||''}}</div>
+                  >{{(getLastMessageAuthor(dialog.data.lastMessage.author)) ||"" }}: {{((dialog.data.lastMessage.body.markdown))||''}}</div>
+                  <div v-else class="lastMessage">
+                    Беседа создана!
+                  </div>
                 </div>
               </div>
             </transition-group>
@@ -77,6 +81,7 @@ export default {
     getLastMessageAuthor(id) {
       if (!id) return null;
       id = parseInt(id);
+      console.log(id, this.$store.getters.GET_MESSAGE_MAP);
       let m = this.$store.getters.GET_MESSAGE_MAP.get(id);
       if (!m) {
         this.$store.dispatch("GET_USERS", [id]).then(response => {
@@ -113,7 +118,7 @@ export default {
           }
         }
       };
-      this.messages.unshift(mes);
+      // this.messages.unshift(mes);
       this.createDialog();
     },
     createDialog() {
@@ -143,8 +148,9 @@ export default {
       // console.log('a')
     },
     getImgUrl(id) {
+      console.log(id);
       if (!id) return null;
-      console.log(this.$store.getters.GET_MESSAGE_MAP)
+      console.log(this.$store.getters.GET_MESSAGE_MAP);
       let m = this.$store.getters.GET_MESSAGE_MAP.get(id);
       if (!m) {
         this.$store.dispatch("GET_USERS", [id]).then(response => {
@@ -152,6 +158,7 @@ export default {
         });
         m = this.$store.getters.GET_MESSAGE_MAP.get(id);
       }
+      if (!m) return require("../../../img/" + "5051" + ".png");
       return require("../../../img/" + m.faculty.campusCode + ".png");
     },
     openDialog(event) {

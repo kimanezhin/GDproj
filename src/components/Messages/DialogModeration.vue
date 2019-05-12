@@ -5,7 +5,7 @@
     </div>
     <div class="header">Информация</div>
 
-    <div class="title d-flex flex-row">
+    <div v-if="!isPersonal || isNotCreation" class="title d-flex flex-row">
       <div class="subTitle">{{Title}}</div>
       <div class="edit">
         <font-awesome-icon id="editIcon" @click="editTitle" icon="pencil-alt"/>
@@ -16,66 +16,107 @@
     <div class="usersCount">
       <div class="d-flex justify-content-around">
         <div @click="toRight" class="cl el justify-content-center d-flex flex-row">
-          <div class="people">Все участники:</div>
-          <div class="num ml-1">{{usersCount}}</div>
+          <div v-if="isNotCreation" class="people">Все участники:</div>
+          <div v-else class="people">Личное сообщение</div>
+          <div v-if="isNotCreation" class="num ml-1">{{usersCount}}</div>
         </div>
         <div @click="toLeft" class="cl el justify-content-center d-flex flex-row">
-          <div class="people">Администраторы:</div>
-          <div class="num ml-1">{{adminsCount}}</div>
+          <div v-if="isNotCreation" class="people">Администраторы:</div>
+          <div v-else class="people">Беседа</div>
+          <div v-if="isNotCreation" class="num ml-1">{{adminsCount}}</div>
         </div>
         <div class="slider slider-translate align-self-end"></div>
       </div>
     </div>
     <hr width="100%" size="4">
     <div v-if="isAdmin" class="input-group p-1">
-      <input
-        type="text"
-        class="form-control"
-        id="userId"
-        placeholder="Введите ID "
-        aria-label="Recipient's username"
-        aria-describedby="basic-addon2"
-      >
-      <div class="input-group-append">
-        <button class="btn btn-outline-secondary" @click="addUser" type="button">Добавить</button>
+      <div class="userInput">
+       
+        <multiselect
+          v-model="selectedCountries"
+          id="ajax"
+          label="name"
+          track-by="code"
+          placeholder="Type to search"
+          open-direction="bottom"
+          :options="countries"
+          :multiple="true"
+          :isSpaceAllowed="true"
+          :internal-search="true"
+          :searchable="false"
+          :loading="isLoading"
+          :max-height="600"
+          @search-change="asyncFind"
+        >
+          <template slot="tag" slot-scope="{ option, remove }">
+            <span class="custom__tag">
+              <span>{{ option.name }}</span>
+              <span class="custom__remove" @click="remove(option)">❌</span>
+            </span>
+          </template>
+          <template slot="clear" slot-scope="props">
+            <div
+              class="multiselect__clear"
+              v-if="selectedCountries.length"
+              @mousedown.prevent.stop="clearAll(props.search)"
+            ></div>
+          </template>
+          <span slot="noResult">Oops! No elements found.</span>
+        </multiselect>
       </div>
+
+      <!-- <div class="input-group-append">
+        <button class="btn btn-outline-secondary" @click="addUser" type="button">Добавить</button>
+      </div>-->
     </div>
     <hr width="100%" size="4">
 
     <div class="moderation">
-      <div v-for="(prs, index) in users" :key="prs[0]" class="person">
-        <div class="d-flex flex-row">
-          <div class="ava">
-            <img class="rounded m-2" :src="getImgUrl(prs[0])" alt>
-          </div>
-          <div class="mt-2 d-flex flex-column font-weight-bold">{{getName(prs[0])}}</div>
-          <div
-            v-if="isAdmin"
-            class="option ml-auto mr-4 mt-2"
-            @mouseover="showMenu(index)"
-            @mouseleave="hideMenu(index)"
-          >
-            <div class="popUp">
-              <div class="admin d-flex flex-row">
-                <div class="boxTitle">Администратор :</div>
-                <div class="box ml-1" @click="changeAdmin(prs[0])">
-                  <p-check
-                    name="check"
-                    class="pretty p-switch p-fill state p-success"
-                    color="success"
-                    v-model="prs[1].isAdmin"
-                  ></p-check>
+      <div v-if="isNotCreation" class="container">
+        <div v-for="(prs, index) in users" :key="prs[0]" class="person">
+          <div class="d-flex flex-row">
+            <div class="ava">
+              <img class="rounded m-2" :src="getImgUrl(prs[0])" alt>
+            </div>
+            <div class="mt-2 d-flex flex-column font-weight-bold">{{getName(prs[0])}}</div>
+            <div
+              v-if="isAdmin"
+              class="option ml-auto mr-4 mt-2"
+              @mouseover="showMenu(index)"
+              @mouseleave="hideMenu(index)"
+            >
+              <div class="popUp">
+                <div class="admin d-flex flex-row">
+                  <div class="boxTitle">Администратор :</div>
+                  <div class="box ml-1" @click="changeAdmin(prs[0])">
+                    <p-check
+                    v-if="disableOnAdmin(prs[0])"
+                      name="check"
+                      class="pretty p-switch p-fill state p-success"
+                      color="success"
+                      v-model="prs[1].isAdmin"
+                    ></p-check>
+                    <p-check
+                    v-else
+                      name="check"
+                      class="pretty p-switch p-fill state p-success"
+                      color="success"
+                      v-model="prs[1].isAdmin"
+                      disabled
+                    ></p-check>
+                    
+                  </div>
+                </div>
+                <div class="deleteFromGroup">
+                  Удалить
+                  <font-awesome-icon @click="deletePerson((prs[0]))" icon="times"/>
                 </div>
               </div>
-              <div class="deleteFromGroup">
-                Удалить
-                <font-awesome-icon @click="deletePerson((prs[0]))" icon="times"/>
-              </div>
+              <font-awesome-icon icon="chevron-down"/>
             </div>
-            <font-awesome-icon icon="chevron-down"/>
           </div>
+          <hr width="100%">
         </div>
-        <hr width="100%">
       </div>
     </div>
     <div class="footer p-2">
@@ -94,7 +135,12 @@
 </template>
 <script>
 import _ from "lodash";
+import multiselect from "vue-multiselect";
+import sendMsg from "./SendMessageModal";
 export default {
+  components: {
+    multiselect
+  },
   data() {
     return {
       textBefore: "",
@@ -104,7 +150,11 @@ export default {
       myMap: "",
       adminsCount: 0,
       usersCount: 0,
-      imgPath:""
+      imgPath: "",
+      isLoading: false,
+      countries: [],
+      selectedCountries: [],
+      isPersonal: true
     };
   },
   computed: {
@@ -144,6 +194,7 @@ export default {
     this.users = Object.entries(this.currentDialog.data.group.users) || [
       [me, { isAdmin: true }]
     ];
+
     if (this.myMap == "") {
       this.myMap = new Map(
         Object.entries(this.currentDialog.data.group.users).map(x => [
@@ -158,6 +209,16 @@ export default {
     this.notFilteredUsers = this.users;
   },
   methods: {
+    disableOnAdmin(id){
+      console.log(id)
+      return parseInt(id) != parseInt(localStorage.getItem('myId'))
+      
+    },
+    asyncFind(query) {
+      this.$store.dispatch("FIND_USERS", query).then(response => {
+        this.countries = response;
+      });
+    },
     simpleClose() {
       this.$emit("close");
     },
@@ -167,9 +228,9 @@ export default {
       console.log(num, id);
       return num != id;
     },
-    addUser() {
-      let id = document.getElementById("userId");
-      let val = id.value;
+    addUser(val) {
+      // let id = document.getElementById("userId");
+      // let val = id.value;
       if (!_.find(this.users, n => n[0] == val)) {
         this.users.push([
           val,
@@ -177,6 +238,7 @@ export default {
             isAdmin: false
           }
         ]);
+        this.notFilteredUsers.push(this.users[this.users.length - 1]);
         _.set(
           this.currentDialog,
           "data.group.users." + val + ".isAdmin",
@@ -184,10 +246,13 @@ export default {
         );
         console.log(this.currentDialog);
       }
-      id.value = "";
+      // id.value = "";
       this.usersCount += 1;
     },
     toRight() {
+      this.isPersonal = true;
+      if (this.selectedCountries.length > 1)
+        this.selectedCountries = [this.selectedCountries.pop()];
       this.users = this.notFilteredUsers;
       this.arePeopleSelected = !this.arePeopleSelected;
       document
@@ -196,7 +261,22 @@ export default {
 
       // document.getElementsByClassName("cl")[0].style.color = "#428bff";
     },
+
+    sendMessage(id) {
+      this.$modal.show(
+        sendMsg,
+        {
+          id: parseInt(id)
+        },
+        {
+          adaptive: true,
+          height: "auto"
+        }
+      );
+    },
+
     toLeft() {
+      this.isPersonal = false;
       this.users = this.notFilteredUsers.filter(x => x[1].isAdmin);
       this.arePeopleSelected = !this.arePeopleSelected;
       document
@@ -242,11 +322,27 @@ export default {
     },
 
     updateChannel() {
-      console.log(this.currentDialog.data.group);
+      _.set(this.currentDialog, "data.group.users." + localStorage.getItem('myId') + ".isAdmin", true);
+      if (this.isPersonal) {
+        this.$store
+          .dispatch("GET_USERCHAT", this.selectedCountries[0].code)
+          .then(response => {
+            this.$emit("close");
+            localStorage.setItem("currentDialog", response);
+            this.$router.push("/im");
+          })
+          .catch(() => {
+            this.sendMessage(this.selectedCountries[0].code);
+            this.$emit("close");
+            this.$router.push("/im");
+          });
+        return;
+      }
       let tmp = {
         operation: this.isNotCreation ? "update" : "create",
         data: this.currentDialog.data.group
       };
+
       this.$store.dispatch("UPDATE_DIALOG", tmp).then(() => {
         localStorage.setItem(
           "currentDialog",
@@ -271,10 +367,9 @@ export default {
       if (!id) return null;
       id = parseInt(id);
       let m = this.$store.getters.GET_MESSAGE_MAP.get(id);
-      
+
       if (!m) {
         this.$store.dispatch("GET_USERS", [id]).then(response => {
-          console.log(response)
           this.$store.commit("ADD_TO_MAP", [id, response]);
         });
       }
@@ -282,7 +377,7 @@ export default {
     },
     getImgUrl(id) {
       if (!id) return null;
-      console.log(this.$store.getters.GET_MESSAGE_MAP)
+      id = parseInt(id);
       let m = this.$store.getters.GET_MESSAGE_MAP.get(id);
       if (!m) {
         this.$store.dispatch("GET_USERS", [id]).then(response => {
@@ -290,6 +385,7 @@ export default {
         });
         m = this.$store.getters.GET_MESSAGE_MAP.get(id);
       }
+      if (!m) return require("../../../img/" + 5051 + ".png");
       return require("../../../img/" + m.faculty.campusCode + ".png");
     },
     saveTitle() {
@@ -316,13 +412,35 @@ export default {
       ch.style.display = "block";
       ed.style.display = "none";
     }
+  },
+  watch: {
+    selectedCountries(neww, old) {
+      console.log(this.isPersonal, neww, old);
+      if (neww.length > old.length) this.addUser(neww[neww.length - 1].code);
+      else {
+      }
+      console.log(this.users);
+      if (!this.isPersonal) {
+        console.log(this.users);
+        return;
+      }
+      if (neww.length > 1) this.selectedCountries = [neww.pop()];
+    }
   }
 };
 </script>
 
+<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
+
 <style scoped>
 .num {
   color: #939393;
+}
+
+.userInput {
+  margin-right: auto;
+  margin-left: auto;
+  width: 100%;
 }
 
 .exitCross {
