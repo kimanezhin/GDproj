@@ -99,11 +99,11 @@ const actions = {
         })
     },
     CREATE_CHANNEL(context, payload) {
-        Axios.post(context.rootState.dataStorage.URL + '/channels/create', payload, { withCredentials: true }).then((channelId) => {
-            context.dispatch('GET_ALL_CHANNELS')
-            // if (localStorage.getItem('currentChannel') == 0) {
-            // context.dispatch("CHANGE_CHANNEL", context.state.channels[0])
-            // }
+        return new Promise((resolve, reject) =>{
+            Axios.post(context.rootState.dataStorage.URL + '/channels/create', payload, { withCredentials: true }).then((channelId) => {
+                context.dispatch('GET_ALL_CHANNELS')
+                resolve();
+            }).catch((err) => {reject(err)})
         })
     },
     async GET_ALL_CHANNELS(context) {
