@@ -250,6 +250,13 @@ export default {
 #myNews {
   /* margin-top: 5%; */
 }
+
+
+html {
+  height: 100vh;
+  background-color: #fff;
+}
+
 .line {
   height: 2px;
   width: 67%;

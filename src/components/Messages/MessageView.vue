@@ -32,15 +32,16 @@
                 <div class="messageCardBody col-9 d-flex flex-column">
                   <div class="userName mt-1 d-flex flex-row">
                     <div class="name">{{getName(dialog.data.user)||dialog.data.group.name}}</div>
-                    <div v-if="dialog.data.lastMessage" class="date ml-auto">{{transformTime(dialog.data.lastMessage.time)}}</div>
+                    <div
+                      v-if="dialog.data.lastMessage"
+                      class="date ml-auto"
+                    >{{transformTime(dialog.data.lastMessage.time)}}</div>
                   </div>
                   <div
                     v-if="dialog.data.lastMessage"
                     class="lastMessage"
                   >{{(getLastMessageAuthor(dialog.data.lastMessage.author)) ||"" }}: {{((dialog.data.lastMessage.body.markdown))||''}}</div>
-                  <div v-else class="lastMessage">
-                    Беседа создана!
-                  </div>
+                  <div v-else class="lastMessage">Беседа создана!</div>
                 </div>
               </div>
             </transition-group>
@@ -81,7 +82,7 @@ export default {
     getLastMessageAuthor(id) {
       if (!id) return null;
       id = parseInt(id);
-      
+
       let m = this.$store.getters.GET_MESSAGE_MAP.get(id);
       if (!m) {
         this.$store.dispatch("GET_USERS", [id]).then(response => {
@@ -135,9 +136,7 @@ export default {
         },
         {
           "before-close": event => {},
-          edited: () => {
-            
-          }
+          edited: () => {}
         }
       );
     },
@@ -148,9 +147,8 @@ export default {
       // console.log('a')
     },
     getImgUrl(id) {
-      
       if (!id) return null;
-      
+
       let m = this.$store.getters.GET_MESSAGE_MAP.get(id);
       if (!m) {
         this.$store.dispatch("GET_USERS", [id]).then(response => {
@@ -162,7 +160,6 @@ export default {
       return require("../../../img/" + m.faculty.campusCode + ".png");
     },
     openDialog(event) {
-      
       let num = event.data.user || event.data.group.id;
       let tmp = event;
       //   if (tmp.data.user) tmp.data.user = this.getName(tmp.data.user);
@@ -183,7 +180,7 @@ export default {
       //13.08.61 - transformed
       let tmp = time.split("-");
       let clock = time.split("T")[1].split(":");
-      
+
       tmp[2] = tmp[2].slice(0, 2);
       let timeString = clock[0] + ":" + clock[1] + ", ";
       return tmp[2] + "." + tmp[1];
@@ -196,7 +193,9 @@ export default {
       this.messages = this.$store.getters.GET_MESSAGES;
     });
     if (localStorage.getItem("currentDialog")) this.isOpened = true;
-
+    document.getElementsByClassName("cnt")[0].style.height =
+      document.querySelector("html").scrollHeight + "px";
+      console.log(document.getElementsByClassName("wrapper")[0])
     window.addEventListener("resize", this.onResizeEventHandler);
   },
   beforeDestroy() {
@@ -222,7 +221,7 @@ export default {
 }
 
 html {
-  height: 100%;
+  height: 100vh;
   background-color: #eff0ef;
 }
 .chatNameInner {

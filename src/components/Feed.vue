@@ -251,6 +251,10 @@ export default {
   mounted() {
     window.addEventListener("scroll", this.pagination);
     //fixed textarea
+
+    
+    
+
     var observe;
     if (window.attachEvent) {
       observe = function(element, event, handler) {
@@ -282,6 +286,7 @@ export default {
 </script>
 <style>
 html{
+  height: 100vh;
   background-color: #fff;
 }
 </style>
