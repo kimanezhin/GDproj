@@ -75,29 +75,25 @@ export default {
       }
 
       //TODO: Here should be /authenticate
-  
 
       this.$store
         .dispatch("AUTH_REQUEST", email)
         .then(
-          (response) => {
+          response => {
             // if(response.data.isRegistred)
-            
+
             if (response == "registered") {
               this.$router.push("/code");
-            } else if (response === "canRegister")
-              {
-                localStorage.setItem('currentMail', email);
-                this.$router.push("/registration");
-              }
-            else if (response === "invalid") {
-            
+            } else if (response === "canRegister") {
+              localStorage.setItem("currentMail", email);
+              this.$router.push("/registration");
+            } else if (response === "invalid") {
+            }
           }
           // else
         )
-        .catch((err) => {
-          
-          console.log(err,"Unable to login");
+        .catch(err => {
+          console.log(err, "Unable to login");
         });
     }
   }
