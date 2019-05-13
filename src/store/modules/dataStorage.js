@@ -80,8 +80,7 @@ const getters = {
                     if (!state.m || !state.m.get(id)) {
                         console.log(id)
                         Axios.post(state.URL + '/users', [id], { withCredentials: true }).then((response) => {
-                            state.m.set(id, response.data[0])
-                            console.log(state.m, response.data[0])
+
                             let user = state.m.get(id);
                             console.log(user)
                             let userID = user.faculty.campusCode
@@ -216,8 +215,16 @@ const mutations = {
     },
     SET_TOKEN(state, payload) { state.token = payload },
     SET_MAP(state, payload) {
-
-        state.m = new Map(Array.from(payload).map(x => [parseInt(x[0]), x[1]]))
+        if(!state.m)
+        {
+            state.m = new Map(Array.from(payload).map(x => [parseInt(x[0]), x[1]]))
+        }
+        else
+        {
+            let arr = Array.from(payload).map(x => [parseInt(x[0]), x[1]])
+            for(let i of arr)
+            state.m.set(parseInt(i[0]), i[1])
+        }
     },
     async PUSH_POST(state, payload) {
 

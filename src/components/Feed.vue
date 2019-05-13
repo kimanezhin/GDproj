@@ -142,9 +142,12 @@ export default {
           promise = this.$store.dispatch("UPDATE_POSTS", request);
         }
         promise
-          .then(() => {
-            console.log("update!");
-            this.$eventHub.$emit("feed-updated");
+          .then((response) => {
+            if(response)
+            {
+              console.log("update!");
+              this.$eventHub.$emit("feed-updated");
+            }
             this.loading = false;
           })
           .catch(() => {

@@ -93,9 +93,12 @@ export default {
   methods: {
     getImgUrl(id) {
        if (!id) return null;
-    
+      console.log(this.$store.getters.GET_MAP)
       let m = this.$store.getters.GET_MAP.get(id);
+
+      if(m && m.faculty && m.faculty.campusCode)
       return require("../../../img/" + m.faculty.campusCode + ".png");
+    return require("../../../img/" + 5051 + ".png");
     },
     transformTime(time) {
       //1861-08-13T00:00:08Z - not transformed

@@ -75,7 +75,7 @@ const actions = {
             Axios.post(context.rootState.dataStorage.URL + '/channels/get', request, { withCredentials: true }).then((response) => {
                 let tt = new Map(Object.entries(response.data.users));
                 context.commit('SET_MAP', tt)
-                console.log('a')
+                
                 if (response.data.response.length == 0)
                     context.rootState.dataStorage.isNotLast = false;
 
@@ -85,7 +85,7 @@ const actions = {
                 
 
             })
-                .then(() => { resolve() })
+                .then(() => { resolve(context.rootState.dataStorage.isNotLast) })
                 .catch((err) => {
                     console.error(err)
                     reject(err)
