@@ -66,6 +66,13 @@ export default {
 .hrefOption:hover {
   cursor: pointer;
 }
+
+.hrefOption{
+  white-space: nowrap;
+  overflow: hidden;
+  
+}
+
 .smth {
   display: flex;
   flex-direction: column;

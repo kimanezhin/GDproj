@@ -256,30 +256,10 @@ export default {
     //fixed textarea
     document.querySelector("body").style.height =
       document.querySelector("html").scrollHeight + "px";
-    var observe;
-    if (window.attachEvent) {
-      observe = function(element, event, handler) {
-        element.attachEvent("on" + event, handler);
-      };
-    } else {
-      observe = function(element, event, handler) {
-        if (element) element.addEventListener(event, handler, false);
-      };
-    }
-
-    var text = document.getElementById("myText");
-
-    /* 0-timeout to get the already changed text */
-
-    observe(text, "change", this.resize);
-    observe(text, "cut", this.delayedResize);
-    observe(text, "paste", this.delayedResize);
-    observe(text, "drop", this.delayedResize);
-    observe(text, "keydown", this.delayedResize);
-    if (text) {
-      text.focus();
-      text.select();
-    }
+    // if (text) {
+    //   text.focus();
+    //   text.select();
+    // }
     window.addEventListener("scroll", this.pagination);
     this.resize();
     document.activeElement.blur();

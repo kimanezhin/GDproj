@@ -74,7 +74,7 @@ export default {
     return {
       flag: true,
       isEditorShown: false,
-      currentSize: "51px",
+      currentSize: "400px",
       inputText: "",
       readyToClose: false,
       isPreviewReady: false,
@@ -156,7 +156,7 @@ export default {
       this.readyToClose = true;
 
       myText.style.height = "51px";
-      myText.style.width = "65%";
+      myText.style.width = "96%";
       this.isEditorShown = false;
 
       document
@@ -200,7 +200,7 @@ export default {
     setInitialSize() {
       {
         myText.style.height = "21px";
-        myText.style.width = "65%";
+        myText.style.width = "96%";
 
         document
           .getElementsByClassName("toOverlay")[0]
@@ -213,8 +213,8 @@ export default {
       let myText = document.getElementById("myText");
       console.log("2");
       this.isEditorShown = true;
-      myText.style.height = "auto";
-      myText.style.width = "55vw";
+      myText.style.height = "400px";
+      myText.style.width = "98%";
       myText.style.height = this.currentSize;
 
       document.getElementById("fantomPage").style.width =
@@ -271,26 +271,11 @@ export default {
     updateSearch(param) {
       console.log(param);
       this.$store.dispatch("GET_COMPLETION", [null, param]).then(aa => {
-        //this.options =
-        // if (!aa) this.options = [];
-        // else this.options = aa;
-        // let a = [
-        //   { name: "#Vue.js", code: "vu" },
-        //   { name: "#Javascript", code: "js" },
-        //   { name: "#OpenSource", code: "os" },
-        //   { name: "#Open", code: "oss" },
-        //   { name: "#Op", code: "ods" },
-        //   { name: "#O", code: "fos" }
-        // ];
-        // this.options = a;
-        // if(this.options.length == 0)
-        // this.options = a;
-        // else
-        // this.options = []
       });
     }
   },
   mounted() {
+
     this.$eventHub.$on("update-search", this.updateSearch);
     this.getImgUrl();
     this.$store.dispatch("GET_TAG_COMPLETIONS");
@@ -381,19 +366,6 @@ svg:hover {
   color: blue;
 }
 
-/* .listP-enter-active,
-.listP-leave-active {
-  transition: all 1s;
-}
-.listP-enter, .listP-leave-to {
-  opacity: 0;
-  transform: translateX(30px);
-}
-
-.listP-move {
-  transition: transform 1s;
-} */
-
 read-more[less-str] {
   color: red;
   text-emphasis: none;
@@ -401,16 +373,15 @@ read-more[less-str] {
 }
 
 textarea {
-  /* height: 51px; */
+  
   margin-top: 2px;
 
   border: none;
   resize: none;
-
-  /* width: 65%; */
+  width: 96% ;
   z-index: 502;
   left: 60px;
-  overflow-y: hidden;
+  /* overflow-y: hidden; */
 }
 
 #fantomPage {

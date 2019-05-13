@@ -93,7 +93,6 @@ export default {
   methods: {
     getImgUrl(id) {
        if (!id) return null;
-      console.log(this.$store.getters.GET_MAP)
       let m = this.$store.getters.GET_MAP.get(id);
 
       if(m && m.faculty && m.faculty.campusCode)
