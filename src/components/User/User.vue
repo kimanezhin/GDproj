@@ -141,6 +141,9 @@ export default {
   mounted() {
     let id = parseInt(this.id);
 
+
+
+
     if (!id) {
       Axios.post(
         this.$store.getters.GET_URL + "/authentication/me",
@@ -170,6 +173,10 @@ export default {
       
     });
     // document.getElementById('main').style.height = window.innerHeight+"px"
+    let main =  document.getElementById('main')
+    if(main)
+     main.style.height = document.querySelector('html').scrollHeight+"px";
+     document.querySelector('body').style.height = document.querySelector('html').scrollHeight+"px";
   },
   methods: {
     isMe() {
@@ -361,7 +368,7 @@ html {
 }
 
 #main {
-  height: 100vh;
+  background-color: white;
 }
 .categoriesAbout {
   font-weight: 600;

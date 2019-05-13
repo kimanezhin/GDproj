@@ -138,7 +138,7 @@ export default {
             type: true,
             request: data
           };
-          
+
           promise = this.$store.dispatch("UPDATE_POSTS", request);
         }
         promise
@@ -205,10 +205,10 @@ export default {
       document.getElementById("myText").style.height = "auto";
       document.getElementById("myText").style.width = "30vw";
       document.getElementById("myText").style.height = this.currentSize;
-document.getElementById('main').style.height = document.querySelector('html').scrollHeight + "px"
+      document.getElementById("main").style.height =
+        document.querySelector("html").scrollHeight + "px";
       document.getElementById("fantomPage").style.height =
         document.getElementById("main").scrollHeight + "px";
-        
 
       document
         .getElementsByClassName("toOverlay")[0]
@@ -252,10 +252,7 @@ document.getElementById('main').style.height = document.querySelector('html').sc
   mounted() {
     window.addEventListener("scroll", this.pagination);
     //fixed textarea
-
-    
-    
-
+document.querySelector('body').style.height = document.querySelector('html').scrollHeight+"px";
     var observe;
     if (window.attachEvent) {
       observe = function(element, event, handler) {
@@ -286,12 +283,12 @@ document.getElementById('main').style.height = document.querySelector('html').sc
 };
 </script>
 <style>
-
-h1, p{
-text-align:initial !important;
+h1,
+p {
+  text-align: initial !important;
 }
 
-html{
+html {
   height: 100vh;
   background-color: #fff;
 }
@@ -404,8 +401,7 @@ img {
   cursor: pointer;
 }
 
-#main{
-  height: 100vh;
+#main {
   background: #fff;
 }
 
