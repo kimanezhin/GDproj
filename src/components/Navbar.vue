@@ -15,14 +15,10 @@
         <font-awesome-icon icon="envelope" class="mt-1 mr-2"/>
         <span>Сообщения</span>
       </router-link>
-      <a href>
-        <font-awesome-icon icon="project-diagram" class="mt-1 mr-2"/>
-        <span>Проекты</span>
-      </a>
-      <a href>
+      <router-link to = "/settings">
         <font-awesome-icon icon="cog" class="mt-1 mr-2"/>
         <span>Настройки</span>
-      </a>
+      </router-link>
     </slide>
   </div>
 </template>

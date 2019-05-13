@@ -23,6 +23,7 @@ const state = {
     URL: "https://valera-denis.herokuapp.com",
     posts: [
     ],
+    foundPosts:[],
     userPosts: [],
     channels: [
         {
@@ -67,6 +68,7 @@ const getters = {
     GET_MAP(state) { return state.m },
     GET_COMPLETIONS(state) { return state.values },
     GET_IMG_ID(state) { return state.userImgId },
+    GET_FOUND_POSTS(state){return state.foundPosts},
 
     GET_IMG(state) {
         return (id) => {
@@ -142,6 +144,43 @@ const actions = {
         })
     },
 
+    FIND_POSTS(context, payload) {
+        let request = {
+            "direction": "backward",
+            "limit": 20,
+            "exclusiveFrom": null,
+            "request": {
+                "people": [],
+                "tags": payload
+            }
+        }
+        context.state.foundPosts = []
+        Axios.post(context.state.URL + '/channels/getAnonymous',request,{withCredentials:true})
+        .then((response)=>{
+            
+             let tt = new Map(Object.entries(response.data.users));
+                    context.commit('SET_MAP', tt)
+                    if (response.data.response.length == 0)
+                        context.rootState.channelsData.isNotLast = false;
+                    for (var item of response.data.response) {
+                        makeRequest(context.state, item, context.state.foundPosts)
+                        console.log(item)
+                    }
+        })
+    },
+
+    UPDATE_USER(context, payload) {
+        return new Promise((resolve, reject) => {
+            Axios.post(context.state.URL + '/users/update', payload, { withCredentials: true }).then(() => {
+                resolve();
+            })
+                .catch((err) => {
+                    console.log(err)
+                    reject()
+                })
+        })
+    },
+
     async GET_TAG_COMPLETIONS(context) {
         Axios.get(context.state.URL + '/tags/completions').then((response) => {
             context.state.tagCompletions = response.data;
@@ -191,7 +230,6 @@ const actions = {
                 context.commit('SET_MAP', tt)
 
                 for (var item of response.data.response) {
-                    // context.commit('PUSH_POST', item)
                     makeRequest(context.state, item, context.state.userPosts)
                 }
 
@@ -215,15 +253,13 @@ const mutations = {
     },
     SET_TOKEN(state, payload) { state.token = payload },
     SET_MAP(state, payload) {
-        if(!state.m)
-        {
+        if (!state.m) {
             state.m = new Map(Array.from(payload).map(x => [parseInt(x[0]), x[1]]))
         }
-        else
-        {
+        else {
             let arr = Array.from(payload).map(x => [parseInt(x[0]), x[1]])
-            for(let i of arr)
-            state.m.set(parseInt(i[0]), i[1])
+            for (let i of arr)
+                state.m.set(parseInt(i[0]), i[1])
         }
     },
     async PUSH_POST(state, payload) {
@@ -300,7 +336,7 @@ const mutations = {
     }
 }
 async function makeRequest(state, payload, array) {
-    // console.log(payload)
+    
     let id = payload.authorId;
     let localMap = state.m.get(id)
     array.push({

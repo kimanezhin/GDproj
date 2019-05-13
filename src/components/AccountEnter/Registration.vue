@@ -2,7 +2,7 @@
   <div>
     <div id="wrapper">
       <form class="form-signin">
-        <h1 class="h3 mb-3 font-weight-normal">Регистрация</h1>
+        <h1 class="h3 mb-3 font-weight-normal">Настройки</h1>
         <div class="form-row">
           <div class="form-group col-md-4">
             <label for="inputEmail4">Имя</label>
@@ -52,7 +52,7 @@
           </multiselect>
         </div>
 
-        <button @click="register" type="submit" class="btn mt-2 btn-primary btn-block">Sign in</button>
+        <button @click="register" type="submit" class="btn mt-2 btn-primary btn-block">Сохранить</button>
         <div
           class="notify bar-top"
           id="checkMail"

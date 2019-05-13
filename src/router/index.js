@@ -9,6 +9,8 @@ import Axios from 'axios';
 import Dialog from './../components/Messages/DialogWrapper.vue'
 import Registration from '../components/AccountEnter/Registration.vue'
 import CodeEnter from '../components/AccountEnter/CodeEnter.vue'
+import Settings from '../components/User/Settings.vue'
+import Finder from '../components/News/FindPosts.vue'
 Vue.use(VueNativeSock, 'ws://websuck1t.herokuapp.com/posts/all ', {
   connectManually: true,
 })
@@ -94,6 +96,18 @@ export default new Router({
       name: "CodeEnter",
       component: CodeEnter,
       
+    },
+    {
+      path: '/settings',
+      name:"Settings",
+      component:Settings,
+      beforeEnter: ifNotAuthenticated
+    },
+    {
+      path: '/find',
+      name:"Find",
+      component:Finder,
+      beforeEnter: ifNotAuthenticated
     }
   ]
 })

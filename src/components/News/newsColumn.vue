@@ -22,7 +22,7 @@
         </div>
         <div class="hashtags">
           <!-- <div v-on:mouseover="checkHashtagCount" class="hash">#smth</div> -->
-          <div v-for="(tag,i) in post.tags" :key="i" class="hash">#{{ tag }}</div>
+          <div @click="findPosts(tag)" v-for="(tag,i) in post.tags" :key="i" class="hash">#{{ tag }}</div>
         </div>
         <div class="text specialClass">
           <div
@@ -64,7 +64,7 @@ export default {
       index: -1,
       currentChannel: {},
       mPosts: [],
-      imgPath:""
+      imgPath: ""
     };
   },
   components: {
@@ -78,26 +78,39 @@ export default {
         return [];
       }
     },
+    query:{
+      type: String,
+      default: ''
+    },
     columnNum: {
       type: Number
     },
     forUser: {
       type: Number
+    },
+    isAnonymous: {
+      type: Boolean,
+      default: false
     }
   },
   beforeDestroy() {
     this.$eventHub.$off("feed-updated", this.updateFeed);
-     this.$eventHub.$off('change-channel', this.changePosts)
+    this.$eventHub.$off("change-channel", this.changePosts);
+    this.$eventHub.$off('queryChanged',this.onQueryChanged);
   },
   // ../../../
   methods: {
+    findPosts(tag) {
+      localStorage.setItem('query',tag);
+      this.$router.push("/find");
+    },
     getImgUrl(id) {
-       if (!id) return null;
+      if (!id) return null;
       let m = this.$store.getters.GET_MAP.get(id);
 
-      if(m && m.faculty && m.faculty.campusCode)
-      return require("../../../img/" + m.faculty.campusCode + ".png");
-    return require("../../../img/" + 5051 + ".png");
+      if (m && m.faculty && m.faculty.campusCode)
+        return require("../../../img/" + m.faculty.campusCode + ".png");
+      return require("../../../img/" + 5051 + ".png");
     },
     transformTime(time) {
       //1861-08-13T00:00:08Z - not transformed
@@ -108,17 +121,6 @@ export default {
     },
     updateFeed(flag) {
       let arr = this.$store.getters.GET_POSTS;
-      // let i = _.differenceBy(arr, this.mPosts, "postId")
-      //   .sort((first, second) => {
-      //     return second.postId - first.postId;
-      //   });
-     
-      // for (let post of arr) 
-        // {
-        //   console.log(post)
-        //   this.mPosts.push(arr);
-        // }
-      // console.log(this.mPosts);
     },
 
     makeMarkDown(preText, name) {
@@ -192,7 +194,6 @@ export default {
 
             if (!texts[i].classList.contains("eventReady")) {
               texts[i].addEventListener("click", element => {
-              
                 item.classList.remove("toCrop");
                 event.target.classList.remove("constantSize");
               });
@@ -203,8 +204,8 @@ export default {
         });
       });
     },
-    changePosts(){
-      this.mPosts = this.$store.getters.GET_POSTS
+    changePosts() {
+      this.mPosts = this.$store.getters.GET_POSTS;
     },
     channelFilter(p) {
       return true;
@@ -220,6 +221,12 @@ export default {
         this.currentChannel.people.includes(p.authorId) ||
         p.tags.some(x => this.currentChannel.tags.includes(x))
       );
+    },
+    onQueryChanged(array){
+      console.log('a')
+      this.$store.dispatch('FIND_POSTS', array).then(()=>{
+        this.mPosts = this.$store.getters.GET_FOUND_POSTS;
+      })
     }
   },
   computed: {
@@ -250,36 +257,44 @@ export default {
   },
   mounted() {
     this.$eventHub.$on("feed-updated", this.updateFeed);
-    this.$eventHub.$on('change-channel', this.changePosts)
-    if(!localStorage.getItem('channel'))
-    this.$store.dispatch("FETCH_DATA").then(() => {
-      if (this.forUser) {
-        let arr = this.$store.getters.GET_USER_POSTS;
+    this.$eventHub.$on("change-channel", this.changePosts);
+    
+    if (this.isAnonymous) {
+      this.$eventHub.$on('queryChanged',this.onQueryChanged)
+      
+      // this.onQueryChanged([this.query])
+    }
 
-        this.mPosts = arr;
-        this.readMore();
-      } else {
-        let arr = this.$store.getters.GET_POSTS;
-        // arr = _.uniqBy(arr, 'postId') // KOSTYLI!!!
+    else if (!localStorage.getItem("channel"))
+      this.$store.dispatch("FETCH_DATA").then(() => {
+        if (this.forUser) {
+          let arr = this.$store.getters.GET_USER_POSTS;
 
-        this.currentChannel = JSON.parse(localStorage.getItem("channel"));
+          this.mPosts = arr;
+          this.readMore();
+        } else {
+          let arr = this.$store.getters.GET_POSTS;
+
+          // arr = _.uniqBy(arr, 'postId') // KOSTYLI!!!
+
+          this.currentChannel = JSON.parse(localStorage.getItem("channel"));
           // arr = arr
           //   .sort((first, second) => {
           //     return second.postId - first.postId;
           //   });
-        this.mPosts = arr;
-      }
-      let that = this;
-      that.$nextTick(() => {
-        this.checkHashtagCount();
-        this.readMore();
+          this.mPosts = arr;
+        }
+        let that = this;
+        that.$nextTick(() => {
+          this.checkHashtagCount();
+          this.readMore();
+        });
       });
-    });
-    else{
-      let ch = JSON.parse(localStorage.getItem('channel'))
-      this.$store.dispatch("CHANGE_CHANNEL",ch ).then(() =>{
-         this.mPosts = this.$store.getters.GET_POSTS;
-      })
+    else {
+      let ch = JSON.parse(localStorage.getItem("channel"));
+      this.$store.dispatch("CHANGE_CHANNEL", ch).then(() => {
+        this.mPosts = this.$store.getters.GET_POSTS;
+      });
     }
   },
   watch: {
@@ -309,7 +324,6 @@ export default {
       //     return second.postId - first.postId;
       //   });
       // } else if (this.index == -1 && !this.forUser) {
-        
       //   arr = arr
       //     .filter(p => this.channelFilter(p))
       //     .sort((first, second) => {
@@ -317,7 +331,6 @@ export default {
       //     });
       // }
       // this.mPosts = arr;
-
       // this.readMore();
     }
   }
@@ -356,7 +369,6 @@ img:hover {
   text-align: right;
 
   font-size: 12px;
-  
 
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#00ffffff',GradientType=0 );
   background: -webkit-gradient(

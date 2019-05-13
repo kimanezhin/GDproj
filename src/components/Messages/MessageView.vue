@@ -75,23 +75,31 @@ export default {
       messages: [],
       isOpened: false,
       screenWidth: 1200,
-      imgPath: ""
+      imgPath: "",
+      
     };
   },
   methods: {
     getLastMessageAuthor(id) {
       if (!id) return null;
       id = parseInt(id);
-
+      // console.log(id, this.$store.getters.GET_MESSAGE_MAP)
       let m = this.$store.getters.GET_MESSAGE_MAP.get(id);
+      console.log(id)
       if (!m) {
         this.$store.dispatch("GET_USERS", [id]).then(response => {
           this.$store.commit("ADD_TO_MAP", [id, response.data]);
         });
+
       }
+      m = this.$store.getters.GET_MESSAGE_MAP.get(id);
       let me = parseInt(localStorage.getItem("myId"));
       if (id == me) return "You";
-      return m.firstName;
+      let name;
+      if(m)
+       name =  m.firstName;
+    else return id
+      return name || 'Seva'
     },
 
     addChat() {

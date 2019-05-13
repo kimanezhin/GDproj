@@ -7,7 +7,7 @@
 
     <div v-if="!isPersonal || isNotCreation" class="title d-flex flex-row">
       <div class="subTitle">{{Title}}</div>
-      <div class="edit">
+      <div v-if="isAdmin" class="edit">
         <font-awesome-icon id="editIcon" @click="editTitle" icon="pencil-alt"/>
         <font-awesome-icon id="saveIcon" @click="saveTitle" icon="check"/>
       </div>
@@ -306,6 +306,7 @@ export default {
       .then(() => {
         this.$emit("close");
         this.$router.push("/im");
+        localStorage.removeItem('currentDialog')
       })
       .catch(err => {
         console.log(err);
@@ -410,9 +411,6 @@ export default {
   },
   watch: {
     selectedCountries(neww, old) {
-
-
-
       if (neww.length > old.length) {
 
         this.addUser(neww[neww.length - 1].code);

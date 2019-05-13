@@ -15,6 +15,16 @@ const getters = {
 
 const actions = {
 
+
+    DEACTIVATE_ALL(context, payload){
+        return new Promise((resolve, reject)=>{
+            Axios.delete(context.rootState.dataStorage.URL+'/deactivateAll',{},{withCredentials: true}).then(()=>{
+                resolve();
+            })
+            .catch(()=>reject())
+        })
+    },
+
     REGISTER_USER(context, payload) {
         return new Promise((resolve, reject) => {
             Axios.post(context.rootState.dataStorage.URL + '/authentication/register', payload, { withCredentials: true })
