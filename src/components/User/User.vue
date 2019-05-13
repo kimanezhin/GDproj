@@ -91,6 +91,7 @@
               </div>
             </div>
           </div>
+
           <news
             flexBehaviour
             v-bind:forUser="parseInt(id)"

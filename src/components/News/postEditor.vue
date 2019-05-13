@@ -121,16 +121,18 @@ export default {
     },
     addTag(newTag) {
       var t = newTag.lastIndexOf("#");
-      if (t !== -1) newTag = newTag.slice(t + 1);
+      if (t !== -1) 
+        newTag = newTag.slice(t + 1);
       newTag = "#" + newTag;
       var reg = newTag.match(/#{1}[a-zA-Zа-яА-Я0-9]+/g);
       if (reg) {
       }
-
       const tag = {
         name: newTag,
         code: newTag.substring(0, 2) + Math.floor(Math.random() * 10000000)
       };
+
+      console.log(tag)
       this.options.push(tag);
       this.value.push(tag);
     },
@@ -173,6 +175,7 @@ export default {
           this.value = [];
           // });
         });
+
       setTimeout(function() {
         document
           .getElementsByClassName("toOverlay")[0]
