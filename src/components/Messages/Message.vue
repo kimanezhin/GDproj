@@ -31,10 +31,6 @@ export default {
     isItMe: {
       type: Boolean
     },
-    Author:{
-        type: String,
-        default:""
-    },
     AuthorId:{
       type:Number,
       default:30
@@ -43,8 +39,12 @@ export default {
   data() {
     return {
       data: "",
-      sender: ""
+      sender: "",
+      Author:''
     };
+  },
+  mounted(){
+    this.getLastMessageAuthor(this.AuthorId);
   },
   methods: {
     makeMarked(text) {
@@ -52,6 +52,24 @@ export default {
     },
     goToAuthor(){
       this.$router.push('/user/'+this.AuthorId);
+    },
+    getLastMessageAuthor(id) {
+      console.log(id)
+      if (!id) return null;
+      // id = parseInt(id);
+      let me = parseInt(localStorage.getItem("myId"));
+      // console.log(id, this.$store.getters.GET_MESSAGE_MAP)
+      let m = this.$store.getters.GET_MESSAGE_MAP.get(id);
+
+      if (!m) {
+        this.$store.dispatch("GET_USERS", [id]).then(response => {
+          this.$store.commit("ADD_TO_MAP", [id, response[0]]);
+          console.log(response)
+          this.Author = response[0].firstName;
+        });
+      } else {
+        this.Author = m.firstName;
+      }
     }
   }
 };

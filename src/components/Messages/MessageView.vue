@@ -14,7 +14,20 @@
               <font-awesome-icon @click="addChat" id="ed" icon="edit"/>
             </div>
           </div>
+
           <div class="leftBody">
+            <transition-group name="list" tag="p">
+              <UserCard
+                v-for="(item, index) in messages"
+                :key="index"
+                :id="parseInt(item.data.user||-1)"
+                v-on:openDialog="openDialog"
+                :dialog="item"
+              />
+            </transition-group>
+          </div>
+
+          <div v-if="false" class="leftBody">
             <transition-group name="list" tag="p">
               <div
                 class="messageCard d-flex flex-row"
@@ -63,20 +76,21 @@ import Logout from "../Logout";
 import moder from "./DialogModeration";
 import Dialog from "./Dialog";
 import co from "./DialogComponent";
+import UserCard from './UserCard'
 export default {
   components: {
     NavBar,
     Logout,
     Dialog,
-    co
+    co, 
+    UserCard
   },
   data() {
     return {
       messages: [],
       isOpened: false,
       screenWidth: 1200,
-      imgPath: "",
-      
+      imgPath: ""
     };
   },
   methods: {
@@ -85,21 +99,19 @@ export default {
       id = parseInt(id);
       // console.log(id, this.$store.getters.GET_MESSAGE_MAP)
       let m = this.$store.getters.GET_MESSAGE_MAP.get(id);
-      console.log(id)
+      console.log(id);
       if (!m) {
         this.$store.dispatch("GET_USERS", [id]).then(response => {
           this.$store.commit("ADD_TO_MAP", [id, response.data]);
         });
-
       }
       m = this.$store.getters.GET_MESSAGE_MAP.get(id);
       let me = parseInt(localStorage.getItem("myId"));
       if (id == me) return "You";
       let name;
-      if(m)
-       name =  m.firstName;
-    else return id
-      return name || 'Seva'
+      if (m) name = m.firstName;
+      else return id;
+      return name || "Seva";
     },
 
     addChat() {
@@ -203,7 +215,7 @@ export default {
     if (localStorage.getItem("currentDialog")) this.isOpened = true;
     document.getElementsByClassName("cnt")[0].style.height =
       document.querySelector("html").scrollHeight + "px";
-      console.log(document.getElementsByClassName("wrapper")[0])
+    console.log(document.getElementsByClassName("wrapper")[0]);
     window.addEventListener("resize", this.onResizeEventHandler);
   },
   beforeDestroy() {
@@ -256,7 +268,7 @@ html {
 }
 .messageCard:hover {
   cursor: pointer;
-  background-color: #F4F6F9;
+  background-color: #f4f6f9;
 }
 .messageCardImg {
 }

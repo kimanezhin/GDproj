@@ -9,7 +9,6 @@
           :key="msg.id"
           :Time="transformTime(msg.time)"
           :isItMe="checkAuthor(msg.author)"
-          :Author="getName(msg.author)"
           :AuthorId="parseInt(msg.author)"
         />
       </div>
