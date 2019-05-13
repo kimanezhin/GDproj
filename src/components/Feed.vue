@@ -205,9 +205,10 @@ export default {
       document.getElementById("myText").style.height = "auto";
       document.getElementById("myText").style.width = "30vw";
       document.getElementById("myText").style.height = this.currentSize;
-
+document.getElementById('main').style.height = document.querySelector('html').scrollHeight + "px"
       document.getElementById("fantomPage").style.height =
         document.getElementById("main").scrollHeight + "px";
+        
 
       document
         .getElementsByClassName("toOverlay")[0]
@@ -400,6 +401,7 @@ img {
 
 #main{
   height: 100vh;
+  background: #fff;
 }
 
 #sendIco {

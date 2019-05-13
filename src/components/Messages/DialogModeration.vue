@@ -31,39 +31,38 @@
     <hr width="100%" size="4">
     <div v-if="isAdmin" class="input-group p-1">
       <div class="userInput">
-       
         <multiselect
-          v-model="selectedCountries"
-          id="ajax"
-          label="name"
-          track-by="code"
-          placeholder="Type to search"
-          open-direction="bottom"
-          :options="countries"
-          :multiple="true"
-          :isSpaceAllowed="true"
-          :internal-search="true"
-          :searchable="false"
-          :loading="isLoading"
-          :max-height="600"
-          @search-change="asyncFind"
+        v-model="selectedCountries"
+        id="ajax"
+        label="name"
+        track-by="code"
+        placeholder="Type to search"
+        open-direction="bottom"
+        :options="countries"
+        :multiple="true"
+        :isSpaceAllowed="true"
+        :internal-search="true"
+        :searchable="false"
+        :loading="isLoading"
+        :max-height="600"
+        @search-change="asyncFind"
         >
-          <template slot="tag" slot-scope="{ option, remove }">
-            <span class="custom__tag">
-              <span>{{ option.name }}</span>
-              <span class="custom__remove" @click="remove(option)">❌</span>
-            </span>
-          </template>
-          <template slot="clear" slot-scope="props">
-            <div
-              class="multiselect__clear"
-              v-if="selectedCountries.length"
-              @mousedown.prevent.stop="clearAll(props.search)"
-            ></div>
-          </template>
-          <span slot="noResult">Oops! No elements found.</span>
-        </multiselect>
-      </div>
+        <template slot="tag" slot-scope="{ option, remove }">
+          <span class="custom__tag">
+            <span>{{ option.name }}</span>
+            <span class="custom__remove" @click="remove(option)">❌</span>
+          </span>
+        </template>
+        <template slot="clear" slot-scope="props">
+          <div
+          class="multiselect__clear"
+          v-if="selectedCountries.length"
+          @mousedown.prevent.stop="clearAll(props.search)"
+          ></div>
+        </template>
+        <span slot="noResult">Oops! No elements found.</span>
+      </multiselect>
+    </div>
 
       <!-- <div class="input-group-append">
         <button class="btn btn-outline-secondary" @click="addUser" type="button">Добавить</button>
@@ -73,62 +72,29 @@
 
     <div class="moderation">
       <div v-if="isNotCreation" class="container">
-        <div v-for="(prs, index) in users" :key="prs[0]" class="person">
-          <div class="d-flex flex-row">
-            <div class="ava">
-              <img class="rounded m-2" :src="getImgUrl(prs[0])" alt>
-            </div>
-            <div class="mt-2 d-flex flex-column font-weight-bold">{{getName(prs[0])}}</div>
-            <div
-              v-if="isAdmin"
-              class="option ml-auto mr-4 mt-2"
-              @mouseover="showMenu(index)"
-              @mouseleave="hideMenu(index)"
-            >
-              <div class="popUp">
-                <div class="admin d-flex flex-row">
-                  <div class="boxTitle">Администратор :</div>
-                  <div class="box ml-1" @click="changeAdmin(prs[0])">
-                    <p-check
-                    v-if="disableOnAdmin(prs[0])"
-                      name="check"
-                      class="pretty p-switch p-fill state p-success"
-                      color="success"
-                      v-model="prs[1].isAdmin"
-                    ></p-check>
-                    <p-check
-                    v-else
-                      name="check"
-                      class="pretty p-switch p-fill state p-success"
-                      color="success"
-                      v-model="prs[1].isAdmin"
-                      disabled
-                    ></p-check>
-                    
-                  </div>
-                </div>
-                <div class="deleteFromGroup">
-                  Удалить
-                  <font-awesome-icon @click="deletePerson((prs[0]))" icon="times"/>
-                </div>
-              </div>
-              <font-awesome-icon icon="chevron-down"/>
-            </div>
-          </div>
-          <hr width="100%">
-        </div>
+        <Person
+        v-for="(prs, index) in users"
+        :key="prs[0]"
+        v-on:changeAdmin="changeAdmin"
+        v-on:deletePerson="deletePerson"
+        :index="index"
+        :id="parseInt(prs[0])"
+        :user="prs[1]"
+        :isAdmin="isAdmin"
+        :vModel="prs[1].isAdmin"
+        />
       </div>
     </div>
     <div class="footer p-2">
       <button
-        v-if="isAdmin"
-        class="btn btn-outline-primary mr-2 btn-block"
-        @click="updateChannel"
+      v-if="isAdmin"
+      class="btn btn-outline-primary mr-2 btn-block"
+      @click="updateChannel"
       >Сохранить</button>
       <button
-        v-if="isNotCreation"
-        class="btn btn-outline-danger mr-2 btn-block"
-        @click="leaveChannel"
+      v-if="isNotCreation"
+      class="btn btn-outline-danger mr-2 btn-block"
+      @click="leaveChannel"
       >Покинуть канал</button>
     </div>
   </div>
@@ -137,9 +103,11 @@
 import _ from "lodash";
 import multiselect from "vue-multiselect";
 import sendMsg from "./SendMessageModal";
+import Person from "./PersonInModeration";
 export default {
   components: {
-    multiselect
+    multiselect,
+    Person
   },
   data() {
     return {
@@ -154,14 +122,13 @@ export default {
       isLoading: false,
       countries: [],
       selectedCountries: [],
-      isPersonal: true,
-      
+      isPersonal: true
     };
   },
   computed: {
     isAdmin() {
       let id = parseInt(localStorage.getItem("myId"));
-      
+
       if (!this.myMap || this.myMap.size == 0 || !this.myMap.get(id))
         return !this.isNotCreation;
       return this.myMap.get(id).isAdmin;
@@ -193,7 +160,7 @@ export default {
     }
     let me = parseInt(localStorage.getItem("myId"));
     this.users = Object.entries(this.currentDialog.data.group.users) || [
-      [me, { isAdmin: true }]
+    [me, { isAdmin: true }]
     ];
 
     if (this.myMap == "") {
@@ -201,8 +168,8 @@ export default {
         Object.entries(this.currentDialog.data.group.users).map(x => [
           parseInt(x[0]),
           x[1]
-        ])
-      );
+          ])
+        );
     }
 
     this.countAdmins();
@@ -210,10 +177,8 @@ export default {
     this.notFilteredUsers = this.users;
   },
   methods: {
-    disableOnAdmin(id){
-      
-      return parseInt(id) != parseInt(localStorage.getItem('myId'))
-      
+    disableOnAdmin(id) {
+      return parseInt(id) != parseInt(localStorage.getItem("myId"));
     },
     asyncFind(query) {
       this.$store.dispatch("FIND_USERS", query).then(response => {
@@ -226,43 +191,32 @@ export default {
     isNotMe(num) {
       let id = parseInt(localStorage.getItem("myId"));
       num = parseInt(num);
-      
+
       return num != id;
     },
     addUser(val) {
       // let id = document.getElementById("userId");
       // let val = id.value;
-      if (!_.find(this.users, n => n[0] == val)) {
-        this.users.push([
-          val,
-          {
-            isAdmin: false
-          }
-        ]);
-        this.notFilteredUsers.push(this.users[this.users.length - 1]);
-        _.set(
-          this.currentDialog,
-          "data.group.users." + val + ".isAdmin",
-          false
-        );
-        console.log(this.currentDialog);
+
+      let usr = [
+      val,
+      {
+        isAdmin: false
       }
-      // id.value = "";
+      ]
+      if(this.isPersonal)
+          this.users.push(usr);
+
+      
+        if(!this.isPersonal)
+          this.notFilteredUsers.push(usr) 
+
+        this.currentDialog.data.group.users[val] = new Object({
+          isAdmin: false
+        });
+        
       this.usersCount += 1;
     },
-    toRight() {
-      this.isPersonal = true;
-      if (this.selectedCountries.length > 1)
-        this.selectedCountries = [this.selectedCountries.pop()];
-      this.users = this.notFilteredUsers;
-      this.arePeopleSelected = !this.arePeopleSelected;
-      document
-        .getElementsByClassName("slider")[0]
-        .classList.add("slider-translate");
-
-      // document.getElementsByClassName("cl")[0].style.color = "#428bff";
-    },
-
     sendMessage(id) {
       this.$modal.show(
         sendMsg,
@@ -273,70 +227,110 @@ export default {
           adaptive: true,
           height: "auto"
         }
-      );
+        );
     },
+
+    toRight() {
+      this.isPersonal = true;
+      if (this.selectedCountries.length > 1 && !this.isNotCreation)
+        this.selectedCountries = [this.selectedCountries.pop()];
+      this.users = this.notFilteredUsers;
+      this.arePeopleSelected = !this.arePeopleSelected;
+      document
+      .getElementsByClassName("slider")[0]
+      .classList.add("slider-translate");
+
+      // document.getElementsByClassName("cl")[0].style.color = "#428bff";
+    },
+
 
     toLeft() {
       this.isPersonal = false;
       this.users = this.notFilteredUsers.filter(x => x[1].isAdmin);
       this.arePeopleSelected = !this.arePeopleSelected;
+      console.log(this.users)
       document
-        .getElementsByClassName("slider")[0]
-        .classList.remove("slider-translate");
+      .getElementsByClassName("slider")[0]
+      .classList.remove("slider-translate");
 
       // document.getElementsByClassName("cl")[1].style.color = "#428bff";
     },
     countAdmins() {
+
       let n = this.users.reduce((sum, curr, index) => {
         if (curr[1].isAdmin) sum += 1;
         return sum;
       }, 0);
 
+
       this.adminsCount = n;
     },
     changeAdmin(event) {
-      // console.log(event)
+      console.log("a");
+      let index;
+      for(let i in this.users)
+      {
+        if(parseInt(this.users[i][0]) == parseInt(event))
+        {
+          this.users[i][1].isAdmin = !this.users[i][1].isAdmin
+          index = i;
+          break;
+        }
+      }
+
       _.update(
         this.currentDialog,
         "data.group.users." + event + ".isAdmin",
         n => {
-          return !n;
+          return this.users[index][1].isAdmin;
         }
-      );
+        );
       this.countAdmins();
     },
     deletePerson(event) {
+      console.log(event)
       _.unset(this.currentDialog, "data.group.users." + event);
+
+      _.remove(this.users, x => {
+        return x[0] == parseInt(event);
+      });
+      _.remove(this.notFilteredUsers, x => {
+        return x[0] == parseInt(event);
+      });
       this.usersCount -= 1;
       this.countAdmins();
     },
     leaveChannel() {
       this.$store
-        .dispatch("LEAVE_CHANNEL", parseInt(this.currentDialog.data.group.id))
-        .then(() => {
-          this.$emit("close");
-          this.$router.push("/im");
-        })
-        .catch(err => {
-          console.log(err);
-        });
+      .dispatch("LEAVE_CHANNEL", parseInt(this.currentDialog.data.group.id))
+      .then(() => {
+        this.$emit("close");
+        this.$router.push("/im");
+      })
+      .catch(err => {
+        console.log(err);
+      });
     },
 
     updateChannel() {
-      _.set(this.currentDialog, "data.group.users." + localStorage.getItem('myId') + ".isAdmin", true);
+      _.set(
+        this.currentDialog,
+        "data.group.users." + localStorage.getItem("myId") + ".isAdmin",
+        true
+        );
       if (this.isPersonal && this.adminsCount == 0) {
         this.$store
-          .dispatch("GET_USERCHAT", this.selectedCountries[0].code)
-          .then(response => {
-            this.$emit("close");
-            localStorage.setItem("currentDialog", response);
-            this.$router.push("/im");
-          })
-          .catch(() => {
-            this.sendMessage(this.selectedCountries[0].code);
-            this.$emit("close");
-            this.$router.push("/im");
-          });
+        .dispatch("GET_USERCHAT", this.selectedCountries[0].code)
+        .then(response => {
+          this.$emit("close");
+          localStorage.setItem("currentDialog", response);
+          this.$router.push("/im");
+        })
+        .catch(() => {
+          this.sendMessage(this.selectedCountries[0].code);
+          this.$emit("close");
+          this.$router.push("/im");
+        });
         return;
       }
       let tmp = {
@@ -348,7 +342,7 @@ export default {
         localStorage.setItem(
           "currentDialog",
           JSON.stringify(this.currentDialog)
-        );
+          );
 
         this.$emit("close");
       });
@@ -356,8 +350,8 @@ export default {
     showMenu(event) {
       let popUp = document.getElementsByClassName("popUp")[event];
       //  setTimeout(() => {
-      
-      popUp.style.opacity = "1";
+
+        popUp.style.opacity = "1";
       // }, 1);
     },
     hideMenu(event) {
@@ -416,15 +410,25 @@ export default {
   },
   watch: {
     selectedCountries(neww, old) {
-      
-      if (neww.length > old.length) this.addUser(neww[neww.length - 1].code);
-      else {
+
+
+
+      if (neww.length > old.length) {
+
+        this.addUser(neww[neww.length - 1].code);
+        console.log(neww.length, old.length)
       }
-      
-      if (!this.isPersonal) {
-      
+      else {
+        console.log(neww, old)
+        let person = _.differenceBy(old, neww,'code')[0]
+        
+        this.deletePerson(person.code)
+      }
+      if (!this.isPersonal || this.adminsCount != 0) {
         return;
       }
+
+
       if (neww.length > 1) this.selectedCountries = [neww.pop()];
     }
   }
@@ -458,9 +462,6 @@ export default {
   text-align: center;
 }
 
-.deleteFromGroup > * {
-  font-size: 20px;
-}
 .cl {
   height: 40px;
   width: 50%;
@@ -489,20 +490,6 @@ export default {
   transform: translateX(-340%);
   transition: 0.3s ease;
 }
-.deleteFromGroup > *:hover {
-  color: #1c58d8;
-}
-
-.popUp {
-  padding: 5px;
-  position: absolute;
-  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
-  width: 300px;
-  background-color: white;
-  right: 10px;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
 
 .header {
   text-align: center;
@@ -515,19 +502,6 @@ export default {
   color: white;
 }
 
-.option {
-  font-size: 20px;
-}
-
-.option:hover {
-  cursor: pointer;
-  opacity: 0.7;
-}
-
-.ava > img {
-  width: 40px;
-  height: 40px;
-}
 #saveIcon {
   display: none;
 }

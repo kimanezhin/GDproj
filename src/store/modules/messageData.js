@@ -20,6 +20,7 @@ const getters = {
 const actions = {
 
     FIND_USERS(context, payload) {
+        
         let id = parseInt(localStorage.getItem('myId'))
         return new Promise((resolve, reject) => {
             Axios.post(context.rootState.dataStorage.URL + '/users/search', JSON.stringify(payload), { withCredentials: true })
@@ -27,7 +28,8 @@ const actions = {
                     let users = response.data;
 
                     users = users.map(x => {
-                        if (id == parseInt(x.id)) {
+                        if (context.state.currentDialog.data.group && 
+                            context.state.currentDialog.data.group.users[x.id]) {
                             return {
                                 name: x.firstName + " " + x.lastName,
                                 code: x.id,
@@ -62,6 +64,7 @@ const actions = {
     }
     */
     GET_DIALOG(context, payload) {
+        context.state.currentDialog = JSON.parse(localStorage.getItem('currentDialog'))
         return new Promise((resolve, reject) => {
             Axios.post(context.rootState.dataStorage.URL + '/messages/get/' + payload.type, {
                 direction: "forward",
