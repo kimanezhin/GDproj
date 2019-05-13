@@ -286,6 +286,11 @@ document.getElementById('main').style.height = document.querySelector('html').sc
 };
 </script>
 <style>
+
+h1, p{
+text-align:initial !important;
+}
+
 html{
   height: 100vh;
   background-color: #fff;

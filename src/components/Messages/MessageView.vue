@@ -248,7 +248,7 @@ html {
 }
 .messageCard:hover {
   cursor: pointer;
-  background-color: #eff0ef;
+  background-color: #F4F6F9;
 }
 .messageCardImg {
 }
