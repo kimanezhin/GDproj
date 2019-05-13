@@ -111,6 +111,7 @@ export default {
       return this.$store.getters.GET_POSTS;
     }
   },
+
   methods: {
     pagination(event) {
       let wrapper = event.target.scrollingElement,
@@ -142,9 +143,8 @@ export default {
           promise = this.$store.dispatch("UPDATE_POSTS", request);
         }
         promise
-          .then((response) => {
-            if(response)
-            {
+          .then(response => {
+            if (response) {
               console.log("update!");
               this.$eventHub.$emit("feed-updated");
             }
@@ -253,9 +253,9 @@ export default {
     this.$store.dispatch("SET_MY_ID");
   },
   mounted() {
-    window.addEventListener("scroll", this.pagination);
     //fixed textarea
-document.querySelector('body').style.height = document.querySelector('html').scrollHeight+"px";
+    document.querySelector("body").style.height =
+      document.querySelector("html").scrollHeight + "px";
     var observe;
     if (window.attachEvent) {
       observe = function(element, event, handler) {
@@ -280,6 +280,7 @@ document.querySelector('body').style.height = document.querySelector('html').scr
       text.focus();
       text.select();
     }
+    window.addEventListener("scroll", this.pagination);
     this.resize();
     document.activeElement.blur();
   }

@@ -11,11 +11,11 @@
           class="btn followButton mt-1 btn-outline-secondary"
         >Отправить сообщение</button>
       </div>
-      <div class="col-10">
+      <div class="col-9">
         <div class="d-flex flex-column">
           <div class="user">{{lastName}} {{firstName}} {{middleName}}</div>
           <div class="line"></div>
-          <div class>
+          <div >
             <div class="tabs mt-3">
               <input type="radio" id="tab1" name="tab-control" checked>
               <input type="radio" id="tab2" name="tab-control">
@@ -207,7 +207,7 @@ export default {
       );
     },
     getImgUrl() {
-      
+      if(this.cityCode)
       return require("../../../img/" +this.cityCode + ".png");
     },
     addUserToChannel() {

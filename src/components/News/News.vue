@@ -16,7 +16,7 @@
       />
     </div>
     <div class="col-md-4 ml-5 col-sm-12 text mt-4">
-      <div v-if="!isDataFetched && !isUserDataFetched && !isNotLast" id="ld" class="loading">
+      <div v-if="!isDataFetched && !isUserDataFetched && isNotLast" id="ld" class="loading">
         <div class="loadText">{{ Loading}}</div>
         <!-- <img src="https://loading.io/spinners/coolors/lg.palette-rotating-ring-loader.gif" alt=""> -->
       </div>

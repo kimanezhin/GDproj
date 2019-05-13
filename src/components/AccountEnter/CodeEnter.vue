@@ -54,7 +54,7 @@ export default {
 
   mounted() {
     let cur = document.getElementsByName(0)[0];
-    setInterval(() => {
+    this.currentInterval = setInterval(() => {
       Axios.post(
         this.$store.getters.GET_URL + "/authentication/me",
         {},

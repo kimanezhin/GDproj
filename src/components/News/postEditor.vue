@@ -112,10 +112,11 @@ export default {
               m.faculty.campusCode +
               ".png");
           });
-        } 
+        } else{
           this.imgSource = require("../../../img/" +
             m.faculty.campusCode +
             ".png");
+        }
       });
     },
     addTag(newTag) {
