@@ -65,7 +65,7 @@ export default {
       return this.$store.state.dataStorage.isUserDataFetched;
     },
     isNotLast() {
-      return this.$store.state.dataStorage.isNotLast;
+      return this.$store.getters.isNotLastGetter;
     },
     screenWidth() {
       return window.outerWidth;

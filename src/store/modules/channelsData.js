@@ -16,7 +16,8 @@ const state = {
 
 const getters = {
     GET_CHANNELS(state) { return state.channels },
-    GET_CURRENT_CHANNEL(state) { return state.currentChannel }
+    GET_CURRENT_CHANNEL(state) { return state.currentChannel },
+    isNotLastGetter(state) {return state.isNotLast}
 }
 
 const actions = {

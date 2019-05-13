@@ -67,7 +67,7 @@
                     <div class="col-7 textAbout">{{city}}</div>
                   </div>
 
-                  <div v-if="facultyAdress" class="row">
+                  <div v-if="faculty" class="row">
                     <div class="col-3 categoriesAbout">Факультет:</div>
                     <div class="col-7 textAbout">{{faculty}}</div>
                   </div>

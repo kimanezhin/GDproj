@@ -129,7 +129,7 @@ const actions = {
                     let tt = new Map(Object.entries(response.data.users));
                     context.commit('SET_MAP', tt)
                     if (response.data.response.length == 0)
-                        context.state.isNotLast = false;
+                        context.rootState.channelsData.isNotLast = false;
                     for (var item of response.data.response) {
                         makeRequest(context.state, item, context.state.posts)
                     }
