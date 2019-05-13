@@ -261,17 +261,23 @@ export default {
     
     if (this.isAnonymous) {
       this.$eventHub.$on('queryChanged',this.onQueryChanged)
-      
-      // this.onQueryChanged([this.query])
     }
+    if(this.forUser)
+    {
 
+      this.$store.dispatch("FETCH_USER_DATA", this.forUser).then(()=>{
+        this.mPosts = this.$store.getters.GET_USER_POSTS;
+        this.readMore();
+      })
+
+    }
     else if (!localStorage.getItem("channel"))
       this.$store.dispatch("FETCH_DATA").then(() => {
         if (this.forUser) {
-          let arr = this.$store.getters.GET_USER_POSTS;
+          // let arr = this.$store.getters.GET_USER_POSTS;
 
-          this.mPosts = arr;
-          this.readMore();
+          // this.mPosts = arr;
+          // this.readMore();
         } else {
           let arr = this.$store.getters.GET_POSTS;
 

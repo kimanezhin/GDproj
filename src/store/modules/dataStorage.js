@@ -228,7 +228,7 @@ const actions = {
             .then(response => {
                 let tt = new Map(Object.entries(response.data.users));
                 context.commit('SET_MAP', tt)
-
+                console.log(response)
                 for (var item of response.data.response) {
                     makeRequest(context.state, item, context.state.userPosts)
                 }

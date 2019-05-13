@@ -169,10 +169,7 @@ export default {
       this.setFields(m);
     }
 
-    this.$store.dispatch("FETCH_USER_DATA", parseInt(id)).then(() => {
-      let name = this.$store.getters.GET_MAP.get(parseInt(id));
-      
-    });
+
     // document.getElementById('main').style.height = window.innerHeight+"px"
     let main =  document.getElementById('main')
     if(main)
