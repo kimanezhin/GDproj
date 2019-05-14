@@ -147,8 +147,6 @@ export default {
             );
         },
         closeEditor() {
-      // this.readyToClose = false;
-
       let myText = document.getElementById("myText");
       // myText.setAttribute('readonly')
       if (this.isEditorShown && myText.readOnly == false) {
@@ -216,6 +214,7 @@ export default {
           .classList.remove("extendedOverlay");
           document.getElementById("ovr").classList.remove("toOverlay");
           this.isEditorShown = false;
+
         }
       },
       setCurrentSize() {

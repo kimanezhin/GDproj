@@ -43,9 +43,21 @@ export default {
       reg: false
     };
   },
+  mounted() {
+    let i = window.location.href;
+    let index = i.lastIndexOf('#');
+    let qIndex = i.lastIndexOf('?')
+    if(qIndex!=-1)
+      return;
+     i = i.split('')
+     i.splice(index,0,"?")
+    window.location.href = i.join('');
+    // .join("")
+  },
   methods: {
     signIn(event) {
       this.$store.dispatch("SET_ID", this.id);
+      
       this.showNotification(event.target.value);
     },
     showNotification(email) {

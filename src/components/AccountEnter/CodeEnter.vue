@@ -191,9 +191,6 @@ export default {
           
         });
     },
-    limitText(count) {
-      return `and ${count} other countries`;
-    }
   }
 };
 </script>

@@ -65,10 +65,10 @@ export default {
         this.$store.dispatch("GET_USERS", [id]).then(response => {
           this.$store.commit("ADD_TO_MAP", [id, response[0]]);
           console.log(response)
-          this.Author = response[0].firstName;
+          this.Author = response[0].firstName + ' '+ response[0].lastName;
         });
       } else {
-        this.Author = m.firstName;
+        this.Author = m.firstName +' '+ m.lastName;
       }
     }
   }

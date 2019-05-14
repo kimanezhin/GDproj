@@ -64,12 +64,11 @@
 
 <script>
 import modalMenu from "./modalMenu";
-import newChannelModal from "./newChannelModal";
+
 import _ from "lodash";
 export default {
   components: {
     modalMenu,
-    newChannelModal
   },
   data() {
     return {
@@ -92,7 +91,7 @@ export default {
     this.currentChannel = parseInt(localStorage.getItem("currentChannel"));
   },
   methods: {
-    moveChannel() {},
+    
     cutName(name) {
       if (name.length > 7) {
         return name.slice(0, 7) + "..";
@@ -103,7 +102,6 @@ export default {
       return index == this.currentChannel;
     },
     createNewChannel() {
-      // this.$modal.show(newChannelModal, { height: "480px" });
       this.showModal(-1);
     },
     showModal(id) {
@@ -148,14 +146,6 @@ export default {
   watch: {
     channelList: function(newVal, oldVal) {
       if (newVal[0] && !this.flag) {
-        if (localStorage.getItem("currentChannel") == -2) {
-          // this.$store.dispatch("CHANGE_CHANNEL", {});
-        } else {
-          // this.$store.dispatch(
-          //   "CHANGE_CHANNEL",
-          //   newVal[localStorage.getItem("currentChannel")]
-          // );
-        }
         this.currentChannel = localStorage.getItem("currentChannel");
         this.flag = true;
       }

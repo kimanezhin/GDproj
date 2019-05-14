@@ -26,7 +26,7 @@ const actions = {
             Axios.post(context.rootState.dataStorage.URL + '/users/search', JSON.stringify(payload), { withCredentials: true })
                 .then((response) => {
                     let users = response.data;
-                    console.log(context.state.currentDialog.data.group)
+                    
                     users = users.map(x => {
                         if (!context.state.isCreation&&context.state.currentDialog.data.group && 
                             context.state.currentDialog.data.group.users[x.id]) {

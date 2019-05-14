@@ -42,7 +42,7 @@ export default {
   },
   data() {
     return {
-      lastMessageAuthor: "",
+      lastMessageAuthor: "You",
       // lastMessage: "",
       time: "",
       imgUrl: "",
@@ -51,6 +51,8 @@ export default {
   },
   computed:{
     myName(){
+      if(!this.dialog.data.group)
+        return ''
       return this.dialog.data.group.name
     },
     lastMessage(){

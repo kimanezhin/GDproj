@@ -117,10 +117,7 @@ export default {
           .addClass("bar-top");
       }, 5000);
     },
-    setTimer() {},
-    limitText(count) {
-      return `and ${count} other countries`;
-    },
+    
 
     asyncFind(query) {
       this.timeToRequest = 500;
@@ -161,10 +158,6 @@ export default {
         
       });
     },
-    signIn() {
-      this.$store.dispatch("SET_ID", this.id);
-      this.showNotification();
-    }
   },
   watch: {
     selectedCountries(neww, old) {
