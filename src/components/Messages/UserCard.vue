@@ -13,7 +13,7 @@
       </div>
       <div class="messageCardBody col-9 d-flex flex-column">
         <div class="userName mt-1 d-flex flex-row">
-          <div class="name">{{name}}</div>
+          <div class="name">{{name || myName}}</div>
           <div
             v-if="dialog.data.lastMessage"
             class="date ml-auto"
@@ -43,11 +43,21 @@ export default {
   data() {
     return {
       lastMessageAuthor: "",
-      lastMessage: "",
+      // lastMessage: "",
       time: "",
       imgUrl: "",
       name: ""
     };
+  },
+  computed:{
+    myName(){
+      return this.dialog.data.group.name
+    },
+    lastMessage(){
+      if(this.dialog.data.lastMessage)
+        return this.dialog.data.lastMessage.body.markdown;
+      return ''
+    }
   },
   mounted() {
     // this.id = this.dialog.data.user || -1;
@@ -56,7 +66,7 @@ export default {
       {
         this.transformTime(this.dialog.data.lastMessage.time);
         this.getLastMessageAuthor(this.dialog.data.lastMessage.author);
-        this.lastMessage = this.dialog.data.lastMessage.body.markdown
+        // this.lastMessage = this.dialog.data.lastMessage.body.markdown
       }
     this.getImgUrl(this.dialog.data.user || -1);
     
@@ -68,7 +78,8 @@ export default {
     getName(id) {
       if (id == -1) {
         // Case of groupchat
-        this.name = this.dialog.data.group.name;
+        // this.name = this.dialog.data.group.name;
+        this.name = ""
         return;
       } else if (!id) return;
       if (!Number.isInteger(id)) return id;

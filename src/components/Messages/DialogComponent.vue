@@ -27,7 +27,7 @@
 
       <div class="chatName text-center d-flex flex-column">
         <div class="chatNameInner">{{chatName}}</div>
-        <div v-if="isGroup()" class="participants" @click="moderateGroup">{{counter()}} participants</div>
+        <div v-if="isGroup()" class="participants" @click="moderateGroup">{{count}} participants</div>
       </div>
     </div>
     <div class="rightBody">
@@ -60,7 +60,8 @@ export default {
     return {
       chatName: "",
       isOpened: true,
-      screenWidth: 1200
+      screenWidth: 1200,
+      count:''
     };
   },
   methods: {
@@ -70,7 +71,7 @@ export default {
     },
     counter() {
       let di = JSON.parse(localStorage.getItem("currentDialog"));
-      return Object.keys(di.data.group.users).length || 0;
+      this.count =  Object.keys(di.data.group.users).length || 0;
     },
     setName() {
       let di = JSON.parse(localStorage.getItem("currentDialog"));
@@ -129,22 +130,32 @@ export default {
           user: parseInt(di.data.user)
         };
       }
+
+
       this.$store
         .dispatch("SEND_MSG", msg)
         .then(() => {
           document.getElementById("msgInput").value = "";
+          
+          this.$eventHub.$emit('messageSend')
         })
         .catch(err => console.error(err));
+    },
+    onDialogChanged(){
+      this.counter();
+      this.setName();
     }
   },
   mounted() {
     this.setName();
     this.$eventHub.$on("dialogChanged", this.setName);
+    this.$eventHub.$on('dialogListChanged', this.onDialogChanged)
     window.addEventListener("resize", this.onResizeEventHandler);
-    
+    this.counter();
     this.onResizeEventHandler();
   },
   beforeDestroy() {
+
     this.$eventHub.$off("dialogChanged", this.setName);
     window.removeEventListener("resize", this.onResizeEventHandler);
   }

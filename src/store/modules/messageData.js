@@ -8,7 +8,7 @@ const state = {
     users: new Map(),
     messages: [],
     currentDialog: [],
-
+    isCreation: false
 }
 
 const getters = {
@@ -26,9 +26,9 @@ const actions = {
             Axios.post(context.rootState.dataStorage.URL + '/users/search', JSON.stringify(payload), { withCredentials: true })
                 .then((response) => {
                     let users = response.data;
-
+                    console.log(context.state.currentDialog.data.group)
                     users = users.map(x => {
-                        if (context.state.currentDialog.data.group && 
+                        if (!context.state.isCreation&&context.state.currentDialog.data.group && 
                             context.state.currentDialog.data.group.users[x.id]) {
                             return {
                                 name: x.firstName + " " + x.lastName,
@@ -47,6 +47,9 @@ const actions = {
                     reject(err);
                 })
         })
+    },
+    CHANGE_FLAG(context, payload){
+        context.state.isCreation = payload;
     },
     GET_USERS(context, payload) {
         return new Promise((resolve, reject) => {
@@ -135,8 +138,9 @@ const actions = {
                             type: Object.entries(i)[0][0],
                             data: i.groupChat || i.userChat
                         });
+                    console.log(context.state.messages)
                     resolve();
-                }).catch((err) => reject())
+                }).catch((err) => reject(err))
         })
     },
 

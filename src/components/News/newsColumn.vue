@@ -4,11 +4,11 @@
       <div class="mb-4 post" v-for="post in mPosts" :key="post.postId">
         <div class="postHeader mb-1">
           <img
-            :src="getImgUrl(post.authorId)"
-            v-bind:alt="post.authorId"
-            class="rounded"
-            :name="post.authorId"
-            v-on:click="openUser($event)"
+          :src="getImgUrl(post.authorId)"
+          v-bind:alt="post.authorId"
+          class="rounded"
+          :name="post.authorId"
+          v-on:click="openUser($event)"
           >
 
           <div class="col">
@@ -26,32 +26,32 @@
         </div>
         <div class="text specialClass">
           <div
-            class="transit"
-            :name="post.postId"
-            v-html="makeMarkDown(post.postBody, post.postId)"
+          class="transit"
+          :name="post.postId"
+          v-html="makeMarkDown(post.postBody, post.postId)"
           ></div>
         </div>
         <div>
           <svg
-            xmlns="http://www.w3.org/2000/svg"
-            xmlns:xlink="http://www.w3.org/1999/xlink"
-            viewBox="0 0 50 50"
-            class="postButtons"
-            version="1.1"
-            width="50px"
-            height="50px"
+          xmlns="http://www.w3.org/2000/svg"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          viewBox="0 0 50 50"
+          class="postButtons"
+          version="1.1"
+          width="50px"
+          height="50px"
           >
-            <g id="surface1">
-              <path
-                style=" "
-                d="M 7 4 C 4.253906 4 2 6.253906 2 9 L 2 33 C 2 35.746094 4.253906 38 7 38 L 11.09375 38 C 11.230469 39.203125 11.214844 40.316406 10.90625 41.25 C 10.527344 42.398438 9.820313 43.363281 8.5 44.15625 C 8.128906 44.390625 7.957031 44.839844 8.070313 45.261719 C 8.183594 45.683594 8.5625 45.984375 9 46 C 13.242188 46 18.105469 43.785156 20.5625 38 L 43 38 C 45.746094 38 48 35.746094 48 33 L 48 9 C 48 6.253906 45.746094 4 43 4 Z M 7 6 L 43 6 C 44.65625 6 46 7.34375 46 9 L 46 33 C 46 34.65625 44.65625 36 43 36 L 20 36 C 19.582031 36 19.207031 36.261719 19.0625 36.65625 C 17.507813 40.898438 14.730469 42.917969 11.84375 43.65625 C 12.234375 43.097656 12.605469 42.507813 12.8125 41.875 C 13.332031 40.296875 13.289063 38.570313 12.96875 36.8125 C 12.878906 36.347656 12.476563 36.007813 12 36 L 7 36 C 5.34375 36 4 34.65625 4 33 L 4 9 C 4 7.34375 5.34375 6 7 6 Z "
-              ></path>
-            </g>
-          </svg>
-        </div>
+          <g id="surface1">
+            <path
+            style=" "
+            d="M 7 4 C 4.253906 4 2 6.253906 2 9 L 2 33 C 2 35.746094 4.253906 38 7 38 L 11.09375 38 C 11.230469 39.203125 11.214844 40.316406 10.90625 41.25 C 10.527344 42.398438 9.820313 43.363281 8.5 44.15625 C 8.128906 44.390625 7.957031 44.839844 8.070313 45.261719 C 8.183594 45.683594 8.5625 45.984375 9 46 C 13.242188 46 18.105469 43.785156 20.5625 38 L 43 38 C 45.746094 38 48 35.746094 48 33 L 48 9 C 48 6.253906 45.746094 4 43 4 Z M 7 6 L 43 6 C 44.65625 6 46 7.34375 46 9 L 46 33 C 46 34.65625 44.65625 36 43 36 L 20 36 C 19.582031 36 19.207031 36.261719 19.0625 36.65625 C 17.507813 40.898438 14.730469 42.917969 11.84375 43.65625 C 12.234375 43.097656 12.605469 42.507813 12.8125 41.875 C 13.332031 40.296875 13.289063 38.570313 12.96875 36.8125 C 12.878906 36.347656 12.476563 36.007813 12 36 L 7 36 C 5.34375 36 4 34.65625 4 33 L 4 9 C 4 7.34375 5.34375 6 7 6 Z "
+            ></path>
+          </g>
+        </svg>
       </div>
     </div>
   </div>
+</div>
 </template>
 
 <script>
@@ -97,6 +97,7 @@ export default {
     this.$eventHub.$off("feed-updated", this.updateFeed);
     this.$eventHub.$off("change-channel", this.changePosts);
     this.$eventHub.$off('queryChanged',this.onQueryChanged);
+    this.$eventHub.$off('newPost',this.onNewPost);
   },
   // ../../../
   methods: {
@@ -140,7 +141,7 @@ export default {
         arr.forEach(function(parentItem, index, arr) {
           var innerArray = Array.from(
             parentItem.getElementsByClassName("hash")
-          );
+            );
           innerArray.forEach((item, i, arr) => {
             // item.classList.add('used')
 
@@ -156,7 +157,7 @@ export default {
               //  item.innerHTML = ". . ."
               points.addEventListener("click", () => {
                 // arr.forEach((item, i) => {
-                that.showAllHashtags(parent, index, points, innerArray);
+                  that.showAllHashtags(parent, index, points, innerArray);
                 // });
               });
 
@@ -213,68 +214,37 @@ export default {
         !this.currentChannel ||
         !this.currentChannel.people ||
         !this.currentChannel.tags
-      ) {
+        ) {
         console.log("Error in filter parsing");
-        return true;
-      }
-      return (
-        this.currentChannel.people.includes(p.authorId) ||
-        p.tags.some(x => this.currentChannel.tags.includes(x))
+      return true;
+    }
+    return (
+      this.currentChannel.people.includes(p.authorId) ||
+      p.tags.some(x => this.currentChannel.tags.includes(x))
       );
-    },
-    onQueryChanged(array){
-      console.log('a')
-      this.$store.dispatch('FIND_POSTS', array).then(()=>{
-        this.mPosts = this.$store.getters.GET_FOUND_POSTS;
-      })
-    }
   },
-  computed: {
-    getCurrentChannel() {
-      return this.$store.getters.GET_CURRENT_CHANNEL;
-    },
-    myPosts() {},
-    getIndex: {
-      get: function() {
-        return this.index;
-      },
-      set: function(param) {
-        this.index = param;
-      }
-    },
-    isFetched() {
-      return (
-        this.$store.state.dataStorage.isDataFetched ||
-        this.$store.state.dataStorage.isUserDataFetched
-      );
-    },
-    size() {
-      return this.$store.state.dataStorage.posts.length;
-    },
-    userSize() {
-      return this.$store.state.dataStorage.userPosts.length;
-    }
+  onQueryChanged(array){
+    console.log('a')
+    this.$store.dispatch('FIND_POSTS', array).then(()=>{
+      this.mPosts = this.$store.getters.GET_FOUND_POSTS;
+    })
   },
-  mounted() {
-    this.$eventHub.$on("feed-updated", this.updateFeed);
-    this.$eventHub.$on("change-channel", this.changePosts);
-    
-    if (this.isAnonymous) {
-      this.$eventHub.$on('queryChanged',this.onQueryChanged)
-    }
+  onNewPost(){
+   if (this.isAnonymous) {
+    this.$eventHub.$on('queryChanged',this.onQueryChanged)
+  }
+  else if(this.forUser)
+  {
 
-    else if(this.forUser)
-    {
+    this.$store.dispatch("FETCH_USER_DATA", this.forUser).then(()=>{
+      this.mPosts = this.$store.getters.GET_USER_POSTS;
+      this.readMore();
+    })
 
-      this.$store.dispatch("FETCH_USER_DATA", this.forUser).then(()=>{
-        this.mPosts = this.$store.getters.GET_USER_POSTS;
-        this.readMore();
-      })
-
-    }
-    else if (!localStorage.getItem("channel"))
-      this.$store.dispatch("FETCH_DATA").then(() => {
-        if (this.forUser) {
+  }
+  else if (!localStorage.getItem("channel"))
+    this.$store.dispatch("FETCH_DATA").then(() => {
+      if (this.forUser) {
           // let arr = this.$store.getters.GET_USER_POSTS;
 
           // this.mPosts = arr;
@@ -297,15 +267,50 @@ export default {
           this.readMore();
         });
       });
-    else {
-      let ch = JSON.parse(localStorage.getItem("channel"));
-      this.$store.dispatch("CHANGE_CHANNEL", ch).then(() => {
-        this.mPosts = this.$store.getters.GET_POSTS;
-      });
+  else {
+    let ch = JSON.parse(localStorage.getItem("channel"));
+    this.$store.dispatch("CHANGE_CHANNEL", ch).then(() => {
+      this.mPosts = this.$store.getters.GET_POSTS;
+    });
+  }
+  console.log(this.mPosts);
+}
+},
+computed: {
+  getCurrentChannel() {
+    return this.$store.getters.GET_CURRENT_CHANNEL;
+  },
+  myPosts() {},
+  getIndex: {
+    get: function() {
+      return this.index;
+    },
+    set: function(param) {
+      this.index = param;
     }
   },
-  watch: {
-    isFetched: function(params) {
+  isFetched() {
+    return (
+      this.$store.state.dataStorage.isDataFetched ||
+      this.$store.state.dataStorage.isUserDataFetched
+      );
+  },
+  size() {
+    return this.$store.state.dataStorage.posts.length;
+  },
+  userSize() {
+    return this.$store.state.dataStorage.userPosts.length;
+  }
+},
+mounted() {
+  this.$eventHub.$on("feed-updated", this.updateFeed);
+  this.$eventHub.$on("change-channel", this.changePosts);
+  this.$eventHub.$on('newPost',this.onNewPost);
+
+  this.onNewPost();
+},
+watch: {
+  isFetched: function(params) {
       // this.checkHashtagCount();
     },
 
@@ -384,32 +389,32 @@ img:hover {
     left top,
     color-stop(0%, rgba(255, 255, 255, 1)),
     color-stop(100%, rgba(255, 255, 255, 0))
-  );
+    );
   background: -webkit-linear-gradient(
     bottom,
     rgba(255, 255, 255, 1) 0%,
     rgba(255, 255, 255, 0) 100%
-  );
+    );
   background: -moz-linear-gradient(
     bottom,
     rgba(255, 255, 255, 1) 0%,
     rgba(255, 255, 255, 0) 100%
-  );
+    );
   background: -ms-linear-gradient(
     bottom,
     rgba(255, 255, 255, 1) 0%,
     rgba(255, 255, 255, 0) 100%
-  );
+    );
   background: -o-linear-gradient(
     bottom,
     rgba(255, 255, 255, 1) 0%,
     rgba(255, 255, 255, 0) 100%
-  );
+    );
   background: linear-gradient(
     bottom,
     rgba(255, 255, 255, 1) 0%,
     rgba(255, 255, 255, 0) 100%
-  );
+    );
 }
 .constantSize:hover::after {
   text-decoration: underline;

@@ -181,8 +181,11 @@ export default {
       return parseInt(id) != parseInt(localStorage.getItem("myId"));
     },
     asyncFind(query) {
+     
+      this.$store.dispatch('CHANGE_FLAG',!this.isNotCreation)
       this.$store.dispatch("FIND_USERS", query).then(response => {
         this.countries = response;
+        this.$store.dispatch('CHANGE_FLAG',false)
       });
     },
     simpleClose() {
@@ -344,7 +347,7 @@ export default {
           "currentDialog",
           JSON.stringify(this.currentDialog)
           );
-
+        this.$eventHub.$emit('dialogListChanged');
         this.$emit("close");
       });
     },

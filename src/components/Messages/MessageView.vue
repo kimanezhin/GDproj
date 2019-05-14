@@ -18,45 +18,12 @@
           <div class="leftBody">
             <transition-group name="list" tag="p">
               <UserCard
-                v-for="(item, index) in messages"
-                :key="index"
+                v-for="(item) in messages"
+                :key="parseInt(item.data.user||item.data.group.id)"
                 :id="parseInt(item.data.user||-1)"
                 v-on:openDialog="openDialog"
                 :dialog="item"
               />
-            </transition-group>
-          </div>
-
-          <div v-if="false" class="leftBody">
-            <transition-group name="list" tag="p">
-              <div
-                class="messageCard d-flex flex-row"
-                v-for="dialog in messages"
-                :key="dialog.data.user||dialog.data.group.id"
-                v-on:click="openDialog(dialog)"
-              >
-                <div class="messageCardImg col-3 d-flex align-content-center align-items-center">
-                  <img
-                    :src="getImgUrl(dialog.data.user||30)"
-                    v-bind:alt="dialog.data.user||dialog.data.group.id"
-                    :name="dialog.data.user||dialog.data.group.id"
-                  >
-                </div>
-                <div class="messageCardBody col-9 d-flex flex-column">
-                  <div class="userName mt-1 d-flex flex-row">
-                    <div class="name">{{getName(dialog.data.user)||dialog.data.group.name}}</div>
-                    <div
-                      v-if="dialog.data.lastMessage"
-                      class="date ml-auto"
-                    >{{transformTime(dialog.data.lastMessage.time)}}</div>
-                  </div>
-                  <div
-                    v-if="dialog.data.lastMessage"
-                    class="lastMessage"
-                  >{{(getLastMessageAuthor(dialog.data.lastMessage.author)) ||"" }}: {{((dialog.data.lastMessage.body.markdown))||''}}</div>
-                  <div v-else class="lastMessage">Беседа создана!</div>
-                </div>
-              </div>
             </transition-group>
           </div>
         </div>
@@ -76,13 +43,13 @@ import Logout from "../Logout";
 import moder from "./DialogModeration";
 import Dialog from "./Dialog";
 import co from "./DialogComponent";
-import UserCard from './UserCard'
+import UserCard from "./UserCard";
 export default {
   components: {
     NavBar,
     Logout,
     Dialog,
-    co, 
+    co,
     UserCard
   },
   data() {
@@ -205,21 +172,33 @@ export default {
       let timeString = clock[0] + ":" + clock[1] + ", ";
       return tmp[2] + "." + tmp[1];
     },
-    updateDialog() {}
+    onDialogListChanged() {
+
+      this.$store.dispatch("GET_ALL_MESSAGES", null).then(() => {
+        let arr = this.$store.getters.GET_MESSAGES;
+        console.log(arr)
+          for (let i in arr) {
+            this.messages.splice(i,1,arr[i])
+          }
+        if (localStorage.getItem("currentDialog")) this.isOpened = true;
+      }).catch((err) => {console.log(err)})
+      if (localStorage.getItem("currentDialog")) this.isOpened = true;
+    }
   },
 
   mounted() {
-    this.$store.dispatch("GET_ALL_MESSAGES", null).then(() => {
-      this.messages = this.$store.getters.GET_MESSAGES;
-    });
-    if (localStorage.getItem("currentDialog")) this.isOpened = true;
+    this.onDialogListChanged();
     document.getElementsByClassName("cnt")[0].style.height =
       document.querySelector("html").scrollHeight + "px";
     console.log(document.getElementsByClassName("wrapper")[0]);
     window.addEventListener("resize", this.onResizeEventHandler);
+    this.$eventHub.$on("dialogListChanged", this.onDialogListChanged);
+    this.$eventHub.$on('messageSend',this.onDialogListChanged);
   },
   beforeDestroy() {
     window.removeEventListener("resize", this.onResizeEventHandler);
+    this.$eventHub.$off("dialogListChanged", this.onDialogListChanged);
+    this.$eventHub.$off('messageSend',this.onDialogListChanged);
   }
 };
 </script>

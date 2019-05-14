@@ -81,12 +81,16 @@ export default {
     },
     updateMessages(msg) {
       this.changeDialog();
+    },
+    updateDialog(){
+      this.changeDialog();
     }
   },
   
   created() {
     this.changeDialog();
     this.$eventHub.$on("dialogChanged", this.changeDialog);
+    this.$eventHub.$on("messageSend", this.updateDialog)
   },
   computed: {
     currentDialog() {
