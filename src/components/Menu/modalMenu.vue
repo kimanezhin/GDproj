@@ -189,19 +189,7 @@ export default {
       // this.checked[event.target.tabIndex] = !this.checked[event.target.tabIndex]
       //TODO: apply to the new list
     },
-    setActive() {
-      var first = document.getElementById("tags");
-      var second = document.getElementById("people");
-      if (first.classList.contains("active")) {
-        this.setClasses(first, second);
-      } else {
-        this.setClasses(second, first);
-      }
-    },
-    setClasses(first, second) {
-      first.classList.remove("active");
-      second.classList.add("active");
-    }
+    
   },
   computed: {
     myChannels() {
