@@ -143,8 +143,8 @@ export default {
       let lastName = document.getElementById("lastName").value;
       let middleName = document.getElementById("middleName").value;
       let email = localStorage.getItem("currentMail");
-      if(!firstName || !lastName || !middleName || !email || this.selectedCountries[0])
-        return;
+      // if(!firstName || !lastName || !middleName || !email || this.selectedCountries[0])
+        // return;
       let faculty = this.selectedCountries[0].code;
       let user = {
         firstName: firstName,

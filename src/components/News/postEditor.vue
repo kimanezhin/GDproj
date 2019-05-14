@@ -77,7 +77,7 @@ export default {
       currentSize: "400px",
       inputText: "",
       readyToClose: false,
-      isPreviewReady: false,
+      isPreviewReady: true,
       editorText: "",
       imgSource: "",
       value: [],

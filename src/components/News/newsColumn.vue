@@ -262,7 +262,8 @@ export default {
     if (this.isAnonymous) {
       this.$eventHub.$on('queryChanged',this.onQueryChanged)
     }
-    if(this.forUser)
+
+    else if(this.forUser)
     {
 
       this.$store.dispatch("FETCH_USER_DATA", this.forUser).then(()=>{
