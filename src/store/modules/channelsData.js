@@ -93,7 +93,7 @@ const actions = {
         })
     },
 
-    UPDATE_CHANNEL(context, payload) {
+    async UPDATE_CHANNEL(context, payload) {
         await Axios.post(context.rootState.dataStorage.URL + '/channels/update', payload, { withCredentials: true }).then(() => {
             context.dispatch('GET_ALL_CHANNELS')
         })
