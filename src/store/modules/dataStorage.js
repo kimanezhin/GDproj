@@ -1,14 +1,10 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+
 import Axios from 'axios'
-import VueNativeSock from "vue-native-websocket";
+
 import _ from "lodash";
 import currentUsers from './currentUsers'
-import { rejects } from 'assert';
-import { puts } from 'util';
 export { makeRequest }
-const vm = new Vue();
-Vue.use(Vuex)
+
 const state = {
     id: '',
     userImgId: '',
@@ -26,26 +22,6 @@ const state = {
     foundPosts:[],
     userPosts: [],
     channels: [
-        {
-            id: 1,
-            name: "#general",
-            thumbnail: "http://lorempixel.com/40/40/people/1"
-        },
-        {
-            id: 2,
-            name: "#grudina",
-            thumbnail: "http://lorempixel.com/40/40/people/2"
-        },
-        {
-            id: 3,
-            name: "#javaHW",
-            thumbnail: "http://lorempixel.com/40/40/people/3"
-        },
-        {
-            id: 4,
-            name: "#osi",
-            thumbnail: "http://lorempixel.com/40/40/4"
-        }
 
     ],
     token: '',
@@ -282,7 +258,7 @@ const mutations = {
         let socketURL =
             "ws://websuck1t.herokuapp.com/posts/subscribe/" +
             state.token;
-        vm.$connect(socketURL, { store: self });
+        // vm.$connect(socketURL, { store: self });
     },
     // default handler called for all methods
     SOCKET_ONMESSAGE(state, message) {

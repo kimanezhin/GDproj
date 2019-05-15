@@ -203,20 +203,6 @@ export default {
 
 
       },
-
-      setInitialSize() {
-        {
-          myText.style.height = "21px";
-          myText.style.width = "96%";
-
-          document
-          .getElementsByClassName("toOverlay")[0]
-          .classList.remove("extendedOverlay");
-          document.getElementById("ovr").classList.remove("toOverlay");
-          this.isEditorShown = false;
-
-        }
-      },
       setCurrentSize() {
         let myText = document.getElementById("myText");
         console.log("2");
@@ -239,10 +225,6 @@ export default {
         }, 300);
       },
 
-      sendToServer(data) {
-      //TODO: here should be adress to drafts
-      Axios.post("", {});
-    },
     resize() {
       var text = document.getElementById("myText");
       this.isPreviewReady = text.value !== "";
@@ -277,7 +259,7 @@ export default {
       document.activeElement.blur();
     },
     updateSearch(param) {
-      console.log(param);
+      
       this.$store.dispatch("GET_COMPLETION", [null, param]).then(aa => {
       });
     }

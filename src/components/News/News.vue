@@ -35,7 +35,8 @@ export default {
   data() {
     return {
       Loading: "Loading",
-      isThisUser: true
+      isThisUser: true,
+      thisIntervalL:''
     };
   },
   props: {
@@ -94,7 +95,7 @@ export default {
   methods: {
     enableLoading() {
       var count = 1;
-      let i = setInterval(() => {
+      this.thisIntervalL = setInterval(() => {
         if (count % 4 != 0) {
           this.Loading += ".";
         } else {
@@ -105,7 +106,10 @@ export default {
         count++;
       }, 400);
     }
-  }
+  },
+  beforeDestroy() {
+    clearInterval(this.thisIntervalL);
+  },
 };
 </script>
 <style scoped>

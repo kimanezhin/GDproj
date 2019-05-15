@@ -82,30 +82,6 @@ export default {
     },
 
     addChat() {
-      let mes = {
-        type: "groupChat",
-        data: {
-          group: {
-            users: {
-              // "9": { isAdmin: true },
-              // "42": { isAdmin: true },
-              // "69": { isAdmin: false },
-              // "30": { isAdmin: false }
-            },
-            name: "Untitled",
-            id: -1
-          },
-          lastMessage: {
-            group: -1,
-            time: "2019-05-09T12:26:19.334349Z",
-            body: {
-              markdown: ""
-            },
-            author: 9,
-            id: 240
-          }
-        }
-      };
       // this.messages.unshift(mes);
       this.createDialog();
     },

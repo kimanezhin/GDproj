@@ -208,21 +208,6 @@ export default {
     changePosts() {
       this.mPosts = this.$store.getters.GET_POSTS;
     },
-    channelFilter(p) {
-      return true;
-      if (
-        !this.currentChannel ||
-        !this.currentChannel.people ||
-        !this.currentChannel.tags
-        ) {
-        console.log("Error in filter parsing");
-      return true;
-    }
-    return (
-      this.currentChannel.people.includes(p.authorId) ||
-      p.tags.some(x => this.currentChannel.tags.includes(x))
-      );
-  },
   onQueryChanged(array){
     console.log('a')
     this.$store.dispatch('FIND_POSTS', array).then(()=>{

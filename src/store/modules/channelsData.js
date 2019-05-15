@@ -46,7 +46,6 @@ const actions = {
 
 
             if (_.isEqual({}, payload)) {
-                console.log('a')
                 context.rootState.dataStorage.posts = []
                 context.dispatch('FETCH_DATA').then(() => {
                     resolve();
@@ -94,7 +93,7 @@ const actions = {
         })
     },
 
-    async UPDATE_CHANNEL(context, payload) {
+    UPDATE_CHANNEL(context, payload) {
         await Axios.post(context.rootState.dataStorage.URL + '/channels/update', payload, { withCredentials: true }).then(() => {
             context.dispatch('GET_ALL_CHANNELS')
         })

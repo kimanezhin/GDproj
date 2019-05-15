@@ -131,91 +131,11 @@ export default {
           });
       }
     },
-    getName(id, num) {
-      let name = "";
-      axios
-        .get("http://websuck1t.herokuapp.com/users/" + id)
-        .then(
-          response =>
-            (this.arr[num].name =
-              response.data.userName.firstName +
-              " " +
-              response.data.userName.secondName)
-        );
-    },
-    closeEditor() {
-      // this.readyToClose = false;
-      this.readyToClose = true;
 
-      document.getElementById("myText").style.height = "51px";
-      document.getElementById("myText").style.width = "65%";
-      this.isEditorShown = false;
-
-      document
-        .getElementsByClassName("toOverlay")[0]
-        .classList.remove("extendedOverlay");
-    },
-    setInitialSize() {
-      {
-        document.getElementById("myText").style.height = "51px";
-        document.getElementById("myText").style.width = "65%";
-
-        document
-          .getElementsByClassName("toOverlay")[0]
-          .classList.remove("extendedOverlay");
-        this.isEditorShown = false;
-      }
-    },
-
-    showChannels() {
-      let list = document.getElementsByClassName("shevron");
-      if (list[0].classList.contains("shevron-down")) {
-        list[0].classList.remove("shevron-down");
-      } else list[0].classList.add("shevron-down");
-    },
-    setCurrentSize() {
-      this.isEditorShown = true;
-
-      document.getElementById("myText").style.height = "auto";
-      document.getElementById("myText").style.width = "30vw";
-      document.getElementById("myText").style.height = this.currentSize;
-      document.getElementById("main").style.height =
-        document.querySelector("html").scrollHeight + "px";
-      document.getElementById("fantomPage").style.height =
-        document.getElementById("main").scrollHeight + "px";
-
-      document
-        .getElementsByClassName("toOverlay")[0]
-        .classList.add("extendedOverlay");
-    },
-    getPosts(i) {
-      return this.arr.filter(post => parseInt(post.num) == i);
-    },
-
-    resize() {
-      var text = document.getElementById("myText");
-      if (text) {
-        text.style.height = "auto";
-        text.style.height = text.scrollHeight + 1 + "px";
-        this.currentSize = text.scrollHeight + 1 + "px";
-      }
-
-      var flag = true;
-    },
-    delayedResize() {
-      window.setTimeout(this.resize, 0);
-    }
   },
   beforeDestroy() {
     window.removeEventListener("scroll", this.pagination);
-    let removeEvents = (type, name) => {
-      window.removeEventListener(type, name);
-    };
-    removeEvents("change", this.resize);
-    removeEvents("cut", this.delayedResize);
-    removeEvents("paste", this.delayedResize);
-    removeEvents("drop", this.delayedResize);
-    removeEvents("keydown", this.delayedResize);
+   
   },
   mounted() {
     

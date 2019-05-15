@@ -191,12 +191,6 @@ export default {
     simpleClose() {
       this.$emit("close");
     },
-    isNotMe(num) {
-      let id = parseInt(localStorage.getItem("myId"));
-      num = parseInt(num);
-
-      return num != id;
-    },
     addUser(val) {
       // let id = document.getElementById("userId");
       // let val = id.value;

@@ -218,21 +218,6 @@ export default {
         }
       );
     },
-    changeCurrentBlock(index) {
-      switch (index) {
-        case 1:
-          document.getElementById(
-            "firstContainer"
-          ).style.backgroundColor = rgba(247, 245, 245, 0.603);
-          break;
-        case 2:
-          break;
-      }
-      this.currentBlock = index;
-    },
-    isBlockActive(i) {
-      return i == this.currentBlock;
-    }
   },
 
   watch: {
