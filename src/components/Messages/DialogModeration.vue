@@ -95,7 +95,7 @@
       v-if="isNotCreation"
       class="btn btn-outline-danger mr-2 btn-block"
       @click="leaveChannel"
-      >Покинуть канал</button>
+      >Покинуть беседу</button>
     </div>
   </div>
 </template>

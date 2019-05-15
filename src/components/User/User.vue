@@ -18,9 +18,9 @@
           <div >
             <div class="tabs mt-3">
               <input type="radio" id="tab1" name="tab-control" checked>
-              <input type="radio" id="tab2" name="tab-control">
-              <input type="radio" id="tab3" name="tab-control">
-              <input type="radio" id="tab4" name="tab-control">
+              <!-- <input type="radio" id="tab2" name="tab-control"> -->
+              <!-- <input type="radio" id="tab3" name="tab-control"> -->
+              <!-- <input type="radio" id="tab4" name="tab-control"> -->
               <ul>
                 <li title="Features">
                   <label for="tab1" role="button">
@@ -33,7 +33,7 @@
                     <span>О себе</span>
                   </label>
                 </li>
-                <li title="Delivery Contents">
+                <li v-if="false" title="Delivery Contents">
                   <label for="tab2" role="button">
                     <svg viewBox="0 0 24 24">
                       <path
@@ -44,7 +44,7 @@
                     <span>Публикации</span>
                   </label>
                 </li>
-                <li title="Shipping">
+                <li v-if = "false" title="Shipping">
                   <label for="tab3" role="button">
                     <svg viewBox="0 0 24 24">
                       <path
@@ -95,7 +95,7 @@
           <news
             flexBehaviour
             v-bind:forUser="parseInt(id)"
-            class
+            class = "mt-2"
             id="myNews"
             v-bind:posts="arr"
             :isMargin="false ||isMe()"
@@ -399,7 +399,7 @@ html {
   margin-bottom: 10px;
   -webkit-box-pack: justify;
   -ms-flex-pack: justify;
-  justify-content: space-between;
+  /* justify-content: space-between; */
   -webkit-box-align: end;
   -ms-flex-align: end;
   align-items: flex-end;
@@ -410,7 +410,7 @@ html {
   box-sizing: border-box;
   -webkit-box-flex: 1;
   -ms-flex: 1;
-  flex: 1;
+  /* flex: 1; */
   width: 33%;
   padding: 0 10px;
   text-align: center;
@@ -471,6 +471,7 @@ html {
   background: #428bff;
   border-radius: 1px;
 }
+
 .tabs .content {
   margin-top: 30px;
 }

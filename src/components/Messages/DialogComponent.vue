@@ -71,12 +71,15 @@ export default {
     },
     counter() {
       let di = JSON.parse(localStorage.getItem("currentDialog"));
+      console.log(di)
+      if(di.data.group)
       this.count =  Object.keys(di.data.group.users).length || 0;
     },
     setName() {
       let di = JSON.parse(localStorage.getItem("currentDialog"));
       this.chatName =
         this.getName(di.data.user) || (di.data.group && di.data.group.name);
+        this.counter();
     },
     moderateGroup() {
       let di = JSON.parse(localStorage.getItem("currentDialog"));
@@ -151,12 +154,14 @@ export default {
     this.$eventHub.$on("dialogChanged", this.setName);
     this.$eventHub.$on('dialogListChanged', this.onDialogChanged)
     window.addEventListener("resize", this.onResizeEventHandler);
-    this.counter();
+    
     this.onResizeEventHandler();
+    this.counter();
   },
   beforeDestroy() {
 
     this.$eventHub.$off("dialogChanged", this.setName);
+     this.$eventHub.$off('dialogListChanged', this.onDialogChanged)
     window.removeEventListener("resize", this.onResizeEventHandler);
   }
 };
