@@ -34,7 +34,7 @@
         ></textarea>
 
         <div class="attachments mr-auto" v-if="isEditorShown">
-          <!-- <div @click="showMyModal" v-if="isPreviewReady" class="preview mr-2">Предпросмотр</div> -->
+          
           <svg
           height="35px"
           viewBox="0 0 496 496"
@@ -42,7 +42,7 @@
           xmlns="http://www.w3.org/2000/svg"
           @click="showMyModal"
           class="mr-2"
-          v-if="isPreviewReady"
+          
           >
           <path
           d="M244.425,98.725c-93.4,0-178.1,51.1-240.6,134.1c-5.1,6.8-5.1,16.3,0,23.1c62.5,83.1,147.2,134.2,240.6,134.2
@@ -72,22 +72,13 @@ export default {
   },
   data() {
     return {
-      flag: true,
       isEditorShown: false,
       currentSize: "400px",
       inputText: "",
-      readyToClose: false,
-      isPreviewReady: true,
       editorText: "",
       imgSource: "",
       value: [],
       options: [
-        // { name: "#Vue.js", code: "vu" },
-        // { name: "#Javascript", code: "js" },
-        // { name: "#OpenSource", code: "os" },
-        // { name: "#Open", code: "oss" },
-        // { name: "#Op", code: "ods" },
-        // { name: "#O", code: "fos" }
         ],
         imgPath: ""
       };
@@ -153,7 +144,7 @@ export default {
         myText.readOnly = true;
       }
 
-      this.readyToClose = true;
+      
 
       myText.style.height = "51px";
       myText.style.width = "96%";
@@ -227,7 +218,6 @@ export default {
 
     resize() {
       var text = document.getElementById("myText");
-      this.isPreviewReady = text.value !== "";
       text.style.height = "auto";
       text.style.height = text.scrollHeight + 1 + "px";
       this.currentSize = text.scrollHeight + 1 + "px";

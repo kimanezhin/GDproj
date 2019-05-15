@@ -27,7 +27,7 @@ export default {
   },
   data() {
     return {
-      messages: [],
+      
       isOpened: false,
       screenWidth: 1200
     };
@@ -40,9 +40,6 @@ onResizeEventHandler(){
 }
 },
   mounted() {
-    this.$store.dispatch("GET_ALL_MESSAGES", null).then(() => {
-      this.messages = this.$store.getters.GET_MESSAGES;
-    });
     if (localStorage.getItem("currentDialog")) this.isOpened = true;
 
     window.addEventListener("resize", this.onResizeEventHandler);

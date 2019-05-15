@@ -40,7 +40,6 @@ export default {
   data() {
     return {
       id: "",
-      reg: false
     };
   },
   mounted() {

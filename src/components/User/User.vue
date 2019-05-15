@@ -118,7 +118,6 @@ import sendMsg from "../Messages/SendMessageModal";
 export default {
   data() {
     return {
-      currentBlock: 1,
       firstName: "",
       lastName: "",
       middleName: "",

@@ -18,7 +18,7 @@
           <div class="leftBody">
             <transition-group name="list" tag="p">
               <UserCard
-                v-for="(item, index) in messages"
+                v-for="(item) in messages"
                 :key="parseInt(item.data.user||item.data.group.id)"
                 :id="parseInt(item.data.user||-1)"
                 v-on:openDialog="openDialog"
@@ -61,25 +61,6 @@ export default {
     };
   },
   methods: {
-    getLastMessageAuthor(id) {
-      if (!id) return null;
-      id = parseInt(id);
-      // console.log(id, this.$store.getters.GET_MESSAGE_MAP)
-      let m = this.$store.getters.GET_MESSAGE_MAP.get(id);
-      console.log(id);
-      if (!m) {
-        this.$store.dispatch("GET_USERS", [id]).then(response => {
-          this.$store.commit("ADD_TO_MAP", [id, response.data]);
-        });
-      }
-      m = this.$store.getters.GET_MESSAGE_MAP.get(id);
-      let me = parseInt(localStorage.getItem("myId"));
-      if (id == me) return "You";
-      let name;
-      if (m) name = m.firstName;
-      else return id;
-      return name || "Seva";
-    },
 
     addChat() {
       // this.messages.unshift(mes);
@@ -109,19 +90,6 @@ export default {
       return this.screenWidth;
       // console.log('a')
     },
-    getImgUrl(id) {
-      if (!id) return null;
-
-      let m = this.$store.getters.GET_MESSAGE_MAP.get(id);
-      if (!m) {
-        this.$store.dispatch("GET_USERS", [id]).then(response => {
-          this.$store.commit("ADD_TO_MAP", [id, response.data]);
-        });
-        m = this.$store.getters.GET_MESSAGE_MAP.get(id);
-      }
-      if (!m) return require("../../../img/" + "5051" + ".png");
-      return require("../../../img/" + m.faculty.campusCode + ".png");
-    },
     openDialog(event) {
       let num = event.data.user || event.data.group.id;
       let tmp = event;
@@ -130,23 +98,6 @@ export default {
       this.$eventHub.$emit("dialogChanged");
       this.isOpened = true;
       if (this.screenWidth < 1000) this.$router.push("/dialog/" + num);
-    },
-    getName(id) {
-      if (!id) return;
-      if (!Number.isInteger(id)) return id;
-      let m = this.$store.getters.GET_MESSAGE_MAP.get(id);
-      if (!m) return "";
-      return m.firstName + " " + m.lastName;
-    },
-    transformTime(time) {
-      //1861-08-13T00:00:08Z - not transformed
-      //13.08.61 - transformed
-      let tmp = time.split("-");
-      let clock = time.split("T")[1].split(":");
-
-      tmp[2] = tmp[2].slice(0, 2);
-      let timeString = clock[0] + ":" + clock[1] + ", ";
-      return tmp[2] + "." + tmp[1];
     },
     onDialogListChanged() {
 

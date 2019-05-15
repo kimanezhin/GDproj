@@ -59,9 +59,9 @@ export default {
       peopleChecks: [],
       value: "Choose tags",
       arePeopleSelected: true,
-      menu: [],
-      searchPeople: "",
-      searchTags: "",
+      
+      
+      
       peopleId: [],
       constPeople: [],
       constTags: [],

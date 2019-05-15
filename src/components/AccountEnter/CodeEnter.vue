@@ -38,15 +38,7 @@ export default {
   name: "Login",
   data() {
     return {
-      id: "",
-
-      reg: false,
-      selectedCountries: [],
-      countries: [],
       code: ["", "", "", "", "", ""],
-      isLoading: false,
-      timeToRequest: 500,
-      currentTimeout: -1,
       currentInterval: -1,
       message: ""
     };

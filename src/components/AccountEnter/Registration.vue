@@ -73,9 +73,9 @@ export default {
   name: "Login",
   data() {
     return {
-      id: "",
+      
 
-      reg: false,
+
       selectedCountries: [],
       countries: [],
       isLoading: false,

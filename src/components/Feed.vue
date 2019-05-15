@@ -91,14 +91,7 @@ export default {
   },
   data() {
     return {
-      flag: false,
-      isEditorShown: false,
-      currentSize: "51px",
-      inputText: "",
-      readyToClose: false,
-      myText: "he",
       arr: [],
-      eventFlag: true,
       loading: false
     };
   },

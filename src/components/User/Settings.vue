@@ -102,7 +102,7 @@ export default {
       firstName: "",
       middleName: "",
       lastName: "",
-      reg: false,
+      
       selectedCountries: [],
       countries: [],
       isLoading: false,

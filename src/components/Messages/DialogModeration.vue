@@ -118,7 +118,6 @@ export default {
       myMap: "",
       adminsCount: 0,
       usersCount: 0,
-      imgPath: "",
       isLoading: false,
       countries: [],
       selectedCountries: [],

@@ -2,7 +2,6 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import Axios from 'axios'
 import _ from "lodash";
-import { makeRequest } from './dataStorage'
 
 Vue.use(Vuex)
 const state = {

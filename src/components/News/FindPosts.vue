@@ -4,9 +4,9 @@
     <Logout/>
     <div class="row">
       <div class="col-md-2 mt-5" id="menu">
-        <!-- <feedMenu></feedMenu> -->
+        
       </div>
-      <!-- <news v-bind:posts="arr"/> -->
+      
       <div class="col-md-4">
       <multiselect
         v-model="value"
@@ -36,7 +36,6 @@
 <script>
 import _ from "lodash";
 import axios from "axios";
-import feedMenu from "../Menu/feedMenu";
 import newsColumn from "../News/newsColumn";
 import { mapState, mapGetters } from "vuex";
 import Navbar from "../Navbar";
@@ -62,15 +61,8 @@ export default {
     Multiselect
   },
   data() {
-    return {
-      flag: false,
-      isEditorShown: false,
-      currentSize: "51px",
-      inputText: "",
-      readyToClose: false,
-      myText: "he",
+    return { 
       arr: [],
-      eventFlag: true,
       loading: false,
       options:[],
       value:[],
