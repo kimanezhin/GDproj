@@ -70,7 +70,7 @@ const actions = {
         context.state.currentDialog = JSON.parse(localStorage.getItem('currentDialog'))
         return new Promise((resolve, reject) => {
             Axios.post(context.rootState.dataStorage.URL + '/messages/get/' + payload.type, {
-                direction: "forward",
+                direction: "backward",
                 limit: 20,
                 exclusiveFrom: null,
                 request: parseInt(payload.id)
@@ -78,7 +78,7 @@ const actions = {
                 {
                     withCredentials: true
                 }).then((response) => {
-                    resolve(response.data)
+                    resolve(response.data.reverse())
                 }).catch((err) => { reject(err) })
         })
 

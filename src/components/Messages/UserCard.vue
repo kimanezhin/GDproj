@@ -1,23 +1,13 @@
 <template>
   <div>
-    <div
-      class="messageCard d-flex flex-row"      
-      v-on:click="openDialog"
-    >
+    <div class="messageCard d-flex flex-row" v-on:click="openDialog">
       <div class="messageCardImg col-3 d-flex align-content-center align-items-center">
-        <img
-          :src="imgUrl"
-          v-bind:alt="id"
-          :name="dialog.data.user||dialog.data.group.id"
-        >
+        <img :src="imgUrl" v-bind:alt="id" :name="dialog.data.user||dialog.data.group.id">
       </div>
       <div class="messageCardBody col-9 d-flex flex-column">
         <div class="userName mt-1 d-flex flex-row">
           <div class="name">{{name || myName}}</div>
-          <div
-            v-if="dialog.data.lastMessage"
-            class="date ml-auto"
-          >{{time}}</div>
+          <div v-if="dialog.data.lastMessage" class="date ml-auto">{{time}}</div>
         </div>
         <div
           v-if="dialog.data.lastMessage"
@@ -32,12 +22,12 @@
 <script>
 export default {
   props: {
-    id: {
-      type: Number,
-      default: -1
-    },
     dialog: {
       type: Object
+    },
+    id:{
+      type:Number,
+      default:-1
     }
   },
   data() {
@@ -46,7 +36,7 @@ export default {
       // lastMessage: "",
       time: "",
       imgUrl: "",
-      name: ""
+      name: "",
     };
   },
   computed:{
@@ -54,6 +44,14 @@ export default {
       if(!this.dialog.data.group)
         return ''
       return this.dialog.data.group.name
+    },
+    lastMessageAuthr(){
+      let m = this.$store.getters.GET_MESSAGE_MAP;
+       if(this.dialog.data.lastMessage)
+       {
+         let id = parseInt(this.dialog.data.lastMessage.author);
+          return m.get(id) || id;
+       }
     },
     lastMessage(){
       if(this.dialog.data.lastMessage)
@@ -63,6 +61,7 @@ export default {
   },
   mounted() {
     // this.id = this.dialog.data.user || -1;
+    this.$eventHub.$on('messageSend', this.updater)
     this.getName(this.id);
     if(this.dialog.data.lastMessage)
       {
@@ -74,6 +73,17 @@ export default {
     
   },
   methods: {
+    updater(){
+      console.log(this.id)
+       this.getName(this.id);
+    if(this.dialog.data.lastMessage)
+      {
+        this.transformTime(this.dialog.data.lastMessage.time);
+        this.getLastMessageAuthor(this.dialog.data.lastMessage.author);
+        // this.lastMessage = this.dialog.data.lastMessage.body.markdown
+      }
+    this.getImgUrl(this.dialog.data.user || -1);
+    },
     openDialog() {
       this.$emit("openDialog", this.dialog);
     },
@@ -128,10 +138,11 @@ export default {
       }
     },
     getLastMessageAuthor(id) {
-      console.log(id)
+      
       if (!id) return null;
       // id = parseInt(id);
       let me = parseInt(localStorage.getItem("myId"));
+      
       if (parseInt(id) == me) 
       {
         this.lastMessageAuthor =  "You";
@@ -139,16 +150,34 @@ export default {
       }
       // console.log(id, this.$store.getters.GET_MESSAGE_MAP)
       let m = this.$store.getters.GET_MESSAGE_MAP.get(id);
-
+    console.log(m, id)
       if (!m) {
         this.$store.dispatch("GET_USERS", [id]).then(response => {
           this.$store.commit("ADD_TO_MAP", [id, response[0]]);
           console.log(response)
           this.lastMessageAuthor = response[0].firstName;
+          // console.log(response)
         });
       } else {
+        
         this.lastMessageAuthor = m.firstName;
       }
+    }
+  },
+  watch:{
+    lastMessageAuthr(neww, old){
+      let id = parseInt(localStorage.getItem('myId'))
+      if(Number.isInteger(neww))
+      {
+        this.$store.dispatch('GET_USERS'[neww]).then((response) =>{
+          this.lastMessageAuthor = response[0].firstName;
+        })
+      }
+      else
+      {
+        this.lastMessageAuthor = parseInt(this.dialog.data.lastMessage.author) == id ? "You " : neww.firstName;
+      }
+
     }
   }
 };

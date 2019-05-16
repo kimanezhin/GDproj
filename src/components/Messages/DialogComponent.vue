@@ -1,29 +1,31 @@
 <template>
-  <div class="rightSide" :class="{'col-8':onResizeEventHandler()>1000, 'col-12':onResizeEventHandler() <1000}">
+  <div
+    class="rightSide"
+    :class="{'col-8':onResizeEventHandler()>1000, 'col-12':onResizeEventHandler() <1000}"
+  >
     <div class="rightHeader abs">
-
-          <div class="back ml-2 position-absolute">
-            <div class="chevron">
-              <svg
-                version="1.1"
-                xmlns="http://www.w3.org/2000/svg"
-                xmlns:xlink="http://www.w3.org/1999/xlink"
-                x="0px"
-                y="0px"
-                viewBox="0 0 1000 1000"
-                enable-background="new 0 0 1000 1000"
-                xml:space="preserve"
-              >
-                <metadata>Svg Vector Icons : http://www.onlinewebfonts.com/icon</metadata>
-                <g>
-                  <path
-                    d="M981.9,283c5.2-5.2,8.1-12.1,8.1-19.4c0-7.3-2.8-14.2-8-19.3c-10.7-10.7-28-10.7-38.7-0.1L498.9,686.4L56.8,244.2c-10.7-10.7-28.1-10.7-38.7,0c-5.2,5.2-8,12.1-8,19.4c0,7.3,2.8,14.2,8,19.4l480,479.9l0.9,0.9L981.9,283z"
-                  ></path>
-                </g>
-              </svg>
-            </div>
-            <div class="backText">Назад</div>
-          </div>
+      <div class="back ml-2 position-absolute">
+        <div class="chevron">
+          <svg
+            version="1.1"
+            xmlns="http://www.w3.org/2000/svg"
+            xmlns:xlink="http://www.w3.org/1999/xlink"
+            x="0px"
+            y="0px"
+            viewBox="0 0 1000 1000"
+            enable-background="new 0 0 1000 1000"
+            xml:space="preserve"
+          >
+            <metadata>Svg Vector Icons : http://www.onlinewebfonts.com/icon</metadata>
+            <g>
+              <path
+                d="M981.9,283c5.2-5.2,8.1-12.1,8.1-19.4c0-7.3-2.8-14.2-8-19.3c-10.7-10.7-28-10.7-38.7-0.1L498.9,686.4L56.8,244.2c-10.7-10.7-28.1-10.7-38.7,0c-5.2,5.2-8,12.1-8,19.4c0,7.3,2.8,14.2,8,19.4l480,479.9l0.9,0.9L981.9,283z"
+              ></path>
+            </g>
+          </svg>
+        </div>
+        <div class="backText">Назад</div>
+      </div>
 
       <div class="chatName text-center d-flex flex-column">
         <div class="chatNameInner">{{chatName}}</div>
@@ -61,7 +63,7 @@ export default {
       chatName: "",
       isOpened: true,
       screenWidth: 1200,
-      count:''
+      count: ""
     };
   },
   methods: {
@@ -71,19 +73,19 @@ export default {
     },
     counter() {
       let di = JSON.parse(localStorage.getItem("currentDialog"));
-      console.log(di)
-      if(di.data.group)
-      this.count =  Object.keys(di.data.group.users).length || 0;
+      console.log(di);
+      if (di.data.group)
+        this.count = Object.keys(di.data.group.users).length || 0;
     },
     setName() {
       let di = JSON.parse(localStorage.getItem("currentDialog"));
       this.chatName =
         this.getName(di.data.user) || (di.data.group && di.data.group.name);
-        this.counter();
+      this.counter();
     },
     moderateGroup() {
       let di = JSON.parse(localStorage.getItem("currentDialog"));
-      
+
       this.$modal.show(
         moder,
         {
@@ -110,14 +112,14 @@ export default {
     },
     onResizeEventHandler() {
       this.screenWidth = window.innerWidth + 91;
-      
+
       return this.screenWidth;
     },
     sendMessage() {
       let msg;
       let text = document.getElementById("msgInput").value;
       let di = JSON.parse(localStorage.getItem("currentDialog"));
-      
+
       if (di.type == "groupChat") {
         msg = {
           group: di.data.group.id,
@@ -134,17 +136,20 @@ export default {
         };
       }
 
-
+      let me = parseInt(localStorage.getItem("myId"));
       this.$store
         .dispatch("SEND_MSG", msg)
         .then(() => {
           document.getElementById("msgInput").value = "";
-          
-          this.$eventHub.$emit('messageSend')
+            // di.data.lastMessage.author = me;
+            // di.data.lastMessage.body = msg.body;
+            // localStorage.setItem('currentDialog',JSON.stringify(di))
+              this.$eventHub.$emit("messageSend");
+            
         })
         .catch(err => console.error(err));
     },
-    onDialogChanged(){
+    onDialogChanged() {
       this.counter();
       this.setName();
     }
@@ -152,23 +157,21 @@ export default {
   mounted() {
     this.setName();
     this.$eventHub.$on("dialogChanged", this.setName);
-    this.$eventHub.$on('dialogListChanged', this.onDialogChanged)
+    this.$eventHub.$on("dialogListChanged", this.onDialogChanged);
     window.addEventListener("resize", this.onResizeEventHandler);
-    
+
     this.onResizeEventHandler();
     this.counter();
   },
   beforeDestroy() {
-
     this.$eventHub.$off("dialogChanged", this.setName);
-     this.$eventHub.$off('dialogListChanged', this.onDialogChanged)
+    this.$eventHub.$off("dialogListChanged", this.onDialogChanged);
     window.removeEventListener("resize", this.onResizeEventHandler);
   }
 };
 </script>
 
 <style>
-
 .custom__tag {
   display: inline-block;
   padding: 3px 12px;
@@ -182,7 +185,6 @@ export default {
 
 
 <style scoped>
-
 .participants {
   text-align: center;
   font-weight: 550;
@@ -201,7 +203,7 @@ export default {
   color: #7e7e7e;
   fill: #7e7e7e;
   opacity: 0.7;
-  margin-top: 5px;;
+  margin-top: 5px;
 }
 
 .back:hover {

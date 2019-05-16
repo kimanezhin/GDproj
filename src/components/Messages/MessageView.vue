@@ -19,7 +19,7 @@
             <transition-group name="list" tag="p">
               <UserCard
                 v-for="(item) in messages"
-                :key="parseInt(item.data.user||item.data.group.id)"
+                :key="parseInt(item.data.user||-1*item.data.group.id)"
                 :id="parseInt(item.data.user||-1)"
                 v-on:openDialog="openDialog"
                 :dialog="item"
@@ -103,10 +103,7 @@ export default {
 
       this.$store.dispatch("GET_ALL_MESSAGES", null).then(() => {
         let arr = this.$store.getters.GET_MESSAGES;
-        console.log(arr)
-          // for (let i in arr) {
-          //   this.messages.splice(i,1,arr[i])
-          // }
+        this.messages = []
           this.messages = arr;
         if (localStorage.getItem("currentDialog")) this.isOpened = true;
       }).catch((err) => {console.log(err)})
