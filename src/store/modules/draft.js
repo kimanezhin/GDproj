@@ -21,7 +21,7 @@ const actions = {
     SEND_POST(context, payload) {
         context.state.currentDraft = payload[0];
         payload[1] = payload[1].map(x => {
-            if (x[0] == "#") {
+            if (x.name[0] == "#") {
                 return x.name.slice(1, x.length)
             }
             else { 

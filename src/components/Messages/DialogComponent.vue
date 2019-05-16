@@ -5,7 +5,7 @@
   >
     <div class="rightHeader abs">
       <div class="back ml-2 position-absolute">
-        <div class="chevron">
+        <div v-if="false" class="chevron">
           <svg
             version="1.1"
             xmlns="http://www.w3.org/2000/svg"
@@ -24,7 +24,7 @@
             </g>
           </svg>
         </div>
-        <div class="backText">Назад</div>
+        <div v-if="false" class="backText">Назад</div>
       </div>
 
       <div class="chatName text-center d-flex flex-column">
