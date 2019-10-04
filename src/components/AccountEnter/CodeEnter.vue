@@ -5,26 +5,22 @@
         <h1 class="h3 mb-3 font-weight-normal">Введите код</h1>
         <div id="container" class="form-row d-flex flex-row justify-content-between">
           <input
-          v-for="(val,index) in code"
-          :name="index"
-          v-model="code[index]"
-          @input="validate"
-          @keyup.delete="deleteAndGoLeft"
-          @keyup.left="goLeft"
-          @keydown.right="goRight"
-          :key="index"
-          type="text"
-          class="form-control number col-2"
-          >
+            v-for="(val,index) in code"
+            :name="index"
+            v-model="code[index]"
+            @input="validate"
+            @keyup.delete="deleteAndGoLeft"
+            @keyup.left="goLeft"
+            @keydown.right="goRight"
+            :key="index"
+            type="text"
+            class="form-control number col-2"
+          />
         </div>
       </form>
     </div>
 
-          <div
-        class="notify bar-top"
-        id="checkMail"
-        data-notification-status="success"
-      >{{message}}</div>
+    <div class="notify bar-top" id="checkMail" data-notification-status="success">{{message}}</div>
   </div>
 </template>
 
@@ -59,32 +55,29 @@ export default {
   },
   beforeDestroy() {
     clearInterval(this.currentInterval);
-    localStorage.removeItem('currentMail');
+    localStorage.removeItem("currentMail");
   },
   methods: {
-
     showNotification(event, code) {
-      // event.preventDefault();
       let status, type;
-      code = parseInt(code)
+      code = parseInt(code);
       if (code == 403) {
         status = "error";
         type = "bottom-right";
-        this.message="Произошла ошибка! Вы ввели неверный код, попробуйте еще раз."
-        this.code = ['', '', '', '', '', '']
-        document.getElementsByName('0')[0].focus();
-      } else if(code == 400) {
+        this.message =
+          "Произошла ошибка! Вы ввели неверный код, попробуйте еще раз.";
+        this.code = ["", "", "", "", "", ""];
+        document.getElementsByName("0")[0].focus();
+      } else if (code == 400) {
         status = "error";
         type = "bottom-right";
-        this.message = "Произошла ошибка! Файлы cookie не были установлены."
-      }
-      else if(code == 498){
-      this.message = "Текущая сессия не активна, попробуйте еще раз."
-      setTimeout(() => {
-        this.$router.push('/registration')
-      }, 4000)
-      }
-      else{
+        this.message = "Произошла ошибка! Файлы cookie не были установлены.";
+      } else if (code == 498) {
+        this.message = "Текущая сессия не активна, попробуйте еще раз.";
+        setTimeout(() => {
+          this.$router.push("/registration");
+        }, 4000);
+      } else {
         return;
       }
 
@@ -139,18 +132,17 @@ export default {
       if (!Number.isInteger(parseInt(event.target.value))) {
         this.code[currNum] = "";
         event.target.value = "";
-        
+
         return;
       }
       if (event.target.value.length == 6) {
-        
         let value = event.target.value;
         value = value.split("").map(x => parseInt(x));
         if (value.every(Number.isInteger)) {
           for (let i = 0; i < 6; ++i) {
             this.code[i] = value[i];
           }
-          
+
           this.sendCode();
           return;
         }
@@ -172,17 +164,16 @@ export default {
 
       this.$store
         .dispatch("VERIFY_CODE", code)
-        .then((response) => {
+        .then(response => {
           console.log(response);
           // this.$router.push("/feed");
         })
-        .catch((err) => {
+        .catch(err => {
           let status = err.response.status;
-          
-          this.showNotification(event, status)
-          
+
+          this.showNotification(event, status);
         });
-    },
+    }
   }
 };
 </script>
@@ -215,7 +206,6 @@ export default {
 .title {
   font-size: 16px;
 }
-
 
 .bottom-right {
   position: fixed;
@@ -256,7 +246,6 @@ export default {
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M12 3.984c4.407 0 8.016 3.609 8.016 8.016 0 4.406-3.608 8.016-8.016 8.016S3.984 16.407 3.984 12 7.593 3.984 12 3.984m0-2C6.478 1.984 1.984 6.477 1.984 12c0 5.521 4.493 10.016 10.016 10.016S22.016 17.522 22.016 12c0-5.523-4.495-10.016-10.016-10.016zm0 2c4.407 0 8.016 3.609 8.016' fill='%23C61512'/%3E%3Cpath d='M13.406,12l2.578,2.578l-1.406,1.406L12,13.406l-2.578,2.578l-1.406-1.406L10.594,12L8.016,9.421l1.406-1.405L12,10.593 l2.578-2.577l1.406,1.405L13.406,12z' fill='%23C61512'/%3E%3C/svg%3E")
     center / cover no-repeat;
 }
-
 
 h1,
 p {

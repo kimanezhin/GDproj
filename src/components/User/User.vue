@@ -18,9 +18,6 @@
           <div >
             <div class="tabs mt-3">
               <input type="radio" id="tab1" name="tab-control" checked>
-              <!-- <input type="radio" id="tab2" name="tab-control"> -->
-              <!-- <input type="radio" id="tab3" name="tab-control"> -->
-              <!-- <input type="radio" id="tab4" name="tab-control"> -->
               <ul>
                 <li title="Features">
                   <label for="tab1" role="button">

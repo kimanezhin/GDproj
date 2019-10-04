@@ -8,8 +8,6 @@ import store from './store/store'
 import Axios from 'axios'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
-import VueNativeSock from 'vue-native-websocket'
-import ReadMore from 'vue-read-more'
 import VModal from 'vue-js-modal'
 import vSelectMenu from 'v-selectmenu'
 Vue.use(VModal, { dynamic: true, injectModalsContainer: true })
@@ -23,13 +21,7 @@ import PrettyCheckbox from 'pretty-checkbox-vue';
 Vue.use(PrettyCheckbox);
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
-Vue.use(ReadMore)
-Vue.use(VueNativeSock, 'ws://websuck1t.herokuapp.com/', {
-  connectionManually: true
-})
 Vue.use(BootstrapVue);
-import Vuex from 'vuex'
-Vue.use(Vuex)
 
 Vue.config.productionTip = false
 

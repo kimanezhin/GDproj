@@ -27,15 +27,6 @@ const actions = {
     },
     CHANGE_CHANNEL(context, payload) {
         return new Promise((resolve, reject) => {
-            // context.state.currentChannel = {}
-            // Object.assign(context.state.currentChannel, payload)
-
-
-            /*
-                Here is 
-                payload[0] - body of request
-                payload[1] - id of last post, can be null
-            */
             let request = {
                 direction: "backward",
                 limit: 20,
