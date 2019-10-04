@@ -14,28 +14,9 @@ const state = {
 const getters = {
     GET_BY_ID(state) {
         return (id) => {
-
             return new Promise((resolve, reject) => {
-
-                // let req = getUser(id, state)
-
-
                 let response = makeResponse(id)
-                // response.then(answ => {
-                //     //  console.log(answ)
-                //     state.m._c.set(id, {
-                //         firstName: answ.data[0].firstName, //response.data.userName.firstName,
-                //         secondName: answ.data[0].secondName, //response.data.userName.secondName
-                //         id: answ.data[0].id
-                //     })
-
-                // }).catch((error) => {
-                // console.error(error)
-                // })
-
                 resolve(response)
-
-
             })
 
         }

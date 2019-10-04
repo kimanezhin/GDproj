@@ -1,21 +1,23 @@
 <template>
   <div id="main">
     <Navbar/>
+    <Logout/>
     <div class="row mr-0">
       <div class="col-2">
-        <img :src="getImgUrl()" class="avatar">
-        <button id="followButton" @click="addUserToChannel" class="btn btn-outline-primary">Follow</button>
+        <img :src="getImgUrl()" class="rounded avatar">
+        <button @click="addUserToChannel" class="btn followButton btn-outline-primary">Follow</button>
+        <button
+          @click="sendMessage"
+          class="btn followButton mt-1 btn-outline-secondary"
+        >Отправить сообщение</button>
       </div>
-      <div class="col-10">
+      <div class="col-9">
         <div class="d-flex flex-column">
-          <div class="userName">{{lastName}} {{firstName}} {{middleName}}</div>
+          <div class="user">{{lastName}} {{firstName}} {{middleName}}</div>
           <div class="line"></div>
-          <div class>
+          <div >
             <div class="tabs mt-3">
               <input type="radio" id="tab1" name="tab-control" checked>
-              <input type="radio" id="tab2" name="tab-control">
-              <input type="radio" id="tab3" name="tab-control">
-              <input type="radio" id="tab4" name="tab-control">
               <ul>
                 <li title="Features">
                   <label for="tab1" role="button">
@@ -28,7 +30,7 @@
                     <span>О себе</span>
                   </label>
                 </li>
-                <li title="Delivery Contents">
+                <li v-if="false" title="Delivery Contents">
                   <label for="tab2" role="button">
                     <svg viewBox="0 0 24 24">
                       <path
@@ -39,7 +41,7 @@
                     <span>Публикации</span>
                   </label>
                 </li>
-                <li title="Shipping">
+                <li v-if = "false" title="Shipping">
                   <label for="tab3" role="button">
                     <svg viewBox="0 0 24 24">
                       <path
@@ -58,32 +60,27 @@
               <div class="content">
                 <section>
                   <div class="row">
+                    <div class="col-3 categoriesAbout">Город:</div>
+                    <div class="col-7 textAbout">{{city}}</div>
+                  </div>
+
+                  <div v-if="faculty" class="row">
                     <div class="col-3 categoriesAbout">Факультет:</div>
-                    <div class="col-7 textAbout">Факультет компьютерных наук</div>
+                    <div class="col-7 textAbout">{{faculty}}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-3 categoriesAbout">Кафедра:</div>
+                    <div class="col-7 textAbout"><a :href="'http://'+facultyUrl">{{facultyName}}</a></div>
                   </div>
                   <div class="row">
-                    <div class="col-3 categoriesAbout">Город:</div>
-                    <div class="col-7 textAbout">Москва</div>
+                    <div class="col-3 categoriesAbout">Адрес:</div>
+                    <div class="col-7 textAbout">{{facultyAdress}}</div>
                   </div>
-                  <div class="row text">
-                    <div class="col-3 categoriesAbout">Должность:</div>
-                    <div class="col-7 textAbout">Доцент</div>
-                  </div>
-                  <div class="row text">
-                    <div class="col-3 categoriesAbout">Город:</div>
-                    <div class="col-7 textAbout">Москва</div>
-                  </div>
-                  <div class="row text">
-                    <div class="col-3 categoriesAbout">Researcher ID:</div>
-                    <div class="col-7 textAbout">K-5545-2015</div>
-                  </div>
-                  <div class="row text">
-                    <div class="col-3 categoriesAbout">Телефон:</div>
-                    <div class="col-7 textAbout">8-912-345-67-89</div>
-                  </div>
+
                   <div class="row text">
                     <div class="col-3 categoriesAbout">Почта:</div>
-                    <div class="col-7 textAbout">vchernyshov@hse.ru</div>
+                    <div class="col-7 textAbout">{{email}}</div>
                   </div>
                 </section>
                 <section>Тут что нибудь появится</section>
@@ -91,12 +88,14 @@
               </div>
             </div>
           </div>
+
           <news
             flexBehaviour
             v-bind:forUser="parseInt(id)"
-            class="mr-auto"
+            class = "mt-2"
             id="myNews"
             v-bind:posts="arr"
+            :isMargin="false ||isMe()"
           />
         </div>
       </div>
@@ -111,13 +110,22 @@ import { mapState, mapGetters } from "vuex";
 import store from "../../store/store.js";
 import Axios from "axios";
 import addUserModal from "./../modals/addUserModal";
+import Logout from "../Logout";
+import sendMsg from "../Messages/SendMessageModal";
 export default {
   data() {
     return {
-      currentBlock: 1,
       firstName: "",
       lastName: "",
-      middleName: ""
+      middleName: "",
+      email: "",
+      city: "",
+      faculty: "",
+      cityCode: "",
+      imgPath: "",
+      facultyAdress:'',
+      facultyName:'',
+      facultyUrl:''
     };
   },
   props: ["id"],
@@ -127,9 +135,74 @@ export default {
       token: "GET_TOKEN"
     })
   },
+  mounted() {
+    let id = parseInt(this.id);
+
+
+
+
+    if (!id) {
+      Axios.post(
+        this.$store.getters.GET_URL + "/authentication/me",
+        {},
+        { withCredentials: true }
+      ).then(response => {
+        id = response.data;
+      });
+    }
+    let m = this.$store.getters.GET_MAP.get(id);
+    
+    if (!m) {
+      this.$store
+        .dispatch("GET_USERS", [id])
+        .then(response => {
+          m = response[0];
+        })
+        .then(response => {
+          this.setFields(m);
+        });
+    } else {
+      this.setFields(m);
+    }
+
+
+    // document.getElementById('main').style.height = window.innerHeight+"px"
+    let main =  document.getElementById('main')
+    if(main)
+     main.style.height = document.querySelector('html').scrollHeight+"px";
+     document.querySelector('body').style.height = document.querySelector('html').scrollHeight+"px";
+  },
   methods: {
-    getImgUrl(){
-     return  require("../../../img/" + this.id + ".png");
+    isMe() {
+      return parseInt(localStorage.getItem("myId")) == parseInt(this.id);
+    },
+    setFields(m) {
+      this.faculty = m.faculty.path;
+      this.email = m.email;
+      this.city = m.faculty.campusName;
+      this.firstName = m.firstName;
+      this.lastName = m.lastName;
+      this.middleName = m.middleName;
+      this.cityCode = m.faculty.campusCode;
+      this.facultyAdress = m.faculty.address;
+      this.facultyName = m.faculty.name;
+      this.facultyUrl = m.faculty.url;
+    },
+    sendMessage() {
+      this.$modal.show(
+        sendMsg,
+        {
+          id: parseInt(this.id)
+        },
+        {
+          adaptive: true,
+          height: "auto"
+        }
+      );
+    },
+    getImgUrl() {
+      if(this.cityCode)
+      return require("../../../img/" +this.cityCode + ".png");
     },
     addUserToChannel() {
       this.$modal.show(
@@ -141,42 +214,18 @@ export default {
         }
       );
     },
-    changeCurrentBlock(index) {
-      switch (index) {
-        case 1:
-          document.getElementById(
-            "firstContainer"
-          ).style.backgroundColor = rgba(247, 245, 245, 0.603);
-          break;
-        case 2:
-          break;
-      }
-      this.currentBlock = index;
-    },
-    isBlockActive(i) {
-      return i == this.currentBlock;
-    }
-  },
-  created() {
-    this.$store.dispatch("FETCH_USER_DATA", parseInt(this.id)).then(() => {
-      let name = this.$store.getters.GET_MAP.get(parseInt(this.id));
-      console.log(name);
-      this.firstName = name.firstName;
-      this.lastName = name.lastName;
-      this.middleName = name.middleName;
-    });
   },
 
   watch: {
     id: function(newId) {
-      console.log(newId);
       location.reload();
     }
   },
   components: {
     Navbar,
     News,
-    addUserModal
+    addUserModal,
+    Logout
   }
 };
 </script>
@@ -185,8 +234,15 @@ export default {
 
 <style>
 #myNews {
-  margin-top: 5%;
+  /* margin-top: 5%; */
 }
+
+
+html {
+  height: 100vh;
+  background-color: #fff;
+}
+
 .line {
   height: 2px;
   width: 67%;
@@ -195,13 +251,13 @@ export default {
   top:12%;
   left: 1.5%; */
 }
-.userName {
+.user {
   font-weight: 500;
 
-  font-size: 28px;
+  font-size: 20px;
 }
 
-#followButton {
+.followButton {
   width: 80%;
   margin-left: 10%;
   margin-right: 10%;
@@ -290,6 +346,9 @@ export default {
   box-shadow: none;
 }
 
+#main {
+  background-color: white;
+}
 .categoriesAbout {
   font-weight: 600;
 }
@@ -320,7 +379,6 @@ export default {
 }
 .tabs .content section h2,
 .tabs ul li label {
-  font-family: "Montserrat";
   font-weight: bold;
   font-size: 18px;
   color: #428bff;
@@ -338,7 +396,7 @@ export default {
   margin-bottom: 10px;
   -webkit-box-pack: justify;
   -ms-flex-pack: justify;
-  justify-content: space-between;
+  /* justify-content: space-between; */
   -webkit-box-align: end;
   -ms-flex-align: end;
   align-items: flex-end;
@@ -349,7 +407,7 @@ export default {
   box-sizing: border-box;
   -webkit-box-flex: 1;
   -ms-flex: 1;
-  flex: 1;
+  /* flex: 1; */
   width: 33%;
   padding: 0 10px;
   text-align: center;
@@ -410,12 +468,24 @@ export default {
   background: #428bff;
   border-radius: 1px;
 }
+
 .tabs .content {
   margin-top: 30px;
 }
 .content {
   margin-left: 30px;
 }
+
+@media screen and (max-width: 1100px) {
+    .tabs {
+    margin-bottom: 50px;
+  }
+  .categoriesAbout {
+    margin-right: 10%;
+  }
+  
+}
+
 .tabs .content section {
   display: none;
   -webkit-animation-name: content;
@@ -631,12 +701,12 @@ export default {
 
 @media (max-width: 830px) {
   #myNews {
-    margin-top: 10%;
+    /* margin-top: 10%; */
   }
 }
 
 @media (max-width: 600px) {
-  .userName {
+  .user {
     font-size: 20px;
     margin-left: 4%;
   }

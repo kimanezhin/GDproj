@@ -6,6 +6,7 @@ import systemData from './modules/systemData'
 import auth from './modules/auth'
 import draft from './modules/draft'
 import channelsData from './modules/channelsData'
+import messageData from  './modules/messageData'
 Vue.use(Vuex)
 
 
@@ -16,6 +17,7 @@ export default new Vuex.Store({
     systemData,
     auth,
     draft,
-    channelsData
+    channelsData,
+    messageData
    }
 })

@@ -12,7 +12,7 @@
           autofocus
           v-model="id"
         >
-        
+
         <input
           class="button btn btn-lg btn-primary btn-block"
           v-on:click="signIn"
@@ -40,20 +40,31 @@ export default {
   data() {
     return {
       id: "",
-      reg: false
     };
   },
+  mounted() {
+    let i = window.location.href;
+    let index = i.lastIndexOf('#');
+    let qIndex = i.lastIndexOf('?')
+    if(qIndex!=-1)
+      return;
+     i = i.split('')
+     i.splice(index,0,"?")
+    window.location.href = i.join('');
+    // .join("")
+  },
   methods: {
-    signIn() {
+    signIn(event) {
       this.$store.dispatch("SET_ID", this.id);
-      this.showNotification();
+      
+      this.showNotification(event.target.value);
     },
-    showNotification() {
+    showNotification(email) {
       var pattern = /^\w+@{1}(edu.)?(hse.ru){1}$/;
       var email = $(document.getElementById("inputEmail")).val();
 
       // if (pattern.test(email))
-      {
+      if (false) {
         event.preventDefault();
 
         //   $('.button').removeClass('is-active');
@@ -75,14 +86,26 @@ export default {
       }
 
       //TODO: Here should be /authenticate
-      console.log(this.$store.getters.GET_ID);
-     
 
-      this.$store.dispatch("AUTH_REQUEST",this.$store.getters.GET_ID).then((response)=>{
-          
-         this.$router.push('/feed')
-      })
+      this.$store
+        .dispatch("AUTH_REQUEST", email)
+        .then(
+          response => {
+            // if(response.data.isRegistred)
 
+            if (response == "registered") {
+              this.$router.push("/code");
+            } else if (response === "canRegister") {
+              localStorage.setItem("currentMail", email);
+              this.$router.push("/registration");
+            } else if (response === "invalid") {
+            }
+          }
+          // else
+        )
+        .catch(err => {
+          console.log(err, "Unable to login");
+        });
     }
   }
 };

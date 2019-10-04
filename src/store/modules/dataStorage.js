@@ -1,44 +1,27 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+
 import Axios from 'axios'
-import VueNativeSock from "vue-native-websocket";
+
 import _ from "lodash";
 import currentUsers from './currentUsers'
-import { rejects } from 'assert';
-const vm = new Vue();
-Vue.use(Vuex)
+export { makeRequest }
+
 const state = {
     id: '',
+    userImgId: '',
     isDataFetched: false,
     isUserDataFetched: false,
-    currentChannel:1,
+    isNotLast: true,
+    currentChannel: 1,
     m: new Map(),
     messages: ['s'],
+    tagCompletions: null,
+    values: [],
     URL: "https://valera-denis.herokuapp.com",
     posts: [
     ],
+    foundPosts:[],
     userPosts: [],
     channels: [
-        {
-            id: 1,
-            name: "#general",
-            thumbnail: "http://lorempixel.com/40/40/people/1"
-        },
-        {
-            id: 2,
-            name: "#grudina",
-            thumbnail: "http://lorempixel.com/40/40/people/2"
-        },
-        {
-            id: 3,
-            name: "#javaHW",
-            thumbnail: "http://lorempixel.com/40/40/people/3"
-        },
-        {
-            id: 4,
-            name: "#osi",
-            thumbnail: "http://lorempixel.com/40/40/4"
-        }
 
     ],
     token: '',
@@ -58,38 +41,150 @@ const getters = {
     GET_FULL_NAME: (state) => (id) => { },
     GET_ID(state) { return parseInt(state.id) },
     GET_URL(state) { return state.URL },
-    GET_MAP(state){return state.m},
-    
+    GET_MAP(state) { return state.m },
+    GET_COMPLETIONS(state) { return state.values },
+    GET_IMG_ID(state) { return state.userImgId },
+    GET_FOUND_POSTS(state){return state.foundPosts},
+
+    GET_IMG(state) {
+        return (id) => {
+
+            let prom = new Promise((resolve, reject) => {
+                if (id == 22723) {
+                    state.userImgId = require("../../../img/" + id + ".png");
+                    resolve();
+                }
+                else
+                    if (!state.m || !state.m.get(id)) {
+                        console.log(id)
+                        Axios.post(state.URL + '/users', [id], { withCredentials: true }).then((response) => {
+
+                            let user = state.m.get(id);
+                            console.log(user)
+                            let userID = user.faculty.campusCode
+                            console.log(userID)
+                            state.userImgId = require("../../../img/" + userID + ".png");
+                            resolve();
+                        })
+                    }
+                    else {
+                        let user = state.m.get(id).faculty.campusCode
+                        state.userImgId = require("../../../img/" + user + ".png");
+                        resolve();
+                    }
+            })
+            console.log(state.userImgId)
+
+
+        }
+    }
+
 
 }
 
 const actions = {
 
     async FETCH_DATA(context, payload) {
-        // let uri = payload ? context.state.URL + "/posts/forUser" : context.state.URL + "/posts/last";
-        context.state.posts = []
-        await Axios
-            .post(context.state.URL + "/posts/last",
-                50
-                , {
-                    withCredentials: true
-                }
-            )
-            .then(response => {
-                let tt = new Map(Object.entries(response.data.users));
-                context.commit('SET_MAP', tt)
-                console.log(response.data)
-                for (var item of response.data.posts) {
-                    // context.commit('PUSH_POST', item)
-                    makeRequest(context.state, item, context.state.posts)
-                }
-
-            }).then(() => {
-
-                context.state.isDataFetched = true;
-            });
+        context.state.isNotLast = true;
+        return new Promise((resolve, reject) => {
+            if (!payload) {
+                context.state.posts = []
+                payload = null
+            }
+            Axios
+                .post(context.state.URL + "/posts/last",
+                    {
+                        direction: 'backward',
+                        limit: 10,
+                        exclusiveFrom: payload,
+                        request: []
+                    }
+                    , {
+                        withCredentials: true
+                    }
+                )
+                .then(response => {
+                    let tt = new Map(Object.entries(response.data.users));
+                    context.commit('SET_MAP', tt)
+                    if (response.data.response.length == 0)
+                        context.rootState.channelsData.isNotLast = false;
+                    for (var item of response.data.response) {
+                        makeRequest(context.state, item, context.state.posts)
+                    }
+                }).then(() => {
+                    // context.state.isDataFetched = true;
+                    resolve();
+                }).catch(() => {
+                    reject();
+                });
+        })
     },
 
+    FIND_POSTS(context, payload) {
+        let request = {
+            "direction": "backward",
+            "limit": 20,
+            "exclusiveFrom": null,
+            "request": {
+                "people": [],
+                "tags": payload
+            }
+        }
+        context.state.foundPosts = []
+        Axios.post(context.state.URL + '/channels/getAnonymous',request,{withCredentials:true})
+        .then((response)=>{
+            
+             let tt = new Map(Object.entries(response.data.users));
+                    context.commit('SET_MAP', tt)
+                    if (response.data.response.length == 0)
+                        context.rootState.channelsData.isNotLast = false;
+                    for (var item of response.data.response) {
+                        makeRequest(context.state, item, context.state.foundPosts)
+                        console.log(item)
+                    }
+        })
+    },
+
+    UPDATE_USER(context, payload) {
+        return new Promise((resolve, reject) => {
+            Axios.post(context.state.URL + '/users/update', payload, { withCredentials: true }).then(() => {
+                resolve();
+            })
+                .catch((err) => {
+                    console.log(err)
+                    reject()
+                })
+        })
+    },
+
+    async GET_TAG_COMPLETIONS(context) {
+        Axios.get(context.state.URL + '/tags/completions').then((response) => {
+            context.state.tagCompletions = response.data;
+        })
+    },
+    GET_COMPLETION(context, payload) {
+        return new Promise((resolve, reject) => {
+            let tree = payload[0] || context.state.tagCompletions;
+            let word = payload[1]
+            if (word === "") {
+                context.state.values = getValues(tree.subtree)
+
+                resolve(transformTags(context.state.values));
+            }
+            let character = word[0];
+
+            if (!tree.subtree[character]) {
+                context.state.values = []
+                resolve();
+            }
+            else {
+                context.dispatch('GET_COMPLETION', [tree.subtree[character], _.drop(word.split('')).join('')]).then((response) => {
+                    //    console.log(response)
+                    resolve(response);
+                });
+            }
+        })
+    },
     async FETCH_USER_DATA(context, payload) {
 
 
@@ -97,19 +192,20 @@ const actions = {
         await Axios
             .post(context.state.URL + "/posts/forUser",
                 {
-                    limit:50,
-                    request:payload
+                    direction: 'backward',
+                    limit: 50,
+                    exclusiveFrom: null,
+                    request: payload
                 },
-                 {
+                {
                     withCredentials: true
                 }
             )
             .then(response => {
                 let tt = new Map(Object.entries(response.data.users));
                 context.commit('SET_MAP', tt)
-                
-                for (var item of response.data.posts) {
-                    // context.commit('PUSH_POST', item)
+                console.log(response)
+                for (var item of response.data.response) {
                     makeRequest(context.state, item, context.state.userPosts)
                 }
 
@@ -117,21 +213,6 @@ const actions = {
 
                 context.state.isUserDataFetched = true;
             });
-
-
-
-        // context.state.userPosts = []
-        // let uri = context.state.URL + '/posts/forUser'
-        // await Axios.post(uri, { 
-        //     limit: 20,
-        //     request: payload,
-        // }, { withCredentials: true }).then((response) => {
-        //     for (var item of response.data) {
-        //         makeUserRequest(item, context)
-        //     }
-        // }).then(() => {
-        //     context.state.isUserDataFetched = true;
-        // })
     },
 
 
@@ -143,15 +224,24 @@ const actions = {
 
 }
 const mutations = {
+    async UPDATER(state, payload) {
+        makeRequest(state, payload, state.posts)
+    },
     SET_TOKEN(state, payload) { state.token = payload },
     SET_MAP(state, payload) {
-
-        state.m = new Map(Array.from(payload).map(x => [parseInt(x[0]), x[1]]))
+        if (!state.m) {
+            state.m = new Map(Array.from(payload).map(x => [parseInt(x[0]), x[1]]))
+        }
+        else {
+            let arr = Array.from(payload).map(x => [parseInt(x[0]), x[1]])
+            for (let i of arr)
+                state.m.set(parseInt(i[0]), i[1])
+        }
     },
     async PUSH_POST(state, payload) {
-       
+
     },
-    
+
     UNSHIFT_POST(state, payload) { },
 
     SOCKET_ONOPEN(state, event) {
@@ -168,7 +258,7 @@ const mutations = {
         let socketURL =
             "ws://websuck1t.herokuapp.com/posts/subscribe/" +
             state.token;
-        vm.$connect(socketURL, { store: self });
+        // vm.$connect(socketURL, { store: self });
     },
     // default handler called for all methods
     SOCKET_ONMESSAGE(state, message) {
@@ -210,10 +300,6 @@ const mutations = {
         }
         //  state.message = message
 
-
-
-
-
     },
     // mutations for reconnect methods
     [WebSocket.WS_RECONNECT](state, count) {
@@ -226,9 +312,9 @@ const mutations = {
     }
 }
 async function makeRequest(state, payload, array) {
-    // console.log(payload)
-    const id = payload.authorId;
-    const localMap = state.m.get(id)
+    
+    let id = payload.authorId;
+    let localMap = state.m.get(id)
     array.push({
         name: localMap.firstName + " " + localMap.lastName,
         postId: payload.id,
@@ -237,11 +323,26 @@ async function makeRequest(state, payload, array) {
         num: state.columnToAdd,
         middleName: payload.middleName,
         timeCreated: payload.updated,
-        tags: payload.tags    
+        tags: payload.tags
     })
     state.columnToAdd = state.columnToAdd == 0 ? 1 : 0;
+    // console.log(state.posts)
 }
 
+function getValues(tree) {
+    //    console.log(tree)
+    let out = []
+    for (let i of Object.entries(tree)) {
+        if (i[1] && i[1].value)
+            out.push(i[1].value)
+
+        if (i[1])
+            out.push(getValues(i[1].subtree))
+        else
+            out.push(getValues(i.subtree))
+    }
+    return _.flattenDeep(out)
+}
 
 async function makeUserRequest(item, context) {
     SET_NAME(context.state, item.authorId).then((name) => {
@@ -255,6 +356,14 @@ async function makeUserRequest(item, context) {
         });
     })
 
+}
+
+function transformTags(array) {
+    array = array.map(x => x = {
+        name: x,
+        code: x,
+    })
+    return array;
 }
 
 function SET_NAME(state, payload) {

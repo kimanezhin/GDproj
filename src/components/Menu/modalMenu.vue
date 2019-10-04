@@ -38,6 +38,11 @@
     </div>
     <button class="btn btn-danger" @click="deleteChannel" v-if="hashId != -1">Удалить</button>
     <button class="btn btn-secondary" @click="updateChannel">Сохранить</button>
+    <div
+      class="notify bar-top"
+      id="checkMail"
+      data-notification-status="error"
+    >Достигнуто максимальное количество каналов!</div>
   </div>
 </template>
 
@@ -54,90 +59,9 @@ export default {
       peopleChecks: [],
       value: "Choose tags",
       arePeopleSelected: true,
-      menu: [
-        {
-          title: "Tags",
-          list: [
-            {
-              id: 1,
-              name: "#someHash",
-              check: false
-            },
-            {
-              id: 2,
-              name: "#someHash",
-              check: false
-            },
-            {
-              id: 3,
-              name: "#someHash",
-              check: false
-            },
-            {
-              id: 4,
-              name: "#someHash",
-              check: false
-            },
-            {
-              id: 5,
-              name: "#someHash",
-              check: false
-            },
-            {
-              id: 6,
-              name: "#someHash",
-              check: false
-            },
-            {
-              id: 7,
-              name: "#someHash",
-              check: false
-            },
-            {
-              id: 8,
-              name: "#someHash",
-              check: false
-            },
-            {
-              id: 9,
-              name: "#someHash",
-              check: false
-            },
-            {
-              id: 10,
-              name: "#someHash",
-              check: false
-            }
-          ]
-        },
-        {
-          title: "People",
-          list: [
-            {
-              id: 6,
-              name: "#someHash"
-            },
-            {
-              id: 7,
-              name: "#someHash"
-            },
-            {
-              id: 8,
-              name: "#someHash"
-            },
-            {
-              id: 9,
-              name: "#someHash"
-            },
-            {
-              id: 10,
-              name: "#someHash"
-            }
-          ]
-        }
-      ],
-      searchPeople: "",
-      searchTags: "",
+      
+      
+      
       peopleId: [],
       constPeople: [],
       constTags: [],
@@ -150,16 +74,16 @@ export default {
       return this.arePeopleSelected ? smth : "#" + smth;
     },
     findEntered(event) {
-      let currentStr = event.srcElement.value;
+      let currentStr = event.srcElement.value.toLowerCase();
       if (this.arePeopleSelected) {
         this.avaliblePeople = this.constPeople.filter(x => {
-          return _.startsWith(x, currentStr) || currentStr == "";
+          return _.startsWith(x.toLowerCase(), currentStr) || currentStr == "";
         });
       } else {
         this.avalibleTags = this.constTags.filter(x => {
           return (
-            _.startsWith(x, currentStr) ||
-            _.startsWith("#" + x, currentStr) ||
+            _.startsWith(x.toLowerCase(), currentStr) ||
+            _.startsWith("#" + x.toLowerCase(), currentStr) ||
             currentStr === ""
           );
         });
@@ -175,34 +99,46 @@ export default {
             this.$store.dispatch("CHANGE_CHANNEL", tmp);
           } else if (a.length > this.hashId + 1) {
             this.$store.dispatch("CHANGE_CHANNEL", a[this.hashId + 1]);
-            console.log("b");
           } else if (this.hashId == a.length - 1) {
-            
-            
           }
         }
         this.$emit("close");
       });
     },
+
+    showNotification() {
+      
+      $(".notify")
+        .removeClass()
+        .addClass("bottom-right" + " " + "error")
+        .addClass("do-show");
+
+      event.preventDefault();
+      setTimeout(function() {
+        $(document.getElementById("checkMail"))
+          .removeClass()
+          .addClass("notify")
+          .addClass("bar-top");
+      }, 5000);
+    },
+
     updateChannel() {
       if (this.channelId != -1) {
         let newChan = {
-            people: this.peopleId.filter((item, i) => {
-              return this.peopleChecks[i] == true;
-            }),
-            name: this.myName,
-            id: this.channelId,
-            tags: this.avalibleTags.filter((item, i) => {
-              return this.tagChecks[i] == true;
-            })
-          }
+          people: this.peopleId.filter((item, i) => {
+            return this.peopleChecks[i] == true;
+          }),
+          name: this.myName,
+          id: this.channelId,
+          tags: this.avalibleTags.filter((item, i) => {
+            return this.tagChecks[i] == true;
+          })
+        };
 
-        this.$store
-          .dispatch("UPDATE_CHANNEL",newChan )
-          .then(() => {
-            this.$store.dispatch("CHANGE_CHANNEL",newChan)
-            this.$emit("close");
-          });
+        this.$store.dispatch("UPDATE_CHANNEL", newChan).then(() => {
+          this.$store.dispatch("CHANGE_CHANNEL", newChan);
+          this.$emit("close");
+        });
       } else {
         let newChan = {
           people: this.peopleId.filter((item, i) => {
@@ -213,13 +149,23 @@ export default {
             return this.tagChecks[i] == true;
           })
         };
-        this.$store.dispatch("CREATE_CHANNEL", newChan).then(() => {
-          console.log(localStorage.getItem("currentChannel"));
-          if (localStorage.getItem("currentChannel") == 0) {
-            this.$store.dispatch("CHANGE_CHANNEL", newChan);
-          }
-          this.$emit("close");
-        });
+        this.$store
+          .dispatch("CREATE_CHANNEL", newChan)
+          .then(() => {
+            if (localStorage.getItem("currentChannel") == 0) {
+              this.$store.dispatch("CHANGE_CHANNEL", newChan);
+            }
+            this.$emit("close");
+          })
+          .catch(err => {
+            if (parseInt(err.response.status) == 406) {
+              this.showNotification();
+              setTimeout(() =>{
+                this.$emit("close");
+              }, 4500)
+            }
+            
+          });
       }
     },
     toRight() {
@@ -239,23 +185,11 @@ export default {
       document.getElementsByClassName("cl")[1].style.color = "#428bff";
     },
     selectHash(event) {
-      this.menu[0].list[event.target.tabIndex].check = !this.menu[0].list[
-        event.target.tabIndex
-      ].check; //TODO: apply to the new list
+      // if(this.arePeopleSelected)
+      // this.checked[event.target.tabIndex] = !this.checked[event.target.tabIndex]
+      //TODO: apply to the new list
     },
-    setActive() {
-      var first = document.getElementById("tags");
-      var second = document.getElementById("people");
-      if (first.classList.contains("active")) {
-        this.setClasses(first, second);
-      } else {
-        this.setClasses(second, first);
-      }
-    },
-    setClasses(first, second) {
-      first.classList.remove("active");
-      second.classList.add("active");
-    }
+    
   },
   computed: {
     myChannels() {
@@ -328,6 +262,12 @@ export default {
               }
             });
           });
+          if (this.hashId >= 0)
+            this.constTags.forEach(element => {
+              if (this.myChannels[this.hashId].tags.includes(element)) {
+                this.tagChecks.push(true);
+              } else this.tagChecks.push(false);
+            });
         });
     }
   }
@@ -361,6 +301,46 @@ export default {
   transition: 0.3s ease;
 }
 
+.bottom-right {
+  position: fixed;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  color: #fff;
+  line-height: 1.3;
+  box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.35);
+  max-width: 350px;
+  margin: 20px;
+  bottom: 0;
+  right: 0;
+  transform: translateX(420px);
+  background-color: #ef5350;
+}
+@keyframes slide-in-right {
+  to {
+    transform: translateX(0);
+  }
+}
+.bottom-right.do-show {
+  animation: slide-in-right 1s ease-in-out forwards,
+    slide-in-right 1s ease-in-out reverse forwards 4s;
+}
+
+.bottom-right[data-notification-status="error"] {
+  background-color: #ef5350;
+}
+.bottom-right[data-notification-status="error"]:before {
+  content: "";
+  display: block;
+  width: 30px;
+  height: 30px;
+  min-width: 30px;
+  margin-right: 20px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M12 3.984c4.407 0 8.016 3.609 8.016 8.016 0 4.406-3.608 8.016-8.016 8.016S3.984 16.407 3.984 12 7.593 3.984 12 3.984m0-2C6.478 1.984 1.984 6.477 1.984 12c0 5.521 4.493 10.016 10.016 10.016S22.016 17.522 22.016 12c0-5.523-4.495-10.016-10.016-10.016zm0 2c4.407 0 8.016 3.609 8.016' fill='%23C61512'/%3E%3Cpath d='M13.406,12l2.578,2.578l-1.406,1.406L12,13.406l-2.578,2.578l-1.406-1.406L10.594,12L8.016,9.421l1.406-1.405L12,10.593 l2.578-2.577l1.406,1.405L13.406,12z' fill='%23C61512'/%3E%3C/svg%3E")
+    center / cover no-repeat;
+}
+
 .slider-translate {
   transform: translateX(-170%);
   transition: 0.3s ease;
@@ -378,6 +358,22 @@ li:focus {
 
   -webkit-box-shadow: none;
   box-shadow: none;
+}
+
+.bar-top {
+  position: fixed;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  color: #fff;
+  line-height: 1.3;
+  box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.35);
+  top: 0;
+  right: 0;
+  left: 0;
+  width: 100%;
+  transform: translateY(-100%);
 }
 
 li {

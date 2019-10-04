@@ -1,39 +1,48 @@
 <template>
   <div class = "d-flex flex-row">
-    <slide>
-        
-      <router-link to = "/user/5051"> 
+    <slide noOverlay>
+          <transition name="slide">
+      <router-link :to = "myId"> 
         <font-awesome-icon icon="user" class="mt-1 mr-2"/>
         <span>Моя страница</span>
       </router-link>
+          </transition>
       <router-link to="/feed">
         <font-awesome-icon icon="newspaper" class="mt-1 mr-2"/>
         <span>Новости</span>
       </router-link>
-      <a href>
+      <router-link to = "/im">
         <font-awesome-icon icon="envelope" class="mt-1 mr-2"/>
         <span>Сообщения</span>
-      </a>
-      <a href>
-        <font-awesome-icon icon="project-diagram" class="mt-1 mr-2"/>
-        <span>Проекты</span>
-      </a>
-      <a href>
+      </router-link>
+      <router-link to = "/settings">
         <font-awesome-icon icon="cog" class="mt-1 mr-2"/>
         <span>Настройки</span>
-      </a>
+      </router-link>
     </slide>
   </div>
 </template>
 
 <script>
 import { Slide } from "vue-burger-menu";
+import Axios from 'axios';
 export default {
   components: {
     Slide
   },
-  computed: {}
-};
+  data(){
+    return{
+      myId:''
+    }
+  },
+  mounted(){
+    if(!localStorage.getItem('myId'))
+      this.$store.dispatch('SET_MY_ID').then(() => {
+    this.myId = '/user/'+localStorage.getItem('myId')    
+      })
+    this.myId = '/user/'+localStorage.getItem('myId')    
+  }
+}
 </script>
 
 <style>
@@ -45,11 +54,11 @@ export default {
     }
 
 .bm-burger-button {
-  position: relative;
-  width: 30px;
-  height: 30px;
-  top: 10px;
-  left: 10px;
+  position: relative !important;
+  width: 30px !important;
+  height: 30px !important;
+  top: 10px !important;
+  left: 10px !important;
   cursor: pointer;
 }
 
@@ -57,12 +66,22 @@ export default {
   /* background-color: #373a47; */
   background-color: #373a47;
 }
+.bm-overlay {
+      background: #fff !important;
+    }
+
 
 .line-style {
   position: absolute;
   height: 19%;
   left: 0;
   right: 0;
+}
+
+@media screen and (max-width: 1200px) {
+ .bm-burger-bars{
+   background-color: white !important;
+ } 
 }
 </style>
 
@@ -80,7 +99,7 @@ nav > span {
   color: white;
   font-weight: 700;
   margin-left: 10px;
-  font-family: Raleway, Arial, sans-serif;
+
   font-size: 20px;
 }
 nav > a {
@@ -113,4 +132,9 @@ img {
   font-weight: 600;
   font-size: 18px;
 }
+
+
+
+
+
 </style>

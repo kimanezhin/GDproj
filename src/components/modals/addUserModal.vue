@@ -51,7 +51,7 @@ export default {
 
         return elem;
       });
-      console.log(tmp);
+      
       tmp.forEach((elem, i) => {
         if (changed[i]) this.$store.dispatch("UPDATE_CHANNEL", elem);
       });
@@ -60,7 +60,7 @@ export default {
     setAvalibleChannels() {
       this.checked = [];
       this.currentList.forEach(element => {
-        console.log(element);
+        
         if (element.people.includes(parseInt(this.hashId)))
           this.checked.push(true);
         else this.checked.push(false);

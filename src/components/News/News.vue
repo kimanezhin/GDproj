@@ -1,24 +1,22 @@
 <template >
-  <div
-    id="resizable"
-    class="row d-flex"
-    v-if="isDataFetched || isUserDataFetched"
-    :class="flexBehaviour"
-  >
+  <div id="resizable" class="row d-flex" :class="flexBehaviour">
     <div
       id="imgCol"
       :class="{'margin':!forUser, 'smallMargin':forUser}"
-      class="col-md-12 col-sm-12 mt-4"
+      class="col-md-12 col-sm-12"
     >
-      <post-editor v-if="isThisUser"/>
+      <post-editor 
+      class = "mt-4"
+      v-if="isThisUser"/>
       <news-column
-        style="margin-top:75px;"
+        :class="{'marginTop': isMargin}"
+        
         v-bind:forUser="parseInt(forUser)"
         v-bind:columnNum="0"
       />
     </div>
     <div class="col-md-4 ml-5 col-sm-12 text mt-4">
-      <div v-if="!isDataFetched && !isUserDataFetched" id="ld" class="loading">
+      <div v-if="!isDataFetched && !isUserDataFetched && isNotLast" id="ld" class="loading">
         <div class="loadText">{{ Loading}}</div>
         <!-- <img src="https://loading.io/spinners/coolors/lg.palette-rotating-ring-loader.gif" alt=""> -->
       </div>
@@ -37,7 +35,8 @@ export default {
   data() {
     return {
       Loading: "Loading",
-      isThisUser: true
+      isThisUser: true,
+      thisIntervalL:''
     };
   },
   props: {
@@ -46,11 +45,11 @@ export default {
       default: function() {
         return [];
       },
-      isMargin: {
+    },
+    isMargin: {
         type: Boolean,
         default: true
-      }
-    },
+      },
     flexBehaviour: {
       type: String,
       default: "justify-content-around"
@@ -66,6 +65,9 @@ export default {
     isUserDataFetched() {
       return this.$store.state.dataStorage.isUserDataFetched;
     },
+    isNotLast() {
+      return this.$store.getters.isNotLastGetter;
+    },
     screenWidth() {
       return window.outerWidth;
     }
@@ -75,21 +77,25 @@ export default {
     postEditor
   },
   mounted() {
+    
+
     this.enableLoading();
+    let i = parseInt(localStorage.getItem("myId"));
+    this.isThisUser = i == this.forUser;
     if (!this.forUser) this.isThisUser = true;
-    else
-      Axios.post(
-        this.$store.getters.GET_URL + "/authentication/me",
-        {},
-        { withCredentials: true }
-      ).then(resp => {
-        this.isThisUser = resp.data == this.forUser;
-      });
+    // else
+    // Axios.post(
+    //   this.$store.getters.GET_URL + "/authentication/me",
+    //   {},
+    //   { withCredentials: true }
+    // ).then(resp => {
+
+    // });
   },
   methods: {
     enableLoading() {
       var count = 1;
-      setInterval(() => {
+      this.thisIntervalL = setInterval(() => {
         if (count % 4 != 0) {
           this.Loading += ".";
         } else {
@@ -100,7 +106,10 @@ export default {
         count++;
       }, 400);
     }
-  }
+  },
+  beforeDestroy() {
+    clearInterval(this.thisIntervalL);
+  },
 };
 </script>
 <style scoped>
@@ -108,12 +117,16 @@ export default {
   min-width: 51px;
 }
 
+.marginTop{
+  margin-top: 75px;
+}
+
 .margin {
   margin-left: 200px;
 }
 
 .smallMargin {
-  margin-left: 100px;
+  /* margin-left: 100px; */
 }
 .loadText {
   font-size: 36px;
@@ -125,5 +138,17 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+@media (max-width: 600px) {
+  .margin {
+    margin-left: 10px;
+  }
+}
+
+@media screen and (max-width: 1200px) {
+  .margin {
+    margin-left: 0;
+  }
 }
 </style>

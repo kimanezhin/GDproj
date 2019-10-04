@@ -20,10 +20,15 @@ const actions = {
     },
     SEND_POST(context, payload) {
         context.state.currentDraft = payload[0];
-        payload[1] = payload[1].map(x => x.name.slice(1, x.length))
+        payload[1] = payload[1].map(x => {
+            if (x.name[0] == "#") {
+                return x.name.slice(1, x.length)
+            }
+            else { 
+                return x.name 
+            }
+        })
         context.state.tags = payload[1]
-        //  context.commit("CREATE_POST", context.rootState.dataStorage.URL)
-
         context.commit("CREATE_POST", context.rootState.dataStorage.URL)
     }
 }
