@@ -23,7 +23,7 @@
     "express": "^4.16.4",
     "install": "^0.12.2",
     "marked": "^0.7.0",
-    "node-sass": "^4.12.0",
+    "node-sass": "^7.0.0",
     "npm": "^6.11.3",
     "sass-loader": "^7.1.0",
     "v-selectmenu": "github:kimanezhin/v-selectmenu",
